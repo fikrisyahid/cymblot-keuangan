@@ -1,9 +1,20 @@
-import { Text } from "@mantine/core";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  return (
-    <div>
-      <Text>Hello</Text>
-    </div>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    const redirectScript = setInterval(() => {
+      router.push("/dashboard");
+    }, 100);
+
+    return () => {
+      clearInterval(redirectScript);
+    };
+  }, [router]);
+
+  return <></>;
 }
