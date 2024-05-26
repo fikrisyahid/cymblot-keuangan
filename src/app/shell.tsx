@@ -1,5 +1,6 @@
 "use client";
 
+import Welcome from "@/components/welcome";
 import { SECONDARY_COLOR, PRIMARY_COLOR } from "@/config";
 import sidebarMenu from "@/data/sidebar";
 import { AppShell, Burger, Button, Flex, Title } from "@mantine/core";
@@ -58,8 +59,10 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
         </Flex>
       </AppShell.Navbar>
       <AppShell.Main>
-        <Burger opened={false} onClick={toggle} />
-        {children}
+        <Flex direction="column" gap="sm">
+          <Burger opened={false} onClick={toggle} />
+          {children}
+        </Flex>
       </AppShell.Main>
     </AppShell>
   );
