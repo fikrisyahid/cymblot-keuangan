@@ -1,5 +1,6 @@
 "use client";
 
+import { SECONDARY_COLOR, PRIMARY_COLOR } from "@/config";
 import sidebarMenu from "@/data/sidebar";
 import { AppShell, Burger, Button, Flex, Title } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
@@ -11,8 +12,6 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
   const pathName = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  console.log(isMobile);
-
   return (
     <AppShell
       layout="alt"
@@ -23,7 +22,7 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
         collapsed: { mobile: !opened, desktop: !opened },
       }}
     >
-      <AppShell.Navbar p="sm" style={{ backgroundColor: "#113F67" }}>
+      <AppShell.Navbar p="sm" style={{ backgroundColor: SECONDARY_COLOR }}>
         <Flex direction="column" gap="xs" align="center">
           <Burger
             opened={true}
@@ -49,7 +48,7 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
               style={{
                 width: "100%",
                 backgroundColor:
-                  pathName === item.route ? "#38598b" : "#113F67",
+                  pathName === item.route ? PRIMARY_COLOR : SECONDARY_COLOR,
                 color: "white",
               }}
             >
