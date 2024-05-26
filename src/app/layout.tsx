@@ -3,7 +3,14 @@ import { Poppins } from "next/font/google";
 
 import "@mantine/core/styles.css";
 
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { Center, ColorSchemeScript, MantineProvider } from "@mantine/core";
+import {
+  ClerkProvider,
+  SignIn,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -21,13 +28,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <ColorSchemeScript />
-      </head>
-      <body className={poppins.className}>
-        <MantineProvider>{children}</MantineProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <head>
+          <ColorSchemeScript />
+        </head>
+        <body className={poppins.className}>
+          <SignedOut>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "100vh",
+              }}
+            >
+              <SignIn routing="hash" />
+            </div>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+            <MantineProvider>{children}</MantineProvider>
+          </SignedIn>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
