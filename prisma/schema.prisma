@@ -40,14 +40,14 @@ model Transaksi {
   id         String          @id @default(cuid())
   email      String          @unique
   tanggal    DateTime        @default(now())
-  keterangan String
+  keterangan String          @default("")
   jenis      JENIS_TRANSAKSI
   sumber     Sumber?         @relation(fields: [sumberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tujuan     Tujuan?         @relation(fields: [tujuanId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   sumberId   String?
   tujuanId   String?
-  nominal    Int
-  bank       Boolean
+  nominal    Int             @default(0)
+  bank       Boolean         @default(false)
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
 }
