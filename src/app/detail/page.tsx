@@ -17,6 +17,7 @@ export default async function Page() {
   });
 
   const dataForTable = transaksiUser.map((transaksi, index) => ({
+    id: transaksi.id,
     No: index + 1,
     Tanggal: transaksi.tanggal.toLocaleDateString(),
     Keterangan: transaksi.keterangan,
