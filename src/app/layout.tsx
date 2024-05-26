@@ -1,10 +1,3 @@
-import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
-
-import "@mantine/core/styles.css";
-import "mantine-datatable/styles.layer.css";
-
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import {
   ClerkProvider,
   SignIn,
@@ -12,8 +5,15 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
-import RootShell from "./shell";
+import type { Metadata } from "next";
+import { Poppins } from "next/font/google";
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+
 import Welcome from "@/components/welcome";
+import RootShell from "./shell";
+
+import "@mantine/core/styles.css";
+import "mantine-datatable/styles.layer.css";
 
 const poppins = Poppins({
   subsets: ["latin"],

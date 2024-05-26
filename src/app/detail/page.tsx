@@ -1,13 +1,9 @@
-"use client";
-
-import { DataTable } from "mantine-datatable";
+import BaseTable from "@/components/base-table";
 
 export default function Page() {
   return (
     <>
-      <DataTable
-        withTableBorder
-        borderRadius="md"
+      <BaseTable
         columns={[
           { accessor: "id" },
           { accessor: "name" },
@@ -16,6 +12,7 @@ export default function Page() {
         ]}
         records={[
           { id: 1, name: "Joe Biden", bornIn: 1942, party: "Democratic" },
+          { id: 1, name: "Joe awd", bornIn: 1942, party: "Democratic" },
         ]}
       />
     </>

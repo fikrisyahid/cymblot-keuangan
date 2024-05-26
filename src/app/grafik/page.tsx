@@ -1,5 +1,5 @@
 export default function Page() {
   return (
-    <div>Detail page</div>
+    <div>Grafik page</div>
   )
 }
