@@ -34,7 +34,7 @@ export default function RootLayout({
         <head>
           <ColorSchemeScript />
         </head>
-        <body className={poppins.className}>
+        <body>
           <SignedOut>
             <div
               style={{
@@ -48,7 +48,11 @@ export default function RootLayout({
             </div>
           </SignedOut>
           <SignedIn>
-            <MantineProvider>
+            <MantineProvider
+              theme={{
+                fontFamily: poppins.style.fontFamily,
+              }}
+            >
               <RootShell>
                 <div style={{ position: "fixed", top: 8, right: 8 }}>
                   <UserButton />
