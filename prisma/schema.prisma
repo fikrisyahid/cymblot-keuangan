@@ -60,6 +60,7 @@ model Transaksi {
   sumberId   String
   tujuanId   String
   nominal    Int
+  bank       Boolean
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
 }
