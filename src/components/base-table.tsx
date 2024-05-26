@@ -16,6 +16,8 @@ export default function BaseTable({
         borderRadius="md"
         columns={columns}
         records={records}
+        noRecordsText="Tidak ada data yang ditemukan"
+        minHeight={150}
       />
     </>
   );
