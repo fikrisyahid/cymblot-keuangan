@@ -3,7 +3,7 @@ import { Poppins } from "next/font/google";
 
 import "@mantine/core/styles.css";
 
-import { Center, ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import {
   ClerkProvider,
   SignIn,
@@ -11,6 +11,7 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import RootShell from "./shell";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -47,8 +48,14 @@ export default function RootLayout({
             </div>
           </SignedOut>
           <SignedIn>
-            <UserButton />
-            <MantineProvider>{children}</MantineProvider>
+            <MantineProvider>
+              <RootShell>
+                <div style={{ position: "fixed", top: 8, right: 8 }}>
+                  <UserButton />
+                </div>
+                {children}
+              </RootShell>
+            </MantineProvider>
           </SignedIn>
         </body>
       </html>
