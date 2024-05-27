@@ -14,7 +14,6 @@ export default function SaldoCard({
       shadow="sm"
       padding="lg"
       radius="md"
-      withBorder
       style={{ width: "100%", backgroundColor, color: "white" }}
     >
       <Title>{title}</Title>
