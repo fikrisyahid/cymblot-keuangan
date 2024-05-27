@@ -1,7 +1,8 @@
-import BaseTable from "@/components/base-table";
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "../db/init";
-import PrettyJSON from "@/components/pretty-json";
+import moment from "moment";
+import "moment/locale/id";
+import DetailTable from "./detail-table";
 
 export default async function Page() {
   const user = await currentUser();
@@ -16,32 +17,33 @@ export default async function Page() {
     },
   });
 
+  const daftarSumber = await prisma.sumber.findMany({
+    where: {
+      email: user?.emailAddresses[0].emailAddress,
+    },
+  });
+
+  const daftarTujuan = await prisma.tujuan.findMany({
+    where: {
+      email: user?.emailAddresses[0].emailAddress,
+    },
+  });
+
   const dataForTable = transaksiUser.map((transaksi, index) => ({
     id: transaksi.id,
-    No: index + 1,
-    Tanggal: transaksi.tanggal.toLocaleDateString(),
-    Keterangan: transaksi.keterangan,
-    Jenis: transaksi.jenis,
-    Sumber: transaksi.sumber?.nama || "-",
-    Tujuan: transaksi.tujuan?.nama || "-",
-    Nominal: transaksi.nominal,
+    no: index + 1,
+    tanggal: moment(transaksi.tanggal).format("LLLL"),
+    keterangan: transaksi.keterangan,
+    jenis: transaksi.jenis,
+    sumber: transaksi.sumber?.nama || "-",
+    tujuan: transaksi.tujuan?.nama || "-",
+    nominal: transaksi.nominal,
+    bank: transaksi.bank ? "Ya" : "Tidak",
   }));
 
   return (
     <>
-      <PrettyJSON text={transaksiUser} />
-      <BaseTable
-        columns={[
-          { accessor: "No" },
-          { accessor: "Tanggal" },
-          { accessor: "Keterangan" },
-          { accessor: "Jenis" },
-          { accessor: "Sumber" },
-          { accessor: "Tujuan" },
-          { accessor: "Nominal" },
-        ]}
-        records={dataForTable}
-      />
+      <DetailTable data={dataForTable} />
     </>
   );
 }
