@@ -132,6 +132,7 @@ export default function DetailTable({
 
   return (
     <DataTable
+      minHeight={data.length === 0 ? 200 : 0}
       withTableBorder
       records={paginatedRecords}
       columns={[

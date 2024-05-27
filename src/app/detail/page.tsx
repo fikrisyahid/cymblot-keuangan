@@ -16,6 +16,9 @@ export default async function Page() {
       sumber: true,
       tujuan: true,
     },
+    orderBy: {
+      tanggal: "desc",
+    },
   });
 
   const daftarSumber = await prisma.sumber.findMany({
