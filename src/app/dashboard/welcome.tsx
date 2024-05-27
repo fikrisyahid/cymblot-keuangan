@@ -6,7 +6,6 @@ import { unstable_cache } from "next/cache";
 import { TEXT_COLOR } from "@/config";
 import MainCard from "../../components/main-card";
 import { IconBuildingBank, IconCash, IconCoins } from "@tabler/icons-react";
-import PrettyJSON from "@/components/pretty-json";
 import stringToRupiah from "@/utils/string-to-rupiah";
 
 export default async function Welcome() {
@@ -24,16 +23,32 @@ export default async function Welcome() {
 
   const transaksiUser = await transaksiUserCache();
 
-  const totalSaldo = transaksiUser.reduce((acc, curr) => acc + curr.nominal, 0);
+  const totalSaldo = {
+    PEMASUKAN: transaksiUser
+      .filter((item) => item.jenis === "PEMASUKAN")
+      .reduce((acc, curr) => acc + curr.nominal, 0),
+    PENGELUARAN: transaksiUser
+      .filter((item) => item.jenis === "PENGELUARAN")
+      .reduce((acc, curr) => acc + curr.nominal, 0),
+  };
 
-  const totalSaldoBank = transaksiUser
-    .filter((item) => item.bank)
-    .reduce((acc, curr) => acc + curr.nominal, 0);
+  const totalSaldoBank = {
+    PEMASUKAN: transaksiUser
+      .filter((item) => item.bank && item.jenis === "PEMASUKAN")
+      .reduce((acc, curr) => acc + curr.nominal, 0),
+    PENGELUARAN: transaksiUser
+      .filter((item) => item.bank && item.jenis === "PENGELUARAN")
+      .reduce((acc, curr) => acc + curr.nominal, 0),
+  };
 
-  const totalSaldoCash = transaksiUser
-    .filter((item) => !item.bank)
-    .reduce((acc, curr) => acc + curr.nominal, 0);
-
+  const totalSaldoCash = {
+    PEMASUKAN: transaksiUser
+      .filter((item) => !item.bank && item.jenis === "PEMASUKAN")
+      .reduce((acc, curr) => acc + curr.nominal, 0),
+    PENGELUARAN: transaksiUser
+      .filter((item) => !item.bank && item.jenis === "PENGELUARAN")
+      .reduce((acc, curr) => acc + curr.nominal, 0),
+  };
 
   return (
     <>
@@ -42,29 +57,49 @@ export default async function Welcome() {
         <SaldoCard
           backgroundColor="#38598b"
           title="Total saldo"
-          text={stringToRupiah(totalSaldo.toString())}
-          styleText={{ color: totalSaldo < 0 ? "red" : "white" }}
+          text={stringToRupiah(
+            (totalSaldo.PEMASUKAN - totalSaldo.PENGELUARAN).toString()
+          )}
+          styleText={{
+            color:
+              totalSaldo.PEMASUKAN - totalSaldo.PENGELUARAN < 0
+                ? "red"
+                : "white",
+          }}
         >
           <IconCoins style={{ height: "100%", width: "20%" }} />
         </SaldoCard>
         <SaldoCard
           backgroundColor="#5177b0"
           title="Bank"
-          text={stringToRupiah(totalSaldoBank.toString())}
-          styleText={{ color: totalSaldoBank < 0 ? "red" : "white" }}
+          text={stringToRupiah(
+            (totalSaldoBank.PEMASUKAN - totalSaldoBank.PENGELUARAN).toString()
+          )}
+          styleText={{
+            color:
+              totalSaldoBank.PEMASUKAN - totalSaldoBank.PENGELUARAN < 0
+                ? "red"
+                : "white",
+          }}
         >
           <IconBuildingBank style={{ height: "100%", width: "20%" }} />
         </SaldoCard>
         <SaldoCard
           backgroundColor="#72aad4"
           title="Cash"
-          text={stringToRupiah(totalSaldoCash.toString())}
-          styleText={{ color: totalSaldoCash < 0 ? "red" : "white" }}
+          text={stringToRupiah(
+            (totalSaldoCash.PEMASUKAN - totalSaldoCash.PENGELUARAN).toString()
+          )}
+          styleText={{
+            color:
+              totalSaldoCash.PEMASUKAN - totalSaldoCash.PENGELUARAN < 0
+                ? "red"
+                : "white",
+          }}
         >
           <IconCash style={{ height: "100%", width: "20%" }} />
         </SaldoCard>
       </MainCard>
-      <PrettyJSON text={transaksiUser} />
     </>
   );
 }
