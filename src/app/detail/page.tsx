@@ -3,6 +3,7 @@ import prisma from "../db/init";
 import moment from "moment";
 import "moment/locale/id";
 import DetailTable from "./detail-table";
+import MainCard from "@/components/main-card";
 
 export default async function Page() {
   const user = await currentUser();
@@ -42,8 +43,12 @@ export default async function Page() {
   }));
 
   return (
-    <>
-      <DetailTable data={dataForTable} />
-    </>
+    <MainCard>
+      <DetailTable
+        data={dataForTable}
+        daftarSumber={daftarSumber}
+        daftarTujuan={daftarTujuan}
+      />
+    </MainCard>
   );
 }
