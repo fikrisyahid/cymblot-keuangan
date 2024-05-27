@@ -7,11 +7,22 @@ import { AppShell, Burger, Button, Flex, Title } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 export default function RootShell({ children }: { children: React.ReactNode }) {
-  const [opened, { close, toggle }] = useDisclosure(true);
+  const [opened, { open, close, toggle }] = useDisclosure(true);
   const pathName = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
+
+  // Auto open or close sidebar
+  useEffect(() => {
+    if (isMobile) {
+      close();
+    }
+    if (!isMobile) {
+      open();
+    }
+  }, [open, close, isMobile]);
 
   return (
     <AppShell
@@ -23,7 +34,11 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
         collapsed: { mobile: !opened, desktop: !opened },
       }}
     >
-      <AppShell.Navbar p="sm" style={{ backgroundColor: SECONDARY_COLOR }}>
+      <AppShell.Navbar
+        p="sm"
+        style={{ backgroundColor: SECONDARY_COLOR }}
+        withBorder={false}
+      >
         <Flex direction="column" gap="xs" align="center">
           <Burger
             opened={true}
@@ -58,7 +73,7 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
           ))}
         </Flex>
       </AppShell.Navbar>
-      <AppShell.Main>
+      <AppShell.Main style={{ backgroundColor: "#f4f4f4" }}>
         <Flex direction="column" gap="sm">
           <Burger opened={false} onClick={toggle} />
           {children}
