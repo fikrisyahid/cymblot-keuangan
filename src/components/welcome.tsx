@@ -5,6 +5,7 @@ import { Flex, Title } from "@mantine/core";
 import { unstable_cache } from "next/cache";
 import { TEXT_COLOR } from "@/config";
 import MainCard from "./main-card";
+import { IconBuildingBank, IconCash, IconCoins } from "@tabler/icons-react";
 
 export default async function Welcome() {
   const user = await currentUser();
@@ -29,9 +30,15 @@ export default async function Welcome() {
           backgroundColor="#38598b"
           title="Total saldo"
           text="Rp500,000.00"
-        />
-        <SaldoCard backgroundColor="#5177b0" title="Bank" text="Rp500,000.00" />
-        <SaldoCard backgroundColor="#72aad4" title="Cash" text="Rp500,000.00" />
+        >
+          <IconCoins style={{ height: "100%", width: "20%" }} />
+        </SaldoCard>
+        <SaldoCard backgroundColor="#5177b0" title="Bank" text="Rp500,000.00">
+          <IconBuildingBank style={{ height: "100%", width: "20%" }} />
+        </SaldoCard>
+        <SaldoCard backgroundColor="#72aad4" title="Cash" text="Rp500,000.00">
+          <IconCash style={{ height: "100%", width: "20%" }} />
+        </SaldoCard>
       </MainCard>
     </MainCard>
   );

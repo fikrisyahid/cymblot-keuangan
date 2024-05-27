@@ -1,25 +1,35 @@
 import { Card, MantineStyleProp, Text, Title } from "@mantine/core";
+import MainCard from "./main-card";
+import { IconCoins } from "@tabler/icons-react";
 
 export default function SaldoCard({
   backgroundColor,
   title,
   text,
+  children,
 }: {
   backgroundColor: string;
   title: string;
   text: string;
+  children: React.ReactNode;
 }) {
   return (
-    <Card
-      shadow="sm"
-      padding="lg"
-      radius="md"
-      style={{ width: "100%", backgroundColor, color: "white" }}
+    <MainCard
+      width="100%"
+      style={{
+        backgroundColor,
+        color: "white",
+        justifyContent: "space-between",
+      }}
+      forceRow
     >
-      <Title>{title}</Title>
-      <Text fw={500} size="lg">
-        {text}
-      </Text>
-    </Card>
+      <MainCard noPadding transparent>
+        <Title>{title}</Title>
+        <Text fw={500} size="lg">
+          {text}
+        </Text>
+      </MainCard>
+      {children}
+    </MainCard>
   );
 }
