@@ -1,7 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "../db/init";
-import moment from "moment";
-import "moment/locale/id";
 import DetailTable from "./detail-table";
 import MainCard from "@/components/main-card";
 
@@ -36,7 +34,7 @@ export default async function Page() {
   const dataForTable = transaksiUser.map((transaksi, index) => ({
     id: transaksi.id,
     no: index + 1,
-    tanggal: moment(transaksi.tanggal).format("LLLL"),
+    tanggal: transaksi.tanggal,
     keterangan: transaksi.keterangan,
     jenis: transaksi.jenis,
     sumber: transaksi.sumber?.nama || "-",

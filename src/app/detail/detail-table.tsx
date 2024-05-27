@@ -15,6 +15,8 @@ import {
 } from "@mantine/core";
 import stringToRupiah from "@/utils/string-to-rupiah";
 import { IconSearch, IconX } from "@tabler/icons-react";
+import moment from "moment";
+import "moment/locale/id";
 
 const PAGE_SIZES = [10, 15, 20];
 
@@ -137,7 +139,13 @@ export default function DetailTable({
       records={paginatedRecords}
       columns={[
         { accessor: "no", sortable: true },
-        { accessor: "tanggal", sortable: true },
+        {
+          accessor: "tanggal",
+          sortable: true,
+          render: ({ tanggal }) => (
+            <Text>{moment(tanggal).format("LLLL")}</Text>
+          ),
+        },
         {
           accessor: "keterangan",
           sortable: true,
