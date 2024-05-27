@@ -6,11 +6,13 @@ export default function SaldoCard({
   title,
   text,
   children,
+  styleText,
 }: {
   backgroundColor: string;
   title: string;
   text: string;
   children: React.ReactNode;
+  styleText?: React.CSSProperties;
 }) {
   return (
     <MainCard
@@ -24,7 +26,7 @@ export default function SaldoCard({
     >
       <MainCard noPadding transparent>
         <Title>{title}</Title>
-        <Text fw={500} size="lg">
+        <Text fw={500} size="lg" style={styleText}>
           {text}
         </Text>
       </MainCard>
