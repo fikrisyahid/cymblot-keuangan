@@ -23,7 +23,7 @@ export default async function Welcome() {
   return (
     <>
       <Title style={{ color: TEXT_COLOR }}>Halo {user?.fullName}</Title>
-      <Flex gap="sm">
+      <Flex gap="sm" mb="md">
         <SaldoCard
           backgroundColor="#38598b"
           title="Total saldo"
