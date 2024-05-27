@@ -9,7 +9,6 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 
-import Welcome from "@/components/welcome";
 import RootShell from "./shell";
 
 import "@mantine/core/styles.css";
@@ -56,10 +55,9 @@ export default function RootLayout({
               }}
             >
               <RootShell>
-                <div style={{ position: "fixed", top: 8, right: 8 }}>
+                <div style={{ position: "fixed", top: 16, right: 16 }}>
                   <UserButton />
                 </div>
-                <Welcome />
                 {children}
               </RootShell>
             </MantineProvider>

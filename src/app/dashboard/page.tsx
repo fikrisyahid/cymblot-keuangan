@@ -1,7 +1,9 @@
+import Welcome from "../welcome";
+
 export default function Page() {
   return (
     <>
-      <div>Dashboard page</div>
+      <Welcome />
     </>
   );
 }

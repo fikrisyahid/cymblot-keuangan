@@ -1,5 +1,5 @@
 import { Card, MantineStyleProp, Text, Title } from "@mantine/core";
-import MainCard from "./main-card";
+import MainCard from "../components/main-card";
 import { IconCoins } from "@tabler/icons-react";
 
 export default function SaldoCard({

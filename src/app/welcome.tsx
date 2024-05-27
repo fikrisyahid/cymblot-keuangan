@@ -1,10 +1,10 @@
 import prisma from "@/app/db/init";
-import SaldoCard from "@/components/saldo-card";
+import SaldoCard from "@/app/saldo-card";
 import { currentUser } from "@clerk/nextjs/server";
 import { Flex, Title } from "@mantine/core";
 import { unstable_cache } from "next/cache";
 import { TEXT_COLOR } from "@/config";
-import MainCard from "./main-card";
+import MainCard from "../components/main-card";
 import { IconBuildingBank, IconCash, IconCoins } from "@tabler/icons-react";
 
 export default async function Welcome() {

@@ -1,6 +1,5 @@
 "use client";
 
-import Welcome from "@/components/welcome";
 import { SECONDARY_COLOR, PRIMARY_COLOR } from "@/config";
 import sidebarMenu from "@/data/sidebar";
 import { AppShell, Burger, Button, Flex, Title } from "@mantine/core";
