@@ -20,7 +20,7 @@ enum JENIS_TRANSAKSI {
 
 model Sumber {
   id        String      @id @default(cuid())
-  email     String      @unique
+  email     String
   Transaksi Transaksi[]
   nama      String
   createdAt DateTime    @default(now())
@@ -29,7 +29,7 @@ model Sumber {
 
 model Tujuan {
   id        String      @id @default(cuid())
-  email     String      @unique
+  email     String
   nama      String
   Transaksi Transaksi[]
   createdAt DateTime    @default(now())
@@ -38,7 +38,7 @@ model Tujuan {
 
 model Transaksi {
   id         String          @id @default(cuid())
-  email      String          @unique
+  email      String
   tanggal    DateTime        @default(now())
   keterangan String          @default("")
   jenis      JENIS_TRANSAKSI
