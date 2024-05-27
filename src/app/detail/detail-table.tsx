@@ -259,6 +259,7 @@ export default function DetailTable({
                 placeholder="Masukkan nominal di sini"
                 thousandSeparator=","
                 value={filter.nominal_angka}
+                prefix="Rp"
                 onChange={(value) =>
                   handleChangeFilter({ nominal_angka: value })
                 }
