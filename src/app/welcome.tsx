@@ -1,7 +1,7 @@
 import prisma from "@/app/db/init";
 import SaldoCard from "@/app/saldo-card";
 import { currentUser } from "@clerk/nextjs/server";
-import { Flex, Title } from "@mantine/core";
+import { Title } from "@mantine/core";
 import { unstable_cache } from "next/cache";
 import { TEXT_COLOR } from "@/config";
 import MainCard from "../components/main-card";
