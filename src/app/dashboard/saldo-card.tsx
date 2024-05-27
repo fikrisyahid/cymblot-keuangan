@@ -1,5 +1,5 @@
 import { Text, Title } from "@mantine/core";
-import MainCard from "../components/main-card";
+import MainCard from "../../components/main-card";
 
 export default function SaldoCard({
   backgroundColor,
