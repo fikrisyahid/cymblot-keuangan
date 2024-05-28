@@ -5,6 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import sortBy from "lodash/sortBy";
 import {
   ActionIcon,
+  Alert,
   Badge,
   Flex,
   MultiSelect,
@@ -14,7 +15,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import stringToRupiah from "@/utils/string-to-rupiah";
-import { IconSearch, IconX } from "@tabler/icons-react";
+import { IconInfoCircle, IconSearch, IconX } from "@tabler/icons-react";
 import moment from "moment";
 import "moment/locale/id";
 import { filterDetailTable } from "./types";
@@ -195,34 +196,62 @@ export default function DetailTable({
           accessor: "sumber",
           sortable: true,
           filter: (
-            <MultiSelect
-              clearable
-              placeholder="Pilih sumber keuangan"
-              label="Pilih sumber keuangan"
-              description="Filter data keuangan berdasarkan sumber keuangan"
-              checkIconPosition="left"
-              data={daftarSumber.map((item) => item.nama)}
-              value={filter.sumber}
-              onChange={(value) => handleChangeFilter({ sumber: value })}
-              style={{ minWidth: 200 }}
-            />
+            <Flex direction="column" gap="sm">
+              <MultiSelect
+                clearable
+                placeholder="Pilih sumber keuangan"
+                label="Pilih sumber keuangan"
+                description="Filter data keuangan berdasarkan sumber keuangan"
+                checkIconPosition="left"
+                data={daftarSumber.map((item) => item.nama)}
+                value={filter.sumber}
+                onChange={(value) => handleChangeFilter({ sumber: value })}
+                style={{ minWidth: 200 }}
+                disabled={daftarSumber.length === 0}
+              />
+              {daftarSumber.length === 0 && (
+                <Alert
+                  variant="filled"
+                  color="indigo"
+                  title="Alert title"
+                  icon={<IconInfoCircle />}
+                  p="xs"
+                >
+                  Kamu belum memiliki sumber keuangan. Silakan tambahkan sumber
+                </Alert>
+              )}
+            </Flex>
           ),
         },
         {
           accessor: "tujuan",
           sortable: true,
           filter: (
-            <MultiSelect
-              clearable
-              placeholder="Pilih tujuan keuangan"
-              label="Pilih tujuan keuangan"
-              description="Filter data keuangan berdasarkan tujuan keuangan"
-              checkIconPosition="left"
-              data={daftarTujuan.map((item) => item.nama)}
-              value={filter.tujuan}
-              onChange={(value) => handleChangeFilter({ tujuan: value })}
-              style={{ minWidth: 200 }}
-            />
+            <Flex direction="column" gap="sm">
+              <MultiSelect
+                clearable
+                placeholder="Pilih tujuan keuangan"
+                label="Pilih tujuan keuangan"
+                description="Filter data keuangan berdasarkan tujuan keuangan"
+                checkIconPosition="left"
+                data={daftarTujuan.map((item) => item.nama)}
+                value={filter.tujuan}
+                onChange={(value) => handleChangeFilter({ tujuan: value })}
+                style={{ minWidth: 200 }}
+                disabled={daftarTujuan.length === 0}
+              />
+              {daftarTujuan.length === 0 && (
+                <Alert
+                  variant="filled"
+                  color="indigo"
+                  title="Alert title"
+                  icon={<IconInfoCircle />}
+                  p="xs"
+                >
+                  Kamu belum memiliki tujuan keuangan. Silakan tambahkan tujuan
+                </Alert>
+              )}
+            </Flex>
           ),
         },
         {
