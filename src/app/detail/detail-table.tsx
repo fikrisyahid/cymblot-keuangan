@@ -17,6 +17,7 @@ import stringToRupiah from "@/utils/string-to-rupiah";
 import { IconSearch, IconX } from "@tabler/icons-react";
 import moment from "moment";
 import "moment/locale/id";
+import { filterDetailTable } from "./types";
 
 const PAGE_SIZES = [10, 15, 20];
 
@@ -31,15 +32,7 @@ export default function DetailTable({
 }) {
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [page, setPage] = useState(1);
-  const [filter, setFilter] = useState<{
-    keterangan: string;
-    jenis: string;
-    sumber: string[];
-    tujuan: string[];
-    nominal_jenis: string;
-    nominal_angka: number;
-    bank: string;
-  }>({
+  const [filter, setFilter] = useState<filterDetailTable>({
     keterangan: "",
     jenis: "SEMUA",
     sumber: [],
@@ -49,11 +42,11 @@ export default function DetailTable({
     bank: "SEMUA",
   });
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<any>>({
-    columnAccessor: "tanggal",
+    columnAccessor: "no",
     direction: "asc",
   });
 
-  const handleChangeFilter = (newObj: any) =>
+  const handleChangeFilter = (newObj: Partial<filterDetailTable>) =>
     setFilter((old) => ({ ...old, ...newObj }));
 
   // Memoize filtered data to prevent unnecessary recalculations
@@ -192,7 +185,9 @@ export default function DetailTable({
                 { value: "PENGELUARAN", label: "Pengeluaran" },
               ]}
               value={filter.jenis}
-              onChange={(value) => handleChangeFilter({ jenis: value })}
+              onChange={(value) =>
+                handleChangeFilter({ jenis: value || "SEMUA" })
+              }
             />
           ),
         },
@@ -259,7 +254,7 @@ export default function DetailTable({
                 ]}
                 value={filter.nominal_jenis}
                 onChange={(value) =>
-                  handleChangeFilter({ nominal_jenis: value })
+                  handleChangeFilter({ nominal_jenis: value || "" })
                 }
               />
               <NumberInput
@@ -270,7 +265,7 @@ export default function DetailTable({
                 value={filter.nominal_angka}
                 prefix="Rp"
                 onChange={(value) =>
-                  handleChangeFilter({ nominal_angka: value })
+                  handleChangeFilter({ nominal_angka: +value })
                 }
               />
             </Flex>
@@ -290,7 +285,9 @@ export default function DetailTable({
                 { value: "CASH", label: "Cash" },
               ]}
               value={filter.bank}
-              onChange={(value) => handleChangeFilter({ bank: value })}
+              onChange={(value) =>
+                handleChangeFilter({ bank: value || "SEMUA" })
+              }
             />
           ),
         },
