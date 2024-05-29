@@ -280,6 +280,7 @@ export default function DetailTable({
                 thousandSeparator=","
                 value={filter.nominal_di_atas}
                 prefix="Rp"
+                allowNegative={false}
                 onChange={(value) =>
                   handleChangeFilter({ nominal_di_atas: +value })
                 }
@@ -291,6 +292,7 @@ export default function DetailTable({
                 thousandSeparator=","
                 value={filter.nominal_di_bawah}
                 prefix="Rp"
+                allowNegative={false}
                 onChange={(value) =>
                   handleChangeFilter({ nominal_di_bawah: +value })
                 }
@@ -302,6 +304,7 @@ export default function DetailTable({
                 thousandSeparator=","
                 value={filter.nominal_sama_dengan}
                 prefix="Rp"
+                allowNegative={false}
                 onChange={(value) =>
                   handleChangeFilter({ nominal_sama_dengan: +value })
                 }
