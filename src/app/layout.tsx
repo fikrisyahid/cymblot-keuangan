@@ -8,11 +8,13 @@ import {
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 
 import RootShell from "./shell";
 
 import "@mantine/core/styles.css";
 import "mantine-datatable/styles.layer.css";
+import ProgressProvider from "@/components/progressbar-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -49,18 +51,20 @@ export default function RootLayout({
             </div>
           </SignedOut>
           <SignedIn>
-            <MantineProvider
-              theme={{
-                fontFamily: poppins.style.fontFamily,
-              }}
-            >
-              <RootShell>
-                <div style={{ position: "fixed", top: 16, right: 16 }}>
-                  <UserButton />
-                </div>
-                {children}
-              </RootShell>
-            </MantineProvider>
+            <ProgressProvider>
+              <MantineProvider
+                theme={{
+                  fontFamily: poppins.style.fontFamily,
+                }}
+              >
+                <RootShell>
+                  <div style={{ position: "fixed", top: 16, right: 16 }}>
+                    <UserButton />
+                  </div>
+                  {children}
+                </RootShell>
+              </MantineProvider>
+            </ProgressProvider>
           </SignedIn>
         </body>
       </html>
