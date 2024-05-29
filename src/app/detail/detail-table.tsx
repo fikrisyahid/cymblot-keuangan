@@ -245,7 +245,7 @@ export default function DetailTable({
                 <Alert
                   variant="filled"
                   color="indigo"
-                  title="Peringatan"
+                  title="Info"
                   icon={<IconInfoCircle />}
                   p="xs"
                   style={{ maxWidth: "300px" }}
@@ -298,7 +298,7 @@ export default function DetailTable({
                 <Alert
                   variant="filled"
                   color="indigo"
-                  title="Peringatan"
+                  title="Info"
                   icon={<IconInfoCircle />}
                   p="xs"
                   style={{ maxWidth: "300px" }}
