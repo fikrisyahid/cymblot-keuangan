@@ -408,7 +408,7 @@ export default function DetailTable({
           ),
         },
       ]}
-      totalRecords={data.length}
+      totalRecords={filteredData.length}
       borderRadius="md"
       recordsPerPage={pageSize}
       page={page}
