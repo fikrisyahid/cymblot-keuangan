@@ -11,7 +11,6 @@ import {
   Checkbox,
   Flex,
   NumberInput,
-  Select,
   Text,
   TextInput,
 } from "@mantine/core";
@@ -173,20 +172,35 @@ export default function DetailTable({
           ),
           sortable: true,
           filter: (
-            <Select
-              label="Pilih jenis transaksi"
-              description="Filter data keuangan berdasarkan jenis transaksi"
-              checkIconPosition="left"
-              data={[
-                { value: "SEMUA", label: "Semua" },
-                { value: "PEMASUKAN", label: "Pemasukan" },
-                { value: "PENGELUARAN", label: "Pengeluaran" },
-              ]}
-              value={filter.jenis}
-              onChange={(value) =>
-                handleChangeFilter({ jenis: value || "SEMUA" })
-              }
-            />
+            <Flex direction="column" gap="sm">
+              <Checkbox
+                label="SEMUA"
+                checked={filter.jenis === "SEMUA"}
+                onChange={(e) =>
+                  handleChangeFilter({
+                    jenis: e.currentTarget.checked ? "SEMUA" : "SEMUA",
+                  })
+                }
+              />
+              <Checkbox
+                label="PEMASUKAN"
+                checked={filter.jenis === "PEMASUKAN"}
+                onChange={(e) =>
+                  handleChangeFilter({
+                    jenis: e.currentTarget.checked ? "PEMASUKAN" : "SEMUA",
+                  })
+                }
+              />
+              <Checkbox
+                label="PENGELUARAN"
+                checked={filter.jenis === "PENGELUARAN"}
+                onChange={(e) =>
+                  handleChangeFilter({
+                    jenis: e.currentTarget.checked ? "PENGELUARAN" : "SEMUA",
+                  })
+                }
+              />
+            </Flex>
           ),
         },
         {
@@ -218,23 +232,23 @@ export default function DetailTable({
                 <Alert
                   variant="filled"
                   color="red"
-                  title="Alert title"
+                  title="Peringatan"
                   icon={<IconInfoCircle />}
                   p="xs"
-                  style={{maxWidth: "300px"}}
+                  style={{ maxWidth: "300px" }}
                 >
-                  Kamu tidak bisa memiliki filter sumber dan tujuan secara bersamaan. Silakan batalkan
-                  filter tujuan terlebih dahulu
+                  Kamu tidak bisa memiliki filter sumber dan tujuan secara
+                  bersamaan. Silakan batalkan filter tujuan terlebih dahulu
                 </Alert>
               )}
               {daftarSumber.length === 0 && (
                 <Alert
                   variant="filled"
                   color="indigo"
-                  title="Alert title"
+                  title="Peringatan"
                   icon={<IconInfoCircle />}
                   p="xs"
-                  style={{maxWidth: "300px"}}
+                  style={{ maxWidth: "300px" }}
                 >
                   Kamu belum memiliki sumber keuangan. Silakan tambahkan sumber
                 </Alert>
@@ -271,23 +285,23 @@ export default function DetailTable({
                 <Alert
                   variant="filled"
                   color="red"
-                  title="Alert title"
+                  title="Peringatan"
                   icon={<IconInfoCircle />}
                   p="xs"
-                  style={{maxWidth: "300px"}}
+                  style={{ maxWidth: "300px" }}
                 >
-                  Kamu tidak bisa memiliki filter tujuan dan sumber secara bersamaan. Silakan batalkan
-                  filter sumber terlebih dahulu
+                  Kamu tidak bisa memiliki filter tujuan dan sumber secara
+                  bersamaan. Silakan batalkan filter sumber terlebih dahulu
                 </Alert>
               )}
               {daftarTujuan.length === 0 && (
                 <Alert
                   variant="filled"
                   color="indigo"
-                  title="Alert title"
+                  title="Peringatan"
                   icon={<IconInfoCircle />}
                   p="xs"
-                  style={{maxWidth: "300px"}}
+                  style={{ maxWidth: "300px" }}
                 >
                   Kamu belum memiliki tujuan keuangan. Silakan tambahkan tujuan
                 </Alert>
@@ -347,20 +361,35 @@ export default function DetailTable({
           sortable: true,
           render: ({ bank }) => <Text>{bank ? "Ya" : "Tidak"}</Text>,
           filter: (
-            <Select
-              label="Pilih jenis metode penyimpanan uang"
-              description="Filter data keuangan berdasarkan metode penyimpanan uang"
-              checkIconPosition="left"
-              data={[
-                { value: "SEMUA", label: "Semua" },
-                { value: "BANK", label: "Bank" },
-                { value: "CASH", label: "Cash" },
-              ]}
-              value={filter.bank}
-              onChange={(value) =>
-                handleChangeFilter({ bank: value || "SEMUA" })
-              }
-            />
+            <Flex direction="column" gap="sm">
+              <Checkbox
+                label="SEMUA"
+                checked={filter.bank === "SEMUA"}
+                onChange={(e) =>
+                  handleChangeFilter({
+                    bank: e.currentTarget.checked ? "SEMUA" : "SEMUA",
+                  })
+                }
+              />
+              <Checkbox
+                label="BANK"
+                checked={filter.bank === "BANK"}
+                onChange={(e) =>
+                  handleChangeFilter({
+                    bank: e.currentTarget.checked ? "BANK" : "SEMUA",
+                  })
+                }
+              />
+              <Checkbox
+                label="CASH"
+                checked={filter.bank === "CASH"}
+                onChange={(e) =>
+                  handleChangeFilter({
+                    bank: e.currentTarget.checked ? "CASH" : "SEMUA",
+                  })
+                }
+              />
+            </Flex>
           ),
         },
       ]}
