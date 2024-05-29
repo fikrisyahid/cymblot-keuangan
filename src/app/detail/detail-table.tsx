@@ -199,6 +199,7 @@ export default function DetailTable({
                   key={item.id}
                   label={item.nama}
                   checked={filter.sumber.includes(item.nama)}
+                  disabled={filter.tujuan.length > 0}
                   onChange={(e) =>
                     handleChangeFilter({
                       sumber: e.currentTarget.checked
@@ -213,6 +214,19 @@ export default function DetailTable({
                   Batalkan filter
                 </Button>
               )}
+              {filter.tujuan.length > 0 && (
+                <Alert
+                  variant="filled"
+                  color="red"
+                  title="Alert title"
+                  icon={<IconInfoCircle />}
+                  p="xs"
+                  style={{maxWidth: "300px"}}
+                >
+                  Kamu tidak bisa memiliki filter sumber dan tujuan secara bersamaan. Silakan batalkan
+                  filter tujuan terlebih dahulu
+                </Alert>
+              )}
               {daftarSumber.length === 0 && (
                 <Alert
                   variant="filled"
@@ -220,6 +234,7 @@ export default function DetailTable({
                   title="Alert title"
                   icon={<IconInfoCircle />}
                   p="xs"
+                  style={{maxWidth: "300px"}}
                 >
                   Kamu belum memiliki sumber keuangan. Silakan tambahkan sumber
                 </Alert>
@@ -237,6 +252,7 @@ export default function DetailTable({
                   key={item.id}
                   label={item.nama}
                   checked={filter.tujuan.includes(item.nama)}
+                  disabled={filter.sumber.length > 0}
                   onChange={(e) =>
                     handleChangeFilter({
                       tujuan: e.currentTarget.checked
@@ -251,6 +267,19 @@ export default function DetailTable({
                   Batalkan filter
                 </Button>
               )}
+              {filter.sumber.length > 0 && (
+                <Alert
+                  variant="filled"
+                  color="red"
+                  title="Alert title"
+                  icon={<IconInfoCircle />}
+                  p="xs"
+                  style={{maxWidth: "300px"}}
+                >
+                  Kamu tidak bisa memiliki filter tujuan dan sumber secara bersamaan. Silakan batalkan
+                  filter sumber terlebih dahulu
+                </Alert>
+              )}
               {daftarTujuan.length === 0 && (
                 <Alert
                   variant="filled"
@@ -258,6 +287,7 @@ export default function DetailTable({
                   title="Alert title"
                   icon={<IconInfoCircle />}
                   p="xs"
+                  style={{maxWidth: "300px"}}
                 >
                   Kamu belum memiliki tujuan keuangan. Silakan tambahkan tujuan
                 </Alert>
