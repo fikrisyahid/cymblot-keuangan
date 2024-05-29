@@ -8,7 +8,6 @@ import {
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
-import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 
 import RootShell from "./shell";
 
