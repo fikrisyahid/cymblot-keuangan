@@ -417,6 +417,7 @@ export default function DetailTable({
       onRecordsPerPageChange={setPageSize}
       sortStatus={sortStatus}
       onSortStatusChange={setSortStatus}
+      noRecordsText="Tidak ada data yang ditemukan"
     />
   );
 }
