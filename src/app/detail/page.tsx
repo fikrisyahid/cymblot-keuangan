@@ -40,7 +40,7 @@ export default async function Page() {
     sumber: transaksi.sumber?.nama || "-",
     tujuan: transaksi.tujuan?.nama || "-",
     nominal: transaksi.nominal,
-    bank: transaksi.bank ? "Ya" : "Tidak",
+    bank: transaksi.bank,
   }));
 
   return (

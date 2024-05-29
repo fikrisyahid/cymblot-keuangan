@@ -91,8 +91,8 @@ export default function DetailTable({
       // Filter by bank
       if (
         filter.bank !== "SEMUA" &&
-        ((item.bank === "Ya" && filter.bank !== "BANK") ||
-          (item.bank === "Tidak" && filter.bank !== "CASH"))
+        ((filter.bank === "BANK" && !item.bank) ||
+          (filter.bank === "CASH" && item.bank))
       ) {
         return false;
       }
@@ -295,6 +295,7 @@ export default function DetailTable({
         {
           accessor: "bank",
           sortable: true,
+          render: ({ bank }) => <Text>{bank ? "Ya" : "Tidak"}</Text>,
           filter: (
             <Select
               label="Pilih jenis metode penyimpanan uang"
