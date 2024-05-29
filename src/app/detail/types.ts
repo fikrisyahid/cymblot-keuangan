@@ -3,7 +3,8 @@ export interface filterDetailTable {
   jenis: string;
   sumber: string[];
   tujuan: string[];
-  nominal_jenis: string;
-  nominal_angka: number;
+  nominal_di_bawah: number;
+  nominal_di_atas: number;
+  nominal_sama_dengan: number;
   bank: string;
 }

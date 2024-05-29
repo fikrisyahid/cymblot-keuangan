@@ -38,8 +38,9 @@ export default function DetailTable({
     jenis: "SEMUA",
     sumber: [],
     tujuan: [],
-    nominal_jenis: "",
-    nominal_angka: 0,
+    nominal_di_bawah: 0,
+    nominal_di_atas: 0,
+    nominal_sama_dengan: 0,
     bank: "SEMUA",
   });
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<any>>({
@@ -77,21 +78,14 @@ export default function DetailTable({
       }
 
       // Filter by nominal
-      if (filter.nominal_jenis !== "") {
-        if (
-          (filter.nominal_jenis === "sama" &&
-            parseInt(item.nominal) !== filter.nominal_angka) ||
-          (filter.nominal_jenis === "lebih_kecil" &&
-            parseInt(item.nominal) >= filter.nominal_angka) ||
-          (filter.nominal_jenis === "lebih_besar" &&
-            parseInt(item.nominal) <= filter.nominal_angka) ||
-          (filter.nominal_jenis === "lebih_kecil_sd" &&
-            parseInt(item.nominal) > filter.nominal_angka) ||
-          (filter.nominal_jenis === "lebih_besar_sd" &&
-            parseInt(item.nominal) < filter.nominal_angka)
-        ) {
-          return false;
-        }
+      if (
+        (filter.nominal_di_atas > 0 && item.nominal < filter.nominal_di_atas) ||
+        (filter.nominal_di_bawah > 0 &&
+          item.nominal > filter.nominal_di_bawah) ||
+        (filter.nominal_sama_dengan > 0 &&
+          item.nominal !== filter.nominal_sama_dengan)
+      ) {
+        return false;
       }
 
       // Filter by bank
@@ -262,39 +256,37 @@ export default function DetailTable({
           sortable: true,
           filter: (
             <Flex direction="column" gap="sm">
-              <Select
-                clearable
-                placeholder="Pilih jenis metode filter nominal"
-                label="Pilih jenis metode filter nominal"
-                description="Filter data keuangan berdasarkan metode filter nominal"
-                checkIconPosition="left"
-                data={[
-                  { value: "sama", label: "Sama dengan (=)" },
-                  { value: "lebih_kecil", label: "Lebih kecil dari (<)" },
-                  { value: "lebih_besar", label: "Lebih besar dari (>)" },
-                  {
-                    value: "lebih_kecil_sd",
-                    label: "Lebih kecil sama dengan dari (<=)",
-                  },
-                  {
-                    value: "lebih_besar_sd",
-                    label: "Lebih besar sama dengan dari (>=)",
-                  },
-                ]}
-                value={filter.nominal_jenis}
+              <NumberInput
+                label="Filter keuangan di atas nominal"
+                description="Filter data keuangan di atas nominal tertentu"
+                placeholder="Masukkan nominal di sini"
+                thousandSeparator=","
+                value={filter.nominal_di_atas}
+                prefix="Rp"
                 onChange={(value) =>
-                  handleChangeFilter({ nominal_jenis: value || "" })
+                  handleChangeFilter({ nominal_di_atas: +value })
                 }
               />
               <NumberInput
-                label="Masukkan nominal filter keuangan"
-                description="Filter data keuangan berdasarkan nominal"
+                label="Filter keuangan di bawah nominal"
+                description="Filter data keuangan di bawah nominal tertentu"
                 placeholder="Masukkan nominal di sini"
                 thousandSeparator=","
-                value={filter.nominal_angka}
+                value={filter.nominal_di_bawah}
                 prefix="Rp"
                 onChange={(value) =>
-                  handleChangeFilter({ nominal_angka: +value })
+                  handleChangeFilter({ nominal_di_bawah: +value })
+                }
+              />
+              <NumberInput
+                label="Filter keuangan pada nominal"
+                description="Filter data keuangan pada nominal tertentu"
+                placeholder="Masukkan nominal di sini"
+                thousandSeparator=","
+                value={filter.nominal_sama_dengan}
+                prefix="Rp"
+                onChange={(value) =>
+                  handleChangeFilter({ nominal_sama_dengan: +value })
                 }
               />
             </Flex>
