@@ -7,8 +7,9 @@ import {
   ActionIcon,
   Alert,
   Badge,
+  Button,
+  Checkbox,
   Flex,
-  MultiSelect,
   NumberInput,
   Select,
   Text,
@@ -79,9 +80,10 @@ export default function DetailTable({
 
       // Filter by nominal
       if (
-        (filter.nominal_di_atas > 0 && item.nominal < filter.nominal_di_atas) ||
+        (filter.nominal_di_atas > 0 &&
+          item.nominal <= filter.nominal_di_atas) ||
         (filter.nominal_di_bawah > 0 &&
-          item.nominal > filter.nominal_di_bawah) ||
+          item.nominal >= filter.nominal_di_bawah) ||
         (filter.nominal_sama_dengan > 0 &&
           item.nominal !== filter.nominal_sama_dengan)
       ) {
@@ -99,6 +101,7 @@ export default function DetailTable({
 
       return true;
     });
+
     return filtered;
   }, [data, filter]);
 
@@ -122,7 +125,7 @@ export default function DetailTable({
 
   return (
     <DataTable
-      minHeight={data.length === 0 ? 200 : 0}
+      minHeight={filteredData.length === 0 ? 200 : 0}
       withTableBorder
       records={paginatedRecords}
       columns={[
@@ -191,18 +194,25 @@ export default function DetailTable({
           sortable: true,
           filter: (
             <Flex direction="column" gap="sm">
-              <MultiSelect
-                clearable
-                placeholder="Pilih sumber keuangan"
-                label="Pilih sumber keuangan"
-                description="Filter data keuangan berdasarkan sumber keuangan"
-                checkIconPosition="left"
-                data={daftarSumber.map((item) => item.nama)}
-                value={filter.sumber}
-                onChange={(value) => handleChangeFilter({ sumber: value })}
-                style={{ minWidth: 200 }}
-                disabled={daftarSumber.length === 0}
-              />
+              {daftarSumber.map((item) => (
+                <Checkbox
+                  key={item.id}
+                  label={item.nama}
+                  checked={filter.sumber.includes(item.nama)}
+                  onChange={(e) =>
+                    handleChangeFilter({
+                      sumber: e.currentTarget.checked
+                        ? [...filter.sumber, item.nama]
+                        : filter.sumber.filter((x) => x !== item.nama),
+                    })
+                  }
+                />
+              ))}
+              {filter.sumber.length > 0 && (
+                <Button onClick={() => handleChangeFilter({ sumber: [] })}>
+                  Batalkan filter
+                </Button>
+              )}
               {daftarSumber.length === 0 && (
                 <Alert
                   variant="filled"
@@ -222,18 +232,25 @@ export default function DetailTable({
           sortable: true,
           filter: (
             <Flex direction="column" gap="sm">
-              <MultiSelect
-                clearable
-                placeholder="Pilih tujuan keuangan"
-                label="Pilih tujuan keuangan"
-                description="Filter data keuangan berdasarkan tujuan keuangan"
-                checkIconPosition="left"
-                data={daftarTujuan.map((item) => item.nama)}
-                value={filter.tujuan}
-                onChange={(value) => handleChangeFilter({ tujuan: value })}
-                style={{ minWidth: 200 }}
-                disabled={daftarTujuan.length === 0}
-              />
+              {daftarTujuan.map((item) => (
+                <Checkbox
+                  key={item.id}
+                  label={item.nama}
+                  checked={filter.tujuan.includes(item.nama)}
+                  onChange={(e) =>
+                    handleChangeFilter({
+                      tujuan: e.currentTarget.checked
+                        ? [...filter.tujuan, item.nama]
+                        : filter.tujuan.filter((x) => x !== item.nama),
+                    })
+                  }
+                />
+              ))}
+              {filter.tujuan.length > 0 && (
+                <Button onClick={() => handleChangeFilter({ tujuan: [] })}>
+                  Batalkan filter
+                </Button>
+              )}
               {daftarTujuan.length === 0 && (
                 <Alert
                   variant="filled"
