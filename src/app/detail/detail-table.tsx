@@ -172,7 +172,7 @@ export default function DetailTable({
           ),
           sortable: true,
           filter: (
-            <Flex direction="column" gap="sm">
+            <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
               <Checkbox
                 label="SEMUA"
                 checked={filter.jenis === "SEMUA"}
@@ -207,7 +207,7 @@ export default function DetailTable({
           accessor: "sumber",
           sortable: true,
           filter: (
-            <Flex direction="column" gap="sm">
+            <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
               {daftarSumber.map((item) => (
                 <Checkbox
                   key={item.id}
@@ -260,7 +260,7 @@ export default function DetailTable({
           accessor: "tujuan",
           sortable: true,
           filter: (
-            <Flex direction="column" gap="sm">
+            <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
               {daftarTujuan.map((item) => (
                 <Checkbox
                   key={item.id}
@@ -316,7 +316,7 @@ export default function DetailTable({
           ),
           sortable: true,
           filter: (
-            <Flex direction="column" gap="sm">
+            <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
               <NumberInput
                 label="Filter keuangan di atas nominal"
                 description="Filter data keuangan di atas nominal tertentu"
@@ -353,6 +353,21 @@ export default function DetailTable({
                   handleChangeFilter({ nominal_sama_dengan: +value })
                 }
               />
+              {(filter.nominal_di_atas > 0 ||
+                filter.nominal_di_bawah > 0 ||
+                filter.nominal_sama_dengan > 0) && (
+                <Button
+                  onClick={() =>
+                    handleChangeFilter({
+                      nominal_di_atas: 0,
+                      nominal_di_bawah: 0,
+                      nominal_sama_dengan: 0,
+                    })
+                  }
+                >
+                  Batalkan filter
+                </Button>
+              )}
             </Flex>
           ),
         },
@@ -361,7 +376,7 @@ export default function DetailTable({
           sortable: true,
           render: ({ bank }) => <Text>{bank ? "Ya" : "Tidak"}</Text>,
           filter: (
-            <Flex direction="column" gap="sm">
+            <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
               <Checkbox
                 label="SEMUA"
                 checked={filter.bank === "SEMUA"}
