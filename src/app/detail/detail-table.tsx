@@ -268,7 +268,7 @@ export default function DetailTable({
         {
           accessor: "nominal",
           render: ({ nominal }: { nominal: string }) => (
-            <Text>{stringToRupiah(nominal)}</Text>
+            <Text>{stringToRupiah(nominal.toString())}</Text>
           ),
           sortable: true,
           filter: (
