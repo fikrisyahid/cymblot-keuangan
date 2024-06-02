@@ -14,6 +14,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
 import stringToRupiah from "@/utils/string-to-rupiah";
 import { IconInfoCircle, IconSearch, IconX } from "@tabler/icons-react";
 import moment from "moment";
@@ -34,6 +35,8 @@ export default function DetailTable({
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState<filterDetailTable>({
+    tanggal_sebelum: new Date(),
+    tanggal_sesudah: new Date(),
     keterangan: "",
     jenis: "SEMUA",
     sumber: [],
@@ -122,6 +125,8 @@ export default function DetailTable({
     setPage(1);
   }, [pageSize, sortStatus]);
 
+  console.log(filter.tanggal_sebelum)
+
   return (
     <DataTable
       minHeight={filteredData.length === 0 ? 200 : 0}
@@ -134,6 +139,16 @@ export default function DetailTable({
           sortable: true,
           render: ({ tanggal }) => (
             <Text>{moment(tanggal).format("LLLL")}</Text>
+          ),
+          filter: (
+            <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
+              <DatePickerInput
+                label="Pilih tanggal sebelum"
+                placeholder="Masukkan tanggal sebelum"
+                value={filter.tanggal_sebelum}
+                onChange={(e) => handleChangeFilter({ tanggal_sebelum: e })}
+              />
+            </Flex>
           ),
         },
         {

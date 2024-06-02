@@ -9,11 +9,12 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 
+import ProgressProvider from "@/components/progressbar-provider";
 import RootShell from "./shell";
 
 import "@mantine/core/styles.css";
 import "mantine-datatable/styles.layer.css";
-import ProgressProvider from "@/components/progressbar-provider";
+import "@mantine/dates/styles.css";
 
 const poppins = Poppins({
   subsets: ["latin"],

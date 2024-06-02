@@ -1,4 +1,8 @@
+import { DateValue } from "@mantine/dates";
+
 export interface filterDetailTable {
+  tanggal_sebelum: DateValue;
+  tanggal_sesudah: DateValue;
   keterangan: string;
   jenis: string;
   sumber: string[];
