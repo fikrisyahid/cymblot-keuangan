@@ -1,5 +1,4 @@
 import prisma from "@/app/db/init";
-import SaldoCard from "@/app/dashboard/saldo-card";
 import { currentUser } from "@clerk/nextjs/server";
 import { Title } from "@mantine/core";
 import { unstable_cache } from "next/cache";
@@ -7,6 +6,7 @@ import { TEXT_COLOR } from "@/config";
 import MainCard from "../../components/main-card";
 import { IconBuildingBank, IconCash, IconCoins } from "@tabler/icons-react";
 import stringToRupiah from "@/utils/string-to-rupiah";
+import SaldoCard from "@/components/saldo-card";
 
 export default async function Welcome() {
   const user = await currentUser();

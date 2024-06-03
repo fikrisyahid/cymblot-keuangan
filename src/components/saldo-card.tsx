@@ -1,26 +1,30 @@
 import { Text, Title } from "@mantine/core";
-import MainCard from "../../components/main-card";
+import MainCard from "./main-card";
 
 export default function SaldoCard({
   backgroundColor,
   title,
   text,
+  textColor = "white",
   children,
+  width = "100%",
   styleText,
 }: {
   backgroundColor: string;
   title: string;
   text: string;
-  children: React.ReactNode;
+  textColor?: string;
+  children?: React.ReactNode;
+  width?: string | number;
   styleText?: React.CSSProperties;
 }) {
   return (
     <MainCard
-      width="100%"
+      width={width}
       style={{
         backgroundColor,
-        color: "white",
-        justifyContent: "space-between",
+        color: textColor,
+        justifyContent: children ? "space-between" : "flex-start",
       }}
       forceRow
     >
