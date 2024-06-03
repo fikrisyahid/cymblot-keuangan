@@ -29,8 +29,10 @@ import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { filterDetailTable } from "./types";
 import { TEXT_COLOR } from "@/config";
+import { useMediaQuery } from "@mantine/hooks";
+import MainCard from "@/components/main-card";
 
-const PAGE_SIZES = [10, 25, 50, 75, 100];
+const PAGE_SIZES = [10, 15, 25, 50, 75, 100];
 
 export default function DetailTable({
   data,
@@ -43,7 +45,8 @@ export default function DetailTable({
   daftarTujuan: any[];
   oldestDate: Date;
 }) {
-  const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState<filterDetailTable>({
     tanggal_sesudah: oldestDate,
@@ -155,8 +158,14 @@ export default function DetailTable({
 
   return (
     <Flex direction="column" gap="sm">
-      <Flex justify="space-between" align="flex-end">
-        <Flex align="flex-end" gap="sm">
+      <MainCard transparent noPadding row>
+        <Flex
+          direction={isMobile ? "column" : "row"}
+          justify={isMobile ? "center" : "flex-start"}
+          align={isMobile ? "center" : "flex-end"}
+          gap="sm"
+          w="100%"
+        >
           <Flex direction="column">
             <Text>Total saldo:</Text>
             <Badge color={totalSaldo > 0 ? "teal" : "red"}>
@@ -184,7 +193,12 @@ export default function DetailTable({
             Reset Filter
           </Button>
         </Flex>
-        <Flex justify="flex-end" gap="sm">
+        <Flex
+          align="flex-end"
+          justify={isMobile ? "center" : "flex-end"}
+          gap="sm"
+          w="100%"
+        >
           <Button
             leftSection={<IconList />}
             style={{ backgroundColor: "#5177b0" }}
@@ -198,7 +212,7 @@ export default function DetailTable({
             Daftar tujuan
           </Button>
         </Flex>
-      </Flex>
+      </MainCard>
       <DataTable
         minHeight={filteredData.length === 0 ? 200 : 0}
         withTableBorder
