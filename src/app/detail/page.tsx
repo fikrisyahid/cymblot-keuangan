@@ -43,12 +43,16 @@ export default async function Page() {
     bank: transaksi.bank,
   }));
 
+  const oldestDate =
+    transaksiUser[transaksiUser.length - 1]?.tanggal || new Date();
+
   return (
     <MainCard>
       <DetailTable
         data={dataForTable}
         daftarSumber={daftarSumber}
         daftarTujuan={daftarTujuan}
+        oldestDate={oldestDate}
       />
     </MainCard>
   );

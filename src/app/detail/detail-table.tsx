@@ -13,12 +13,18 @@ import {
   NumberInput,
   Text,
   TextInput,
+  rem,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import stringToRupiah from "@/utils/string-to-rupiah";
-import { IconInfoCircle, IconSearch, IconX } from "@tabler/icons-react";
-import moment from "moment";
-import "moment/locale/id";
+import {
+  IconCalendar,
+  IconInfoCircle,
+  IconSearch,
+  IconX,
+} from "@tabler/icons-react";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
 import { filterDetailTable } from "./types";
 
 const PAGE_SIZES = [10, 15, 20];
@@ -27,16 +33,18 @@ export default function DetailTable({
   data,
   daftarSumber,
   daftarTujuan,
+  oldestDate,
 }: {
   data: any[];
   daftarSumber: any[];
   daftarTujuan: any[];
+  oldestDate: Date;
 }) {
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState<filterDetailTable>({
+    tanggal_sesudah: oldestDate,
     tanggal_sebelum: new Date(),
-    tanggal_sesudah: new Date(),
     keterangan: "",
     jenis: "SEMUA",
     sumber: [],
@@ -57,6 +65,16 @@ export default function DetailTable({
   // Memoize filtered data to prevent unnecessary recalculations
   const filteredData = useMemo(() => {
     const filtered = data.filter((item) => {
+      // Filter by tanggal
+      if (
+        (filter.tanggal_sesudah &&
+          dayjs(item.tanggal).isBefore(filter.tanggal_sesudah)) ||
+        (filter.tanggal_sebelum &&
+          dayjs(item.tanggal).isAfter(filter.tanggal_sebelum))
+      ) {
+        return false;
+      }
+
       // Filter by keterangan
       if (
         filter.keterangan !== "" &&
@@ -125,7 +143,7 @@ export default function DetailTable({
     setPage(1);
   }, [pageSize, sortStatus]);
 
-  console.log(filter.tanggal_sebelum)
+  console.log(filter.tanggal_sebelum);
 
   return (
     <DataTable
@@ -138,16 +156,52 @@ export default function DetailTable({
           accessor: "tanggal",
           sortable: true,
           render: ({ tanggal }) => (
-            <Text>{moment(tanggal).format("LLLL")}</Text>
+            <Text>
+              {dayjs(tanggal).locale("id").format("DD MMMM YYYY pukul H:m:s")}
+            </Text>
           ),
           filter: (
             <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
               <DatePickerInput
+                label="Pilih tanggal sesudah"
+                placeholder="Masukkan tanggal sesudah"
+                valueFormatter={({ date }) =>
+                  dayjs(date?.toString()).locale("id").format("DD MMMM YYYY")
+                }
+                leftSection={
+                  <IconCalendar
+                    style={{ width: rem(18), height: rem(18) }}
+                    stroke={1.5}
+                  />
+                }
+                value={filter.tanggal_sesudah}
+                onChange={(e) => handleChangeFilter({ tanggal_sesudah: e })}
+              />
+              <DatePickerInput
                 label="Pilih tanggal sebelum"
                 placeholder="Masukkan tanggal sebelum"
+                valueFormatter={({ date }) =>
+                  dayjs(date?.toString()).locale("id").format("DD MMMM YYYY")
+                }
+                leftSection={
+                  <IconCalendar
+                    style={{ width: rem(18), height: rem(18) }}
+                    stroke={1.5}
+                  />
+                }
                 value={filter.tanggal_sebelum}
                 onChange={(e) => handleChangeFilter({ tanggal_sebelum: e })}
               />
+              <Button
+                onClick={() =>
+                  handleChangeFilter({
+                    tanggal_sesudah: oldestDate,
+                    tanggal_sebelum: new Date(),
+                  })
+                }
+              >
+                Reset
+              </Button>
             </Flex>
           ),
         },
@@ -380,7 +434,7 @@ export default function DetailTable({
                     })
                   }
                 >
-                  Batalkan filter
+                  Reset
                 </Button>
               )}
             </Flex>
