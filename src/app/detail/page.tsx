@@ -1,6 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "../db/init";
-import DetailTable from "./detail-table";
+import TableSection from "./table-section";
 import MainCard from "@/components/main-card";
 import { Title } from "@mantine/core";
 import { TEXT_COLOR } from "@/config";
@@ -53,7 +53,7 @@ export default async function Page() {
       <Title style={{ color: TEXT_COLOR, alignSelf: "center" }}>
         Detail data keuangan
       </Title>
-      <DetailTable
+      <TableSection
         data={dataForTable}
         daftarSumber={daftarSumber}
         daftarTujuan={daftarTujuan}

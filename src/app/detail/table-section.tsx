@@ -16,7 +16,7 @@ import generateDetailTableColumns from "./table-columns";
 
 const PAGE_SIZES = [10, 15, 25, 50, 75, 100];
 
-export default function DetailTable({
+export default function TableSection({
   data,
   daftarSumber,
   daftarTujuan,
