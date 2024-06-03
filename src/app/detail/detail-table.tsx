@@ -26,6 +26,7 @@ import {
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { filterDetailTable } from "./types";
+import { TEXT_COLOR } from "@/config";
 
 const PAGE_SIZES = [10, 15, 20];
 
@@ -150,6 +151,7 @@ export default function DetailTable({
       minHeight={filteredData.length === 0 ? 200 : 0}
       withTableBorder
       records={paginatedRecords}
+      style={{ color: TEXT_COLOR }}
       columns={[
         { accessor: "no", sortable: true },
         {
