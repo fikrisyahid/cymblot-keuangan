@@ -1,7 +1,7 @@
 import { Text, Title } from "@mantine/core";
 import MainCard from "./main-card";
 
-export default function SaldoCard({
+export default function DataCard({
   backgroundColor,
   title,
   text,
