@@ -1,104 +1,77 @@
 import prisma from "@/app/db/init";
 import { currentUser } from "@clerk/nextjs/server";
 import { Title } from "@mantine/core";
-import { unstable_cache } from "next/cache";
 import { TEXT_COLOR } from "@/config";
 import MainCard from "../../components/main-card";
 import { IconBuildingBank, IconCash, IconCoins } from "@tabler/icons-react";
 import stringToRupiah from "@/utils/string-to-rupiah";
-import SaldoCard from "@/components/saldo-card";
+import DataCard from "@/components/data-card";
 
 export default async function Welcome() {
   const user = await currentUser();
 
-  const transaksiUserCache = unstable_cache(
-    async () =>
-      await prisma.transaksi.findMany({
-        where: {
-          email: user?.emailAddresses[0].emailAddress,
-        },
-      }),
-    ["revalidateWelcome"]
+  const transaksiUser = await prisma.transaksi.findMany({
+    where: {
+      email: user?.emailAddresses[0].emailAddress,
+    },
+  });
+
+  const totalSaldo = transaksiUser.reduce(
+    (acc, cur) =>
+      acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
+    0
   );
 
-  const transaksiUser = await transaksiUserCache();
+  const totalSaldoBank = transaksiUser
+    .filter((item) => item.bank)
+    .reduce(
+      (acc, cur) =>
+        acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
+      0
+    );
 
-  const totalSaldo = {
-    PEMASUKAN: transaksiUser
-      .filter((item) => item.jenis === "PEMASUKAN")
-      .reduce((acc, curr) => acc + curr.nominal, 0),
-    PENGELUARAN: transaksiUser
-      .filter((item) => item.jenis === "PENGELUARAN")
-      .reduce((acc, curr) => acc + curr.nominal, 0),
-  };
-
-  const totalSaldoBank = {
-    PEMASUKAN: transaksiUser
-      .filter((item) => item.bank && item.jenis === "PEMASUKAN")
-      .reduce((acc, curr) => acc + curr.nominal, 0),
-    PENGELUARAN: transaksiUser
-      .filter((item) => item.bank && item.jenis === "PENGELUARAN")
-      .reduce((acc, curr) => acc + curr.nominal, 0),
-  };
-
-  const totalSaldoCash = {
-    PEMASUKAN: transaksiUser
-      .filter((item) => !item.bank && item.jenis === "PEMASUKAN")
-      .reduce((acc, curr) => acc + curr.nominal, 0),
-    PENGELUARAN: transaksiUser
-      .filter((item) => !item.bank && item.jenis === "PENGELUARAN")
-      .reduce((acc, curr) => acc + curr.nominal, 0),
-  };
+  const totalSaldoCash = transaksiUser
+    .filter((item) => !item.bank)
+    .reduce(
+      (acc, cur) =>
+        acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
+      0
+    );
 
   return (
     <>
       <Title style={{ color: TEXT_COLOR }}>Halo {user?.fullName}</Title>
       <MainCard transparent row noPadding>
-        <SaldoCard
+        <DataCard
           backgroundColor="#38598b"
           title="Total saldo"
-          text={stringToRupiah(
-            (totalSaldo.PEMASUKAN - totalSaldo.PENGELUARAN).toString()
-          )}
+          text={stringToRupiah(totalSaldo.toString())}
           styleText={{
-            color:
-              totalSaldo.PEMASUKAN - totalSaldo.PENGELUARAN < 0
-                ? "red"
-                : "white",
+            color: totalSaldo < 0 ? "red" : "white",
           }}
         >
           <IconCoins style={{ height: "100%", width: "20%" }} />
-        </SaldoCard>
-        <SaldoCard
+        </DataCard>
+        <DataCard
           backgroundColor="#5177b0"
           title="Bank"
-          text={stringToRupiah(
-            (totalSaldoBank.PEMASUKAN - totalSaldoBank.PENGELUARAN).toString()
-          )}
+          text={stringToRupiah(totalSaldoBank.toString())}
           styleText={{
-            color:
-              totalSaldoBank.PEMASUKAN - totalSaldoBank.PENGELUARAN < 0
-                ? "red"
-                : "white",
+            color: totalSaldoBank < 0 ? "red" : "white",
           }}
         >
           <IconBuildingBank style={{ height: "100%", width: "20%" }} />
-        </SaldoCard>
-        <SaldoCard
+        </DataCard>
+        <DataCard
           backgroundColor="#72aad4"
           title="Cash"
-          text={stringToRupiah(
-            (totalSaldoCash.PEMASUKAN - totalSaldoCash.PENGELUARAN).toString()
-          )}
+          text={stringToRupiah(totalSaldoCash.toString())}
           styleText={{
-            color:
-              totalSaldoCash.PEMASUKAN - totalSaldoCash.PENGELUARAN < 0
-                ? "red"
-                : "white",
+            color: totalSaldoCash < 0 ? "red" : "white",
           }}
         >
           <IconCash style={{ height: "100%", width: "20%" }} />
-        </SaldoCard>
+        </DataCard>
       </MainCard>
     </>
   );
