@@ -2,6 +2,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import prisma from "../db/init";
 import DetailTable from "./detail-table";
 import MainCard from "@/components/main-card";
+import { Title } from "@mantine/core";
+import { TEXT_COLOR } from "@/config";
 
 export default async function Page() {
   const user = await currentUser();
@@ -48,6 +50,9 @@ export default async function Page() {
 
   return (
     <MainCard>
+      <Title style={{ color: TEXT_COLOR, alignSelf: "center" }}>
+        Detail data keuangan
+      </Title>
       <DetailTable
         data={dataForTable}
         daftarSumber={daftarSumber}
