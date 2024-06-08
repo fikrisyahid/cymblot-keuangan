@@ -1,10 +1,28 @@
 import MainCard from "@/components/main-card";
 import { BUTTON_BASE_COLOR, TEXT_COLOR } from "@/config";
-import { Button, Flex, Text, Title } from "@mantine/core";
+import { Button, Title } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
+import SumberSection from "./sumber-section";
+import TujuanSection from "./tujuan-section";
+import { currentUser } from "@clerk/nextjs/server";
+import prisma from "@/app/db/init";
 
-export default function Page() {
+export default async function Page() {
+  const user = await currentUser();
+
+  const daftarSumber = await prisma.sumber.findMany({
+    where: {
+      email: user?.emailAddresses[0].emailAddress,
+    },
+  });
+
+  const daftarTujuan = await prisma.tujuan.findMany({
+    where: {
+      email: user?.emailAddresses[0].emailAddress,
+    },
+  });
+
   return (
     <MainCard>
       <MainCard
@@ -30,18 +48,12 @@ export default function Page() {
         </Title>
       </MainCard>
       <MainCard row transparent noPadding fullWidth>
-        <Flex direction="column" gap="sm" w="100%" align="center">
-          <Text fw={700}>Daftar Sumber</Text>
-          <div>Daftar sumber page</div>
-          <div>Daftar sumber page</div>
-          <div>Daftar sumber page</div>
-        </Flex>
-        <Flex direction="column" gap="sm" w="100%" align="center">
-          <Text fw={700}>Daftar Tujuan</Text>
-          <div>Daftar tujuan page</div>
-          <div>Daftar tujuan page</div>
-          <div>Daftar tujuan page</div>
-        </Flex>
+        <MainCard noPadding transparent fullWidth>
+          <SumberSection daftarSumber={daftarSumber} />
+        </MainCard>
+        <MainCard noPadding transparent fullWidth>
+          <TujuanSection daftarTujuan={daftarTujuan} />
+        </MainCard>
       </MainCard>
     </MainCard>
   );
