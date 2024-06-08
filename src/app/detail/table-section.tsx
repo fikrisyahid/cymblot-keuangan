@@ -9,11 +9,12 @@ import { IconList, IconRestore } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { filterDetailTable } from "./types";
-import { TEXT_COLOR } from "@/config";
+import { BUTTON_BASE_COLOR, TEXT_COLOR } from "@/config";
 import { useDebouncedState, useMediaQuery } from "@mantine/hooks";
 import MainCard from "@/components/main-card";
 import generateDetailTableColumns from "./table-columns";
 import { isBoolean, isNumber } from "lodash";
+import Link from "next/link";
 
 const PAGE_SIZES = [10, 15, 25, 50, 75, 100];
 
@@ -199,7 +200,7 @@ export default function TableSection({
           </Flex>
           <Button
             leftSection={<IconRestore />}
-            style={{ backgroundColor: "#5177b0" }}
+            style={{ backgroundColor: BUTTON_BASE_COLOR }}
             onClick={() =>
               handleChangeFilter({
                 tanggal_sesudah: oldestDate,
@@ -226,15 +227,11 @@ export default function TableSection({
         >
           <Button
             leftSection={<IconList />}
-            style={{ backgroundColor: "#5177b0" }}
+            style={{ backgroundColor: BUTTON_BASE_COLOR }}
+            component={Link}
+            href="/detail/sumber-tujuan"
           >
-            Daftar sumber
-          </Button>
-          <Button
-            leftSection={<IconList />}
-            style={{ backgroundColor: "#5177b0" }}
-          >
-            Daftar tujuan
+            Daftar sumber & tujuan
           </Button>
         </Flex>
       </MainCard>
