@@ -13,6 +13,7 @@ import { TEXT_COLOR } from "@/config";
 import { useDebouncedState, useMediaQuery } from "@mantine/hooks";
 import MainCard from "@/components/main-card";
 import generateDetailTableColumns from "./table-columns";
+import { isBoolean, isNumber } from "lodash";
 
 const PAGE_SIZES = [10, 15, 25, 50, 75, 100];
 
@@ -67,9 +68,30 @@ export default function TableSection({
       // Filter by general search
       if (
         generalSearch !== "" &&
-        !Object.values(item).some((value) =>
-          value.toString().toLowerCase().includes(generalSearch.toLowerCase())
-        )
+        !Object.values(item).some((value) => {
+          if (value instanceof Date) {
+            return dayjs(value)
+              .locale("id")
+              .format("DD MMMM YYYY pukul H:m:s")
+              .toLowerCase()
+              .includes(generalSearch.toLowerCase());
+          }
+          if (isBoolean(value)) {
+            const booleanString = value ? "ya" : "tidak";
+            return booleanString
+              .toLowerCase()
+              .includes(generalSearch.toLowerCase());
+          }
+          if (isNumber(value)) {
+            return stringToRupiah(value.toString())
+              .toLowerCase()
+              .includes(generalSearch);
+          }
+          return value
+            .toString()
+            .toLowerCase()
+            .includes(generalSearch.toLowerCase());
+        })
       ) {
         return false;
       }
@@ -217,7 +239,7 @@ export default function TableSection({
         </Flex>
       </MainCard>
       <Input
-        placeholder="Cari data keuangan"
+        placeholder="Cari seluruh data keuangan"
         defaultValue={generalSearch}
         onChange={(e) => setGeneralSearch(e.currentTarget.value)}
       />

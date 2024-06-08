@@ -263,7 +263,7 @@ export default function generateDetailTableColumns({
     },
     {
       accessor: "nominal",
-      render: ({ nominal }: { nominal: string }) => (
+      render: ({ nominal }: { nominal: number }) => (
         <Text>{stringToRupiah(nominal.toString())}</Text>
       ),
       sortable: true,
