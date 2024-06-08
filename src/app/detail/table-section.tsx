@@ -3,14 +3,14 @@
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import { useEffect, useState, useMemo } from "react";
 import sortBy from "lodash/sortBy";
-import { Badge, Button, Flex, Text } from "@mantine/core";
+import { Badge, Button, Flex, Input, Text } from "@mantine/core";
 import stringToRupiah from "@/utils/string-to-rupiah";
 import { IconList, IconRestore } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { filterDetailTable } from "./types";
 import { TEXT_COLOR } from "@/config";
-import { useMediaQuery } from "@mantine/hooks";
+import { useDebouncedState, useMediaQuery } from "@mantine/hooks";
 import MainCard from "@/components/main-card";
 import generateDetailTableColumns from "./table-columns";
 
@@ -22,7 +22,17 @@ export default function TableSection({
   daftarTujuan,
   oldestDate,
 }: {
-  data: any[];
+  data: {
+    id: string;
+    no: number;
+    tanggal: Date;
+    keterangan: string;
+    jenis: "PEMASUKAN" | "PENGELUARAN";
+    sumber: string;
+    tujuan: string;
+    nominal: number;
+    bank: boolean;
+  }[];
   daftarSumber: any[];
   daftarTujuan: any[];
   oldestDate: Date;
@@ -30,6 +40,7 @@ export default function TableSection({
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [page, setPage] = useState(1);
+  const [generalSearch, setGeneralSearch] = useDebouncedState("", 200);
   const [filter, setFilter] = useState<filterDetailTable>({
     tanggal_sesudah: oldestDate,
     tanggal_sebelum: new Date(),
@@ -53,6 +64,16 @@ export default function TableSection({
   // Memoize filtered data to prevent unnecessary recalculations
   const filteredData = useMemo(() => {
     const filtered = data.filter((item) => {
+      // Filter by general search
+      if (
+        generalSearch !== "" &&
+        !Object.values(item).some((value) =>
+          value.toString().toLowerCase().includes(generalSearch.toLowerCase())
+        )
+      ) {
+        return false;
+      }
+
       // Filter by tanggal
       if (
         (filter.tanggal_sesudah &&
@@ -111,7 +132,7 @@ export default function TableSection({
     });
 
     return filtered;
-  }, [data, filter]);
+  }, [data, filter, generalSearch]);
 
   // Memoize sorted data based on sortStatus and filtered data
   const sortedData = useMemo(() => {
@@ -195,6 +216,11 @@ export default function TableSection({
           </Button>
         </Flex>
       </MainCard>
+      <Input
+        placeholder="Cari data keuangan"
+        defaultValue={generalSearch}
+        onChange={(e) => setGeneralSearch(e.currentTarget.value)}
+      />
       <DataTable
         minHeight={filteredData.length === 0 ? 200 : 0}
         withTableBorder
