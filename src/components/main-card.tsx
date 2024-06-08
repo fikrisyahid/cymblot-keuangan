@@ -47,7 +47,7 @@ export default function MainCard({
         flexWrap: wrap ? "wrap" : "nowrap",
         borderRadius: theme.radius.md,
         boxSizing: "border-box",
-        padding: noPadding ? 0 : isMobile ? 10 : 20,
+        padding: noPadding ? 0 : isMobile ? theme.spacing.sm : theme.spacing.md,
         width: fullWidth || isMobile ? "100%" : width,
         alignItems: !row && center ? "center" : "normal",
         flexDirection: (row && !isMobile) || forceRow ? "row" : "column",
