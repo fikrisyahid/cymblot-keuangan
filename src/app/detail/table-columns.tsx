@@ -34,17 +34,31 @@ export default function generateDetailTableColumns({
   daftarSumber: any[];
   daftarTujuan: any[];
   oldestDate: Date;
-}) {
+}): DataTableColumn<any>[] {
+  const renderTanggal = ({ tanggal }: { tanggal: Date }) => (
+    <Text>
+      {dayjs(tanggal).locale("id").format("DD MMMM YYYY pukul H:m:s")}
+    </Text>
+  );
+
+  const renderJenis = ({ jenis }: { jenis: string }) => (
+    <Badge color={jenis === "PEMASUKAN" ? "teal" : "pink"}>{jenis}</Badge>
+  );
+
+  const renderNominal = ({ nominal }: { nominal: number }) => (
+    <Text>{stringToRupiah(nominal.toString())}</Text>
+  );
+
+  const renderBank = ({ bank }: { bank: string }) => (
+    <Text>{bank ? "Ya" : "Tidak"}</Text>
+  );
+
   const columnsToReturn: DataTableColumn<any>[] = [
     { accessor: "no", sortable: true },
     {
       accessor: "tanggal",
       sortable: true,
-      render: ({ tanggal }: { tanggal: Date }) => (
-        <Text>
-          {dayjs(tanggal).locale("id").format("DD MMMM YYYY pukul H:m:s")}
-        </Text>
-      ),
+      render: renderTanggal,
       filter: (
         <Flex direction="column" gap="sm" style={{ width: "300px" }}>
           <DatePickerInput
@@ -119,9 +133,7 @@ export default function generateDetailTableColumns({
     },
     {
       accessor: "jenis",
-      render: ({ jenis }: { jenis: string }) => (
-        <Badge color={jenis === "PEMASUKAN" ? "teal" : "pink"}>{jenis}</Badge>
-      ),
+      render: renderJenis,
       sortable: true,
       filter: (
         <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
@@ -263,9 +275,7 @@ export default function generateDetailTableColumns({
     },
     {
       accessor: "nominal",
-      render: ({ nominal }: { nominal: number }) => (
-        <Text>{stringToRupiah(nominal.toString())}</Text>
-      ),
+      render: renderNominal,
       sortable: true,
       filter: (
         <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
@@ -326,9 +336,7 @@ export default function generateDetailTableColumns({
     {
       accessor: "bank",
       sortable: true,
-      render: ({ bank }: { bank: string }) => (
-        <Text>{bank ? "Ya" : "Tidak"}</Text>
-      ),
+      render: renderBank,
       filter: (
         <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
           <Checkbox
@@ -362,5 +370,6 @@ export default function generateDetailTableColumns({
       ),
     },
   ];
+
   return columnsToReturn;
 }

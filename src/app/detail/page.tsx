@@ -5,35 +5,22 @@ import MainCard from "@/components/main-card";
 import { Title } from "@mantine/core";
 import { TEXT_COLOR } from "@/config";
 
-export default async function Page() {
-  const user = await currentUser();
+async function getUserTransactions(email: string) {
+  const [transaksiUser, daftarSumber, daftarTujuan] = await Promise.all([
+    prisma.transaksi.findMany({
+      where: { email },
+      include: { sumber: true, tujuan: true },
+      orderBy: { tanggal: "desc" },
+    }),
+    prisma.sumber.findMany({ where: { email } }),
+    prisma.tujuan.findMany({ where: { email } }),
+  ]);
 
-  const transaksiUser = await prisma.transaksi.findMany({
-    where: {
-      email: user?.emailAddresses[0].emailAddress,
-    },
-    include: {
-      sumber: true,
-      tujuan: true,
-    },
-    orderBy: {
-      tanggal: "desc",
-    },
-  });
+  return { transaksiUser, daftarSumber, daftarTujuan };
+}
 
-  const daftarSumber = await prisma.sumber.findMany({
-    where: {
-      email: user?.emailAddresses[0].emailAddress,
-    },
-  });
-
-  const daftarTujuan = await prisma.tujuan.findMany({
-    where: {
-      email: user?.emailAddresses[0].emailAddress,
-    },
-  });
-
-  const dataForTable = transaksiUser.map((transaksi, index) => ({
+function mapTransactionsToTableData(transaksiUser: any[]) {
+  return transaksiUser.map((transaksi, index) => ({
     id: transaksi.id,
     no: index + 1,
     tanggal: transaksi.tanggal,
@@ -44,7 +31,20 @@ export default async function Page() {
     nominal: transaksi.nominal,
     bank: transaksi.bank,
   }));
+}
 
+export default async function Page() {
+  const user = await currentUser();
+  const email = user?.emailAddresses[0].emailAddress;
+
+  if (!email) {
+    return <div>User not found</div>;
+  }
+
+  const { transaksiUser, daftarSumber, daftarTujuan } =
+    await getUserTransactions(email);
+
+  const dataForTable = mapTransactionsToTableData(transaksiUser);
   const oldestDate =
     transaksiUser[transaksiUser.length - 1]?.tanggal || new Date();
 
