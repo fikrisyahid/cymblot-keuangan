@@ -6,22 +6,14 @@ import Link from "next/link";
 import SumberSection from "./sumber-section";
 import TujuanSection from "./tujuan-section";
 import { currentUser } from "@clerk/nextjs/server";
-import prisma from "@/app/db/init";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
   const user = await currentUser();
 
-  const daftarSumber = await prisma.sumber.findMany({
-    where: {
-      email: user?.emailAddresses[0].emailAddress,
-    },
-  });
-
-  const daftarTujuan = await prisma.tujuan.findMany({
-    where: {
-      email: user?.emailAddresses[0].emailAddress,
-    },
-  });
+  if (!user) {
+    redirect("/");
+  }
 
   return (
     <MainCard>
@@ -49,10 +41,10 @@ export default async function Page() {
       </MainCard>
       <MainCard row transparent noPadding fullWidth>
         <MainCard noPadding transparent fullWidth>
-          <SumberSection daftarSumber={daftarSumber} />
+          <SumberSection user={user} />
         </MainCard>
         <MainCard noPadding transparent fullWidth>
-          <TujuanSection daftarTujuan={daftarTujuan} />
+          <TujuanSection user={user} />
         </MainCard>
       </MainCard>
     </MainCard>
