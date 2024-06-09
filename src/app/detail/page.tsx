@@ -1,9 +1,10 @@
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "../db/init";
-import TableSection from "./table-section";
+import TableSection from "./c-table-section";
 import MainCard from "@/components/main-card";
 import { Title } from "@mantine/core";
 import { TEXT_COLOR } from "@/config";
+import dayjs from "dayjs";
 
 async function getUserTransactions(email: string) {
   const [transaksiUser, daftarSumber, daftarTujuan] = await Promise.all([
@@ -46,7 +47,9 @@ export default async function Page() {
 
   const dataForTable = mapTransactionsToTableData(transaksiUser);
   const oldestDate =
-    transaksiUser[transaksiUser.length - 1]?.tanggal || new Date();
+    dayjs(transaksiUser[transaksiUser.length - 1].tanggal)
+      .startOf("day")
+      .toDate() || new Date();
 
   return (
     <MainCard>

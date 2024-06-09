@@ -6,15 +6,23 @@ import sortBy from "lodash/sortBy";
 import { Badge, Button, Flex, Input, Text } from "@mantine/core";
 import stringToRupiah from "@/utils/string-to-rupiah";
 import { IconList, IconRestore } from "@tabler/icons-react";
-import dayjs from "dayjs";
 import "dayjs/locale/id";
-import { filterDetailTable } from "./types";
+import type { tableDataArray, filterDetailTable } from "../types";
 import { BUTTON_BASE_COLOR, TEXT_COLOR } from "@/config";
 import { useDebouncedState, useMediaQuery } from "@mantine/hooks";
 import MainCard from "@/components/main-card";
-import generateDetailTableColumns from "./table-columns";
-import { isBoolean, isNumber } from "lodash";
+import generateDetailTableColumns from "./c-table-columns";
 import Link from "next/link";
+import {
+  matchBalance,
+  matchBank,
+  matchDate,
+  matchGeneralSearch,
+  matchInformation,
+  matchKind,
+  matchPurpose,
+  matchSource,
+} from "./filter";
 
 const PAGE_SIZES = [10, 15, 25, 50, 75, 100];
 
@@ -24,17 +32,7 @@ export default function TableSection({
   daftarTujuan,
   oldestDate,
 }: {
-  data: {
-    id: string;
-    no: number;
-    tanggal: Date;
-    keterangan: string;
-    jenis: "PEMASUKAN" | "PENGELUARAN";
-    sumber: string;
-    tujuan: string;
-    nominal: number;
-    bank: boolean;
-  }[];
+  data: tableDataArray;
   daftarSumber: any[];
   daftarTujuan: any[];
   oldestDate: Date;
@@ -66,98 +64,22 @@ export default function TableSection({
   // Memoize filtered data to prevent unnecessary recalculations
   const filteredData = useMemo(() => {
     const filtered = data.filter((item) => {
-      // Filter by general search
-      if (
-        generalSearch !== "" &&
-        !Object.values(item).some((value) => {
-          if (value instanceof Date) {
-            return dayjs(value)
-              .locale("id")
-              .format("DD MMMM YYYY pukul H:m:s")
-              .toLowerCase()
-              .includes(generalSearch.toLowerCase());
-          }
-          if (isBoolean(value)) {
-            const booleanString = value ? "ya" : "tidak";
-            return booleanString
-              .toLowerCase()
-              .includes(generalSearch.toLowerCase());
-          }
-          if (isNumber(value)) {
-            return stringToRupiah(value.toString())
-              .toLowerCase()
-              .includes(generalSearch);
-          }
-          return value
-            .toString()
-            .toLowerCase()
-            .includes(generalSearch.toLowerCase());
-        })
-      ) {
-        return false;
-      }
-
-      // Filter by tanggal
-      if (
-        (filter.tanggal_sesudah &&
-          dayjs(item.tanggal).isBefore(filter.tanggal_sesudah)) ||
-        (filter.tanggal_sebelum &&
-          dayjs(item.tanggal).isAfter(filter.tanggal_sebelum))
-      ) {
-        return false;
-      }
-
-      // Filter by keterangan
-      if (
-        filter.keterangan !== "" &&
-        !item.keterangan.toLowerCase().includes(filter.keterangan.toLowerCase())
-      ) {
-        return false;
-      }
-
-      // Filter by jenis
-      if (filter.jenis !== "SEMUA" && item.jenis !== filter.jenis) {
-        return false;
-      }
-
-      // Filter by sumber
-      if (filter.sumber.length > 0 && !filter.sumber.includes(item.sumber)) {
-        return false;
-      }
-
-      // Filter by tujuan
-      if (filter.tujuan.length > 0 && !filter.tujuan.includes(item.tujuan)) {
-        return false;
-      }
-
-      // Filter by nominal
-      if (
-        (filter.nominal_di_atas > 0 &&
-          item.nominal <= filter.nominal_di_atas) ||
-        (filter.nominal_di_bawah > 0 &&
-          item.nominal >= filter.nominal_di_bawah) ||
-        (filter.nominal_sama_dengan > 0 &&
-          item.nominal !== filter.nominal_sama_dengan)
-      ) {
-        return false;
-      }
-
-      // Filter by bank
-      if (
-        filter.bank !== "SEMUA" &&
-        ((filter.bank === "BANK" && !item.bank) ||
-          (filter.bank === "CASH" && item.bank))
-      ) {
-        return false;
-      }
-
-      return true;
+      return (
+        matchGeneralSearch({ generalSearch, item }) &&
+        matchDate({ item, filter }) &&
+        matchInformation({ item, filter }) &&
+        matchKind({ item, filter }) &&
+        matchSource({ item, filter }) &&
+        matchPurpose({ item, filter }) &&
+        matchBalance({ item, filter }) &&
+        matchBank
+      );
     });
 
     return filtered;
   }, [data, filter, generalSearch]);
 
-  // Memoize sorted data based on sortStatus and filtered data
+  // Memoize sorted data based on filtered data
   const sortedData = useMemo(() => {
     const sorted = sortBy(filteredData, sortStatus.columnAccessor);
     return sortStatus.direction === "desc" ? sorted.reverse() : sorted;
@@ -170,17 +92,16 @@ export default function TableSection({
     return sortedData.slice(from, to);
   }, [sortedData, page, pageSize]);
 
-  // Reset to first page when pageSize or sortStatus changes
-  useEffect(() => {
-    setPage(1);
-  }, [pageSize, sortStatus]);
-
-  // Count total saldo
   const totalSaldo = filteredData.reduce(
     (acc, cur) =>
       acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
     0
   );
+
+  // Reset to first page when page size or sort status changes
+  useEffect(() => {
+    setPage(1);
+  }, [pageSize, sortStatus]);
 
   return (
     <Flex direction="column" gap="sm">

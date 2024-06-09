@@ -1,6 +1,6 @@
 import { DateValue } from "@mantine/dates";
 
-export interface filterDetailTable {
+interface filterDetailTable {
   tanggal_sebelum: DateValue;
   tanggal_sesudah: DateValue;
   keterangan: string;
@@ -12,3 +12,19 @@ export interface filterDetailTable {
   nominal_sama_dengan: number;
   bank: string;
 }
+
+interface tableData {
+  id: string;
+  no: number;
+  tanggal: Date;
+  keterangan: string;
+  jenis: "PEMASUKAN" | "PENGELUARAN";
+  sumber: string;
+  tujuan: string;
+  nominal: number;
+  bank: boolean;
+}
+
+type tableDataArray = tableData[];
+
+export type { filterDetailTable, tableData, tableDataArray };
