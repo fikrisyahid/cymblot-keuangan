@@ -29,7 +29,7 @@ export default function AddTujuanForm({
           formData.set("tujuan", nama);
 
           try {
-            await addTujuan(formData);
+            addTujuan(formData);
             if (inputRef.current) {
               inputRef.current.value = "";
             }

@@ -29,7 +29,7 @@ export default function AddSumberForm({
           formData.set("sumber", nama);
 
           try {
-            await addSumber(formData);
+            addSumber(formData);
             if (inputRef.current) {
               inputRef.current.value = "";
             }
