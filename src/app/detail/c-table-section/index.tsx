@@ -62,22 +62,21 @@ export default function TableSection({
     setFilter((old) => ({ ...old, ...newObj }));
 
   // Memoize filtered data to prevent unnecessary recalculations
-  const filteredData = useMemo(() => {
-    const filtered = data.filter((item) => {
-      return (
-        matchGeneralSearch({ generalSearch, item }) &&
-        matchDate({ item, filter }) &&
-        matchInformation({ item, filter }) &&
-        matchKind({ item, filter }) &&
-        matchSource({ item, filter }) &&
-        matchPurpose({ item, filter }) &&
-        matchBalance({ item, filter }) &&
-        matchBank({ item, filter })
-      );
-    });
-
-    return filtered;
-  }, [data, filter, generalSearch]);
+  const filteredData = useMemo(
+    () =>
+      data.filter(
+        (item) =>
+          matchGeneralSearch({ generalSearch, item }) &&
+          matchDate({ item, filter }) &&
+          matchInformation({ item, filter }) &&
+          matchKind({ item, filter }) &&
+          matchSource({ item, filter }) &&
+          matchPurpose({ item, filter }) &&
+          matchBalance({ item, filter }) &&
+          matchBank({ item, filter })
+      ),
+    [data, filter, generalSearch]
+  );
 
   // Memoize sorted data based on filtered data
   const sortedData = useMemo(() => {
