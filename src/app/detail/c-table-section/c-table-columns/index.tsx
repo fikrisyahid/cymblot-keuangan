@@ -5,11 +5,11 @@ import { filterDetailTable } from "../../types";
 import { DataTableColumn } from "mantine-datatable";
 import FilterInformation from "./filter-information";
 import FilterDate from "./filter-date";
-import FilterKind from "./filter-kind";
 import FilterSource from "./filter-source";
 import FilterPurpose from "./filter-purpose";
 import FilterBalance from "./filter-balance";
 import FilterBank from "./filter-bank";
+import FilterType from "./filter-type";
 
 const renderTanggal = ({ tanggal }: { tanggal: Date }) => (
   <Text>{dayjs(tanggal).locale("id").format("DD MMMM YYYY pukul H:m:s")}</Text>
@@ -70,7 +70,7 @@ export default function generateDetailTableColumns({
       render: renderJenis,
       sortable: true,
       filter: (
-        <FilterKind filter={filter} handleChangeFilter={handleChangeFilter} />
+        <FilterType filter={filter} handleChangeFilter={handleChangeFilter} />
       ),
     },
     {

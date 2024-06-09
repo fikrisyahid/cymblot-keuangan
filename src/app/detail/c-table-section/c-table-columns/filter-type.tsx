@@ -1,7 +1,7 @@
 import { Checkbox, Flex } from "@mantine/core";
 import { filterDetailTable } from "../../types";
 
-export default function FilterKind({
+export default function FilterType({
   filter,
   handleChangeFilter,
 }: {
