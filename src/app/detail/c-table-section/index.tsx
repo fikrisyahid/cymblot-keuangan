@@ -72,7 +72,7 @@ export default function TableSection({
         matchSource({ item, filter }) &&
         matchPurpose({ item, filter }) &&
         matchBalance({ item, filter }) &&
-        matchBank
+        matchBank({ item, filter })
       );
     });
 
