@@ -87,12 +87,19 @@ const matchBalance = ({
 }: {
   item: tableData;
   filter: filterDetailTable;
-}) =>
-  matchBalanceIgnore(filter) ||
-  (filter.nominal_di_atas !== 0 && item.nominal >= filter.nominal_di_atas) ||
-  (filter.nominal_di_bawah !== 0 && item.nominal <= filter.nominal_di_bawah) ||
-  (filter.nominal_sama_dengan !== 0 &&
-    item.nominal === filter.nominal_sama_dengan);
+}) => {
+  if (matchBalanceIgnore(filter)) return true;
+  if (filter.nominal_di_atas > 0 && item.nominal < filter.nominal_di_atas)
+    return false;
+  if (filter.nominal_di_bawah > 0 && item.nominal > filter.nominal_di_bawah)
+    return false;
+  if (
+    filter.nominal_sama_dengan > 0 &&
+    item.nominal !== filter.nominal_sama_dengan
+  )
+    return false;
+  return true;
+};
 
 const matchBankIgnore = (filter: filterDetailTable) => filter.bank === "SEMUA";
 const matchBank = ({
