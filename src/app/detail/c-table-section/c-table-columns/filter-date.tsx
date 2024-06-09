@@ -1,4 +1,4 @@
-import { DatePickerInput } from "@mantine/dates";
+import { DatePickerInput, DateValue } from "@mantine/dates";
 import { filterDetailTable } from "../../types";
 import dayjs from "dayjs";
 import { IconCalendar } from "@tabler/icons-react";
@@ -13,38 +13,41 @@ export default function FilterDate({
   handleChangeFilter: (newObj: Partial<filterDetailTable>) => void;
   oldestDate: Date;
 }) {
+  const filterDateConfigurations = [
+    {
+      label: "Pilih tanggal sesudah",
+      placeholder: "Masukkan tanggal sesudah",
+      value: filter.tanggal_sesudah,
+      onChange: (e: DateValue) => handleChangeFilter({ tanggal_sesudah: e }),
+    },
+    {
+      label: "Pilih tanggal sebelum",
+      placeholder: "Masukkan tanggal sebelum",
+      value: filter.tanggal_sebelum,
+      onChange: (e: DateValue) => handleChangeFilter({ tanggal_sebelum: e }),
+    },
+  ];
+
   return (
     <Flex direction="column" gap="sm" style={{ width: "300px" }}>
-      <DatePickerInput
-        label="Pilih tanggal sesudah"
-        placeholder="Masukkan tanggal sesudah"
-        valueFormatter={({ date }) =>
-          dayjs(date?.toString()).locale("id").format("DD MMMM YYYY")
-        }
-        leftSection={
-          <IconCalendar
-            style={{ width: rem(18), height: rem(18) }}
-            stroke={1.5}
-          />
-        }
-        value={filter.tanggal_sesudah}
-        onChange={(e) => handleChangeFilter({ tanggal_sesudah: e })}
-      />
-      <DatePickerInput
-        label="Pilih tanggal sebelum"
-        placeholder="Masukkan tanggal sebelum"
-        valueFormatter={({ date }) =>
-          dayjs(date?.toString()).locale("id").format("DD MMMM YYYY")
-        }
-        leftSection={
-          <IconCalendar
-            style={{ width: rem(18), height: rem(18) }}
-            stroke={1.5}
-          />
-        }
-        value={filter.tanggal_sebelum}
-        onChange={(e) => handleChangeFilter({ tanggal_sebelum: e })}
-      />
+      {filterDateConfigurations.map((item) => (
+        <DatePickerInput
+          key={item.label}
+          label={item.label}
+          placeholder={item.placeholder}
+          valueFormatter={({ date }) =>
+            dayjs(date?.toString()).locale("id").format("DD MMMM YYYY")
+          }
+          leftSection={
+            <IconCalendar
+              style={{ width: rem(18), height: rem(18) }}
+              stroke={1.5}
+            />
+          }
+          value={item.value}
+          onChange={item.onChange}
+        />
+      ))}
       <Button
         onClick={() =>
           handleChangeFilter({

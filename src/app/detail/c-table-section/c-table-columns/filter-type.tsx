@@ -8,35 +8,22 @@ export default function FilterType({
   filter: filterDetailTable;
   handleChangeFilter: (newObj: Partial<filterDetailTable>) => void;
 }) {
+  const filterTypeConfigurations = ["SEMUA", "PEMASUKAN", "PENGELUARAN"];
+
   return (
     <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
-      <Checkbox
-        label="SEMUA"
-        checked={filter.jenis === "SEMUA"}
-        onChange={(e) =>
-          handleChangeFilter({
-            jenis: e.currentTarget.checked ? "SEMUA" : "SEMUA",
-          })
-        }
-      />
-      <Checkbox
-        label="PEMASUKAN"
-        checked={filter.jenis === "PEMASUKAN"}
-        onChange={(e) =>
-          handleChangeFilter({
-            jenis: e.currentTarget.checked ? "PEMASUKAN" : "SEMUA",
-          })
-        }
-      />
-      <Checkbox
-        label="PENGELUARAN"
-        checked={filter.jenis === "PENGELUARAN"}
-        onChange={(e) =>
-          handleChangeFilter({
-            jenis: e.currentTarget.checked ? "PENGELUARAN" : "SEMUA",
-          })
-        }
-      />
+      {filterTypeConfigurations.map((jenis) => (
+        <Checkbox
+          key={jenis}
+          label={jenis}
+          checked={filter.jenis === jenis}
+          onChange={(e) =>
+            handleChangeFilter({
+              jenis: e.currentTarget.checked ? jenis : "SEMUA",
+            })
+          }
+        />
+      ))}
     </Flex>
   );
 }

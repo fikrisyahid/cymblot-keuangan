@@ -8,35 +8,22 @@ export default function FilterBank({
   filter: filterDetailTable;
   handleChangeFilter: (newObj: Partial<filterDetailTable>) => void;
 }) {
+  const filterBankConfiguration = ["SEMUA", "BANK", "CASH"];
+
   return (
     <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
-      <Checkbox
-        label="SEMUA"
-        checked={filter.bank === "SEMUA"}
-        onChange={(e) =>
-          handleChangeFilter({
-            bank: e.currentTarget.checked ? "SEMUA" : "SEMUA",
-          })
-        }
-      />
-      <Checkbox
-        label="BANK"
-        checked={filter.bank === "BANK"}
-        onChange={(e) =>
-          handleChangeFilter({
-            bank: e.currentTarget.checked ? "BANK" : "SEMUA",
-          })
-        }
-      />
-      <Checkbox
-        label="CASH"
-        checked={filter.bank === "CASH"}
-        onChange={(e) =>
-          handleChangeFilter({
-            bank: e.currentTarget.checked ? "CASH" : "SEMUA",
-          })
-        }
-      />
+      {filterBankConfiguration.map((option) => (
+        <Checkbox
+          key={option}
+          label={option}
+          checked={filter.bank === option}
+          onChange={(e) =>
+            handleChangeFilter({
+              bank: e.currentTarget.checked ? option : "SEMUA",
+            })
+          }
+        />
+      ))}
     </Flex>
   );
 }
