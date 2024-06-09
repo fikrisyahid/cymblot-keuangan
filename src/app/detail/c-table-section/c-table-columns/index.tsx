@@ -11,22 +11,6 @@ import FilterBalance from "./filter-balance";
 import FilterBank from "./filter-bank";
 import FilterType from "./filter-type";
 
-const renderTanggal = ({ tanggal }: { tanggal: Date }) => (
-  <Text>{dayjs(tanggal).locale("id").format("DD MMMM YYYY pukul H:m:s")}</Text>
-);
-
-const renderJenis = ({ jenis }: { jenis: string }) => (
-  <Badge color={jenis === "PEMASUKAN" ? "teal" : "pink"}>{jenis}</Badge>
-);
-
-const renderNominal = ({ nominal }: { nominal: number }) => (
-  <Text>{stringToRupiah(nominal.toString())}</Text>
-);
-
-const renderBank = ({ bank }: { bank: string }) => (
-  <Text>{bank ? "Ya" : "Tidak"}</Text>
-);
-
 export default function generateDetailTableColumns({
   filter,
   handleChangeFilter,
@@ -40,6 +24,24 @@ export default function generateDetailTableColumns({
   daftarTujuan: any[];
   oldestDate: Date;
 }): DataTableColumn<any>[] {
+  const renderTanggal = ({ tanggal }: { tanggal: Date }) => (
+    <Text>
+      {dayjs(tanggal).locale("id").format("DD MMMM YYYY pukul H:m:s")}
+    </Text>
+  );
+
+  const renderJenis = ({ jenis }: { jenis: string }) => (
+    <Badge color={jenis === "PEMASUKAN" ? "teal" : "pink"}>{jenis}</Badge>
+  );
+
+  const renderNominal = ({ nominal }: { nominal: number }) => (
+    <Text>{stringToRupiah(nominal.toString())}</Text>
+  );
+
+  const renderBank = ({ bank }: { bank: string }) => (
+    <Text>{bank ? "Ya" : "Tidak"}</Text>
+  );
+
   const columnsToReturn: DataTableColumn<any>[] = [
     { accessor: "no", sortable: true },
     {
