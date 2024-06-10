@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import sortBy from "lodash/sortBy";
 import { Badge, Button, Flex, Input, Text } from "@mantine/core";
 import stringToRupiah from "@/utils/string-to-rupiah";
-import { IconList, IconRestore } from "@tabler/icons-react";
+import { IconList, IconPlus, IconRestore } from "@tabler/icons-react";
 import "dayjs/locale/id";
 import type { tableDataArray, filterDetailTable } from "../types";
 import { BUTTON_BASE_COLOR, TEXT_COLOR } from "@/config";
@@ -145,6 +145,14 @@ export default function TableSection({
           gap="sm"
           w="100%"
         >
+          <Button
+            leftSection={<IconPlus />}
+            style={{ backgroundColor: BUTTON_BASE_COLOR }}
+            component={Link}
+            href="/detail/tambah"
+          >
+            Tambah Data Keuangan
+          </Button>
           <Button
             leftSection={<IconList />}
             style={{ backgroundColor: BUTTON_BASE_COLOR }}
