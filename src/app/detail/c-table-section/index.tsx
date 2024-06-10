@@ -120,6 +120,7 @@ export default function TableSection({
             </Badge>
           </Flex>
           <Button
+            fullWidth={isMobile}
             leftSection={<IconRestore />}
             style={{ backgroundColor: BUTTON_BASE_COLOR }}
             onClick={() =>
@@ -141,12 +142,14 @@ export default function TableSection({
           </Button>
         </Flex>
         <Flex
-          align="flex-end"
+          direction={isMobile ? "column" : "row"}
           justify={isMobile ? "center" : "flex-end"}
+          align={isMobile ? "center" : "flex-end"}
           gap="sm"
           w="100%"
         >
           <Button
+            fullWidth={isMobile}
             leftSection={<IconPlus />}
             style={{ backgroundColor: BUTTON_BASE_COLOR }}
             component={Link}
@@ -155,6 +158,7 @@ export default function TableSection({
             Tambah Data Keuangan
           </Button>
           <Button
+            fullWidth={isMobile}
             leftSection={<IconList />}
             style={{ backgroundColor: BUTTON_BASE_COLOR }}
             component={Link}
