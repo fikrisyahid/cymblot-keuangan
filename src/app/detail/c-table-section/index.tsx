@@ -7,7 +7,6 @@ import { Badge, Button, Flex, Input, Text } from "@mantine/core";
 import stringToRupiah from "@/utils/string-to-rupiah";
 import { IconList, IconPlus, IconRestore } from "@tabler/icons-react";
 import "dayjs/locale/id";
-import type { tableDataArray, filterDetailTable } from "../types";
 import { BUTTON_BASE_COLOR, TEXT_COLOR } from "@/config";
 import { useDebouncedState, useMediaQuery } from "@mantine/hooks";
 import MainCard from "@/components/main-card";
@@ -23,6 +22,8 @@ import {
   matchPurpose,
   matchSource,
 } from "./filter";
+import { ITujuanSumber } from "@/types/db";
+import { IFilterDetailTable, ITableData } from "../types";
 
 const PAGE_SIZES = [10, 15, 25, 50, 75, 100];
 
@@ -32,16 +33,16 @@ export default function TableSection({
   daftarTujuan,
   oldestDate,
 }: {
-  data: tableDataArray;
-  daftarSumber: any[];
-  daftarTujuan: any[];
+  data: ITableData[];
+  daftarSumber: ITujuanSumber[];
+  daftarTujuan: ITujuanSumber[];
   oldestDate: Date;
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [page, setPage] = useState(1);
   const [generalSearch, setGeneralSearch] = useDebouncedState("", 200);
-  const [filter, setFilter] = useState<filterDetailTable>({
+  const [filter, setFilter] = useState<IFilterDetailTable>({
     tanggal_sesudah: oldestDate,
     tanggal_sebelum: new Date(),
     keterangan: "",
@@ -58,7 +59,7 @@ export default function TableSection({
     direction: "asc",
   });
 
-  const handleChangeFilter = (newObj: Partial<filterDetailTable>) =>
+  const handleChangeFilter = (newObj: Partial<IFilterDetailTable>) =>
     setFilter((old) => ({ ...old, ...newObj }));
 
   // Memoize filtered data to prevent unnecessary recalculations

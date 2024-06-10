@@ -1,12 +1,12 @@
 import { Checkbox, Flex } from "@mantine/core";
-import { filterDetailTable } from "../../types";
+import { IFilterDetailTable } from "../../types";
 
 export default function FilterBank({
   filter,
   handleChangeFilter,
 }: {
-  filter: filterDetailTable;
-  handleChangeFilter: (newObj: Partial<filterDetailTable>) => void;
+  filter: IFilterDetailTable;
+  handleChangeFilter: (newObj: Partial<IFilterDetailTable>) => void;
 }) {
   const filterBankConfiguration = ["SEMUA", "BANK", "CASH"];
 

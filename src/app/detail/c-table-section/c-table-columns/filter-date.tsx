@@ -1,5 +1,5 @@
 import { DatePickerInput, DateValue } from "@mantine/dates";
-import { filterDetailTable } from "../../types";
+import { IFilterDetailTable } from "../../types";
 import dayjs from "dayjs";
 import { IconCalendar } from "@tabler/icons-react";
 import { Button, Flex, rem } from "@mantine/core";
@@ -9,8 +9,8 @@ export default function FilterDate({
   handleChangeFilter,
   oldestDate,
 }: {
-  filter: filterDetailTable;
-  handleChangeFilter: (newObj: Partial<filterDetailTable>) => void;
+  filter: IFilterDetailTable;
+  handleChangeFilter: (newObj: Partial<IFilterDetailTable>) => void;
   oldestDate: Date;
 }) {
   const filterDateConfigurations = [

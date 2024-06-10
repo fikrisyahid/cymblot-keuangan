@@ -1,6 +1,6 @@
 import { DateValue } from "@mantine/dates";
 
-interface filterDetailTable {
+interface IFilterDetailTable {
   tanggal_sebelum: DateValue;
   tanggal_sesudah: DateValue;
   keterangan: string;
@@ -13,7 +13,7 @@ interface filterDetailTable {
   bank: string;
 }
 
-interface tableData {
+interface ITableData {
   id: string;
   no: number;
   tanggal: Date;
@@ -25,6 +25,4 @@ interface tableData {
   bank: boolean;
 }
 
-type tableDataArray = tableData[];
-
-export type { filterDetailTable, tableData, tableDataArray };
+export type { IFilterDetailTable, ITableData };

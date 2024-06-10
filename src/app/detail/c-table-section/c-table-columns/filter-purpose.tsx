@@ -1,15 +1,16 @@
 import { Alert, Button, Checkbox, Flex } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
-import { filterDetailTable } from "../../types";
+import { ITujuanSumber } from "@/types/db";
+import { IFilterDetailTable } from "../../types";
 
 export default function FilterPurpose({
   filter,
   handleChangeFilter,
   daftarTujuan,
 }: {
-  filter: filterDetailTable;
-  handleChangeFilter: (newObj: Partial<filterDetailTable>) => void;
-  daftarTujuan: { id: string; nama: string }[];
+  filter: IFilterDetailTable;
+  handleChangeFilter: (newObj: Partial<IFilterDetailTable>) => void;
+  daftarTujuan: ITujuanSumber[];
 }) {
   return (
     <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>

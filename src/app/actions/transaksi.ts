@@ -49,7 +49,7 @@ export async function deleteTransaksi(id: string) {
   revalidatePath("/detail");
 }
 
-export type TransaksiFormState = {
+export interface ITransaksiFormState {
   email: string;
   tanggal: DateValue;
   keterangan: string;
@@ -58,4 +58,4 @@ export type TransaksiFormState = {
   tujuanId: string;
   nominal: number;
   bank: boolean;
-};
+}

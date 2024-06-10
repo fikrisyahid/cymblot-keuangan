@@ -1,12 +1,12 @@
 import { Checkbox, Flex } from "@mantine/core";
-import { filterDetailTable } from "../../types";
+import { IFilterDetailTable } from "../../types";
 
 export default function FilterType({
   filter,
   handleChangeFilter,
 }: {
-  filter: filterDetailTable;
-  handleChangeFilter: (newObj: Partial<filterDetailTable>) => void;
+  filter: IFilterDetailTable;
+  handleChangeFilter: (newObj: Partial<IFilterDetailTable>) => void;
 }) {
   const filterTypeConfigurations = ["SEMUA", "PEMASUKAN", "PENGELUARAN"];
 

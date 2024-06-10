@@ -1,7 +1,6 @@
 import stringToRupiah from "@/utils/string-to-rupiah";
 import { Badge, Text } from "@mantine/core";
 import dayjs from "dayjs";
-import { filterDetailTable } from "../../types";
 import { DataTableColumn } from "mantine-datatable";
 import FilterInformation from "./filter-information";
 import FilterDate from "./filter-date";
@@ -11,6 +10,8 @@ import FilterBalance from "./filter-balance";
 import FilterBank from "./filter-bank";
 import FilterType from "./filter-type";
 import DeleteDataKeuanganButton from "../delete-data-keuangan-button";
+import { ITujuanSumber } from "@/types/db";
+import { IFilterDetailTable } from "../../types";
 
 export default function generateDetailTableColumns({
   filter,
@@ -19,10 +20,10 @@ export default function generateDetailTableColumns({
   daftarTujuan,
   oldestDate,
 }: {
-  filter: filterDetailTable;
-  handleChangeFilter: (newObj: Partial<filterDetailTable>) => void;
-  daftarSumber: any[];
-  daftarTujuan: any[];
+  filter: IFilterDetailTable;
+  handleChangeFilter: (newObj: Partial<IFilterDetailTable>) => void;
+  daftarSumber: ITujuanSumber[];
+  daftarTujuan: ITujuanSumber[];
   oldestDate: Date;
 }): DataTableColumn<any>[] {
   const renderTanggal = ({ tanggal }: { tanggal: Date }) => (
@@ -124,7 +125,7 @@ export default function generateDetailTableColumns({
     {
       accessor: "action",
       render: renderAction,
-      textAlign: "right"
+      textAlign: "right",
     },
   ];
 

@@ -1,13 +1,13 @@
 import { ActionIcon, TextInput } from "@mantine/core";
 import { IconSearch, IconX } from "@tabler/icons-react";
-import { filterDetailTable } from "../../types";
+import { IFilterDetailTable } from "../../types";
 
 export default function FilterInformation({
   filter,
   handleChangeFilter,
 }: {
-  filter: filterDetailTable;
-  handleChangeFilter: (newObj: Partial<filterDetailTable>) => void;
+  filter: IFilterDetailTable;
+  handleChangeFilter: (newObj: Partial<IFilterDetailTable>) => void;
 }) {
   return (
     <TextInput

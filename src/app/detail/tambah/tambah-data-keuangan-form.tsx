@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TransaksiFormState, tambahTransaksi } from "@/app/actions/transaksi";
+import { ITransaksiFormState, tambahTransaksi } from "@/app/actions/transaksi";
 import {
   Button,
   Textarea,
@@ -20,16 +20,7 @@ import { IconCalendar } from "@tabler/icons-react";
 import { openConfirmModal } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next-nprogress-bar";
-
-interface ITujuanSumber {
-  id: string;
-  email: string;
-  nama: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-type ITujuanSumberArray = ITujuanSumber[];
+import { ITujuanSumber } from "@/types/db";
 
 export default function TambahDataKeuangan({
   email,
@@ -37,11 +28,11 @@ export default function TambahDataKeuangan({
   daftarTujuan,
 }: {
   email: string;
-  daftarSumber: ITujuanSumberArray;
-  daftarTujuan: ITujuanSumberArray;
+  daftarSumber: ITujuanSumber[];
+  daftarTujuan: ITujuanSumber[];
 }) {
   const router = useRouter();
-  const [formState, setFormState] = useState<TransaksiFormState>({
+  const [formState, setFormState] = useState<ITransaksiFormState>({
     email,
     tanggal: new Date(),
     keterangan: "",
@@ -53,7 +44,7 @@ export default function TambahDataKeuangan({
   });
   const [errors, setErrors] = useState<any>({});
 
-  const handleChange = (newObj: any) =>
+  const handleChange = (newObj: Partial<ITransaksiFormState>) =>
     setFormState((prevState) => ({ ...prevState, ...newObj }));
 
   const validateForm = (): boolean => {
@@ -86,7 +77,7 @@ export default function TambahDataKeuangan({
           Object.keys(formState).forEach((key) => {
             formData.append(
               key,
-              formState[key as keyof TransaksiFormState] as string | Blob
+              formState[key as keyof ITransaksiFormState] as string | Blob
             );
           });
 

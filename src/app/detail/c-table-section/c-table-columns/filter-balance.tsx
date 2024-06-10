@@ -1,12 +1,12 @@
 import { Button, Flex, NumberInput } from "@mantine/core";
-import { filterDetailTable } from "../../types";
+import { IFilterDetailTable } from "../../types";
 
 export default function FilterBalance({
   filter,
   handleChangeFilter,
 }: {
-  filter: filterDetailTable;
-  handleChangeFilter: (newObj: Partial<filterDetailTable>) => void;
+  filter: IFilterDetailTable;
+  handleChangeFilter: (newObj: Partial<IFilterDetailTable>) => void;
 }) {
   const filterBalanceActive =
     filter.nominal_di_atas > 0 ||
