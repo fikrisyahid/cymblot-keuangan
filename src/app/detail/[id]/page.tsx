@@ -16,7 +16,7 @@ async function getUserSumberTujuan(email: string) {
   return { daftarSumber, daftarTujuan };
 }
 
-export default async function Page() {
+export default async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
   const email = user?.emailAddresses[0].emailAddress;
 
@@ -25,6 +25,15 @@ export default async function Page() {
   }
 
   const { daftarSumber, daftarTujuan } = await getUserSumberTujuan(email);
+
+  const { id } = params;
+  const dataKeuangan = await prisma.transaksi.findUnique({
+    where: { id },
+  });
+
+  if (!dataKeuangan) {
+    return <p>Data tidak ditemukan</p>;
+  }
 
   return (
     <MainCard>
@@ -38,13 +47,25 @@ export default async function Page() {
           Kembali
         </Button>
         <Title style={{ color: TEXT_COLOR, textAlign: "center" }}>
-          Tambah Data Keuangan
+          Edit Data Keuangan
         </Title>
       </MainCard>
       <AddEditDataKeuanganForm
+        isEdit
         email={email}
         daftarSumber={daftarSumber}
         daftarTujuan={daftarTujuan}
+        initialFormData={{
+          email,
+          id: dataKeuangan.id,
+          tanggal: dataKeuangan.tanggal,
+          keterangan: dataKeuangan.keterangan,
+          jenis: dataKeuangan.jenis,
+          sumberId: dataKeuangan.sumberId || "",
+          tujuanId: dataKeuangan.tujuanId || "",
+          nominal: dataKeuangan.nominal,
+          bank: dataKeuangan.bank,
+        }}
       />
     </MainCard>
   );

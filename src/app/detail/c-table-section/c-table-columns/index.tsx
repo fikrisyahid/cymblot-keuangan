@@ -1,5 +1,5 @@
 import stringToRupiah from "@/utils/string-to-rupiah";
-import { Badge, Text } from "@mantine/core";
+import { Badge, Flex, Text } from "@mantine/core";
 import dayjs from "dayjs";
 import { DataTableColumn } from "mantine-datatable";
 import FilterInformation from "./filter-information";
@@ -12,6 +12,7 @@ import FilterType from "./filter-type";
 import DeleteDataKeuanganButton from "../delete-data-keuangan-button";
 import { ITujuanSumber } from "@/types/db";
 import { IFilterDetailTable } from "../../types";
+import EditDataKeuanganButton from "../edit-data-keuangan-button";
 
 export default function generateDetailTableColumns({
   filter,
@@ -45,7 +46,10 @@ export default function generateDetailTableColumns({
   );
 
   const renderAction = ({ id }: { id: string }) => (
-    <DeleteDataKeuanganButton id={id} />
+    <Flex gap="sm">
+      <EditDataKeuanganButton id={id} />
+      <DeleteDataKeuanganButton id={id} />
+    </Flex>
   );
 
   const columnsToReturn: DataTableColumn<any>[] = [

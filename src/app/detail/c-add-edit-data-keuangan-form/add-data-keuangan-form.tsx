@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ITransaksiFormState, tambahTransaksi } from "@/app/actions/transaksi";
+import {
+  ITransaksiFormState,
+  editTransaksi,
+  tambahTransaksi,
+} from "@/app/actions/transaksi";
 import {
   Button,
   Textarea,
@@ -23,25 +27,33 @@ import { useRouter } from "next-nprogress-bar";
 import { ITujuanSumber } from "@/types/db";
 import CustomAlert from "./custom-alert";
 
-export default function AddDataKeuanganForm({
+interface IInitialFormData extends ITransaksiFormState {
+  id: string;
+}
+
+export default function AddEditDataKeuanganForm({
   email,
   daftarSumber,
   daftarTujuan,
+  initialFormData,
+  isEdit,
 }: {
   email: string;
   daftarSumber: ITujuanSumber[];
   daftarTujuan: ITujuanSumber[];
+  initialFormData?: IInitialFormData;
+  isEdit?: boolean;
 }) {
   const router = useRouter();
   const [formState, setFormState] = useState<ITransaksiFormState>({
     email,
-    tanggal: new Date(),
-    keterangan: "",
-    jenis: "PEMASUKAN",
-    sumberId: "",
-    tujuanId: "",
-    nominal: 0,
-    bank: false,
+    tanggal: initialFormData?.tanggal || new Date(),
+    keterangan: initialFormData?.keterangan || "",
+    jenis: initialFormData?.jenis || "PEMASUKAN",
+    sumberId: initialFormData?.sumberId || "",
+    tujuanId: initialFormData?.tujuanId || "",
+    nominal: initialFormData?.nominal || 0,
+    bank: initialFormData?.bank || false,
   });
   const [errors, setErrors] = useState<any>({});
 
@@ -70,9 +82,12 @@ export default function AddDataKeuanganForm({
       openConfirmModal({
         title: "Konfirmasi Penambahan",
         children: (
-          <Text>Apakah Anda yakin ingin menambahkan data keuangan ini?</Text>
+          <Text>
+            Apakah Anda yakin ingin {isEdit ? "mengubah" : "menambahkan"} data
+            keuangan ini?
+          </Text>
         ),
-        labels: { confirm: "Tambah", cancel: "Batal" },
+        labels: { confirm: isEdit ? "Ubah" : "Tambah", cancel: "Batal" },
         onConfirm: async () => {
           const formData = new FormData();
           Object.keys(formState).forEach((key) => {
@@ -83,17 +98,25 @@ export default function AddDataKeuanganForm({
           });
 
           try {
-            await tambahTransaksi(formData);
+            if (isEdit) {
+              await editTransaksi(initialFormData?.id as string, formData);
+            } else {
+              await tambahTransaksi(formData);
+            }
             notifications.show({
               title: "Sukses",
-              message: "Data keuangan berhasil ditambahkan",
+              message: `Data keuangan berhasil ${
+                isEdit ? "diubah" : "ditambahkan"
+              }`,
               color: "green",
             });
             router.push("/detail");
           } catch (error) {
             notifications.show({
               title: "Error",
-              message: "Gagal menambahkan data keuangan",
+              message: `Gagal ${
+                isEdit ? "mengubah" : "menambahkan"
+              } data keuangan`,
               color: "red",
             });
           }

@@ -44,6 +44,44 @@ export async function tambahTransaksi(data: FormData) {
   revalidatePath("/detail");
 }
 
+export async function editTransaksi(id: string, data: FormData) {
+  const tanggal = new Date(data.get("tanggal") as string);
+  const keterangan = data.get("keterangan") as string;
+  const jenis = data.get("jenis") as JENIS_TRANSAKSI;
+  const sumberId = data.get("sumberId") as string;
+  const tujuanId = data.get("tujuanId") as string;
+  const nominal = parseInt(data.get("nominal") as string, 10);
+  const bank = data.get("bank") === "true";
+
+  // Validasi
+  if (!tanggal || !keterangan || !jenis || nominal <= 0) {
+    throw new Error("Semua field wajib diisi dan nominal harus lebih dari 0.");
+  }
+
+  if (jenis === "PEMASUKAN" && !sumberId) {
+    throw new Error("Sumber harus dipilih untuk jenis transaksi PEMASUKAN.");
+  }
+
+  if (jenis === "PENGELUARAN" && !tujuanId) {
+    throw new Error("Tujuan harus dipilih untuk jenis transaksi PENGELUARAN.");
+  }
+
+  await prisma.transaksi.update({
+    where: { id },
+    data: {
+      tanggal,
+      keterangan,
+      jenis,
+      sumberId: jenis === "PEMASUKAN" ? sumberId : null,
+      tujuanId: jenis === "PENGELUARAN" ? tujuanId : null,
+      nominal,
+      bank,
+    },
+  });
+
+  revalidatePath("/detail");
+}
+
 export async function deleteTransaksi(id: string) {
   await prisma.transaksi.delete({ where: { id } });
   revalidatePath("/detail");
