@@ -113,7 +113,7 @@ export default function TableSection({
           gap="sm"
           w="100%"
         >
-          <Flex direction="column">
+          <Flex direction="column" align={isMobile ? "center" : "flex-start"}>
             <Text>Total saldo:</Text>
             <Badge color={totalSaldo > 0 ? "teal" : "red"}>
               {stringToRupiah(totalSaldo.toString())}
