@@ -10,6 +10,7 @@ import FilterPurpose from "./filter-purpose";
 import FilterBalance from "./filter-balance";
 import FilterBank from "./filter-bank";
 import FilterType from "./filter-type";
+import DeleteDataKeuanganButton from "../delete-data-keuangan-button";
 
 export default function generateDetailTableColumns({
   filter,
@@ -40,6 +41,10 @@ export default function generateDetailTableColumns({
 
   const renderBank = ({ bank }: { bank: string }) => (
     <Text>{bank ? "Ya" : "Tidak"}</Text>
+  );
+
+  const renderAction = ({ id }: { id: string }) => (
+    <DeleteDataKeuanganButton id={id} />
   );
 
   const columnsToReturn: DataTableColumn<any>[] = [
@@ -115,6 +120,11 @@ export default function generateDetailTableColumns({
       filter: (
         <FilterBank filter={filter} handleChangeFilter={handleChangeFilter} />
       ),
+    },
+    {
+      accessor: "action",
+      render: renderAction,
+      textAlign: "right"
     },
   ];
 

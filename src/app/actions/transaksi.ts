@@ -44,6 +44,11 @@ export async function tambahTransaksi(data: FormData) {
   revalidatePath("/detail");
 }
 
+export async function deleteTransaksi(id: string) {
+  await prisma.transaksi.delete({ where: { id } });
+  revalidatePath("/detail");
+}
+
 export type TransaksiFormState = {
   email: string;
   tanggal: DateValue;
