@@ -5,7 +5,7 @@ import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "@/app/db/init";
-import AddEditDataKeuanganForm from "../c-add-edit-data-keuangan-form/add-data-keuangan-form";
+import AddEditDataKeuanganForm from "../c-add-edit-data-keuangan-form";
 
 async function getUserSumberTujuan(email: string) {
   const [daftarSumber, daftarTujuan] = await Promise.all([
