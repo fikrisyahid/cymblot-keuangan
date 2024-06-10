@@ -5,12 +5,9 @@ import { ActionIcon, Flex, Input, Loader, Text } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { openConfirmModal } from "@mantine/modals";
+import { addSumber } from "@/app/actions/sumber";
 
-export default function AddSumberForm({
-  addSumber,
-}: {
-  addSumber: (formData: FormData) => void;
-}) {
+export default function AddSumberForm() {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 

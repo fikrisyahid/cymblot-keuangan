@@ -5,12 +5,9 @@ import { ActionIcon, Flex, Input, Loader, Text } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { openConfirmModal } from "@mantine/modals";
+import { addTujuan } from "@/app/actions/tujuan";
 
-export default function AddTujuanForm({
-  addTujuan,
-}: {
-  addTujuan: (formData: FormData) => void;
-}) {
+export default function AddTujuanForm() {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 

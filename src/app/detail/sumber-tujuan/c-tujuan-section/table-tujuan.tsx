@@ -5,7 +5,6 @@ import DeleteTujuanButton from "./delete-tujuan-button";
 
 export default function TableTujuan({
   daftarTujuan,
-  deleteTujuan,
 }: {
   daftarTujuan: {
     id: string;
@@ -14,7 +13,6 @@ export default function TableTujuan({
     createdAt: Date;
     updatedAt: Date;
   }[];
-  deleteTujuan: (id: string) => void;
 }) {
   return (
     <DataTable
@@ -32,9 +30,7 @@ export default function TableTujuan({
           accessor: "actions",
           title: "Aksi",
           textAlign: "right",
-          render: (record) => (
-            <DeleteTujuanButton id={record.id} deleteTujuan={deleteTujuan} />
-          ),
+          render: (record) => <DeleteTujuanButton id={record.id} />,
         },
       ]}
       records={daftarTujuan.map((item, index) => ({

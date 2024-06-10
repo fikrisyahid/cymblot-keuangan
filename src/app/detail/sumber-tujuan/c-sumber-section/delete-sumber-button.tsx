@@ -5,14 +5,9 @@ import { IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { openConfirmModal } from "@mantine/modals";
+import { deleteSumber } from "@/app/actions/sumber";
 
-export default function DeleteSumberButton({
-  id,
-  deleteSumber,
-}: {
-  id: string;
-  deleteSumber: (id: string) => void;
-}) {
+export default function DeleteSumberButton({ id }: { id: string }) {
   const [loading, setLoading] = useState(false);
 
   function handleDelete() {

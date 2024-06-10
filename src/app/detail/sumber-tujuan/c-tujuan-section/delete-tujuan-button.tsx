@@ -5,14 +5,9 @@ import { IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { openConfirmModal } from "@mantine/modals";
+import { deleteTujuan } from "@/app/actions/tujuan";
 
-export default function DeleteTujuanButton({
-  id,
-  deleteTujuan,
-}: {
-  id: string;
-  deleteTujuan: (id: string) => void;
-}) {
+export default function DeleteTujuanButton({ id }: { id: string }) {
   const [loading, setLoading] = useState(false);
 
   function handleDelete() {

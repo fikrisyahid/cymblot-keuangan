@@ -5,7 +5,6 @@ import DeleteSumberButton from "./delete-sumber-button";
 
 export default function TableSumber({
   daftarSumber,
-  deleteSumber,
 }: {
   daftarSumber: {
     id: string;
@@ -14,7 +13,6 @@ export default function TableSumber({
     createdAt: Date;
     updatedAt: Date;
   }[];
-  deleteSumber: (id: string) => void;
 }) {
   return (
     <DataTable
@@ -32,9 +30,7 @@ export default function TableSumber({
           accessor: "actions",
           title: "Aksi",
           textAlign: "right",
-          render: (record) => (
-            <DeleteSumberButton id={record.id} deleteSumber={deleteSumber} />
-          ),
+          render: (record) => <DeleteSumberButton id={record.id} />,
         },
       ]}
       records={daftarSumber.map((item, index) => ({
