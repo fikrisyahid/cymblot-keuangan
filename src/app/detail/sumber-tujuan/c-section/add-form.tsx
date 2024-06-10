@@ -5,9 +5,15 @@ import { ActionIcon, Flex, Input, Loader, Text } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { openConfirmModal } from "@mantine/modals";
-import { addSumber } from "@/app/actions/sumber";
+import stringCapitalize from "@/utils/string-capitalize";
 
-export default function AddSumberForm() {
+export default function AddForm({
+  type,
+  addFunction,
+}: {
+  type: "sumber" | "tujuan";
+  addFunction: (formData: FormData) => Promise<void>;
+}) {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -18,27 +24,27 @@ export default function AddSumberForm() {
     if (nama) {
       openConfirmModal({
         title: "Konfirmasi Penambahan",
-        children: <Text>Apakah Anda yakin ingin menambahkan sumber ini?</Text>,
+        children: <Text>Apakah Anda yakin ingin menambahkan {type} ini?</Text>,
         labels: { confirm: "Tambah", cancel: "Batal" },
         onConfirm: async () => {
           setLoading(true);
           const formData = new FormData();
-          formData.set("sumber", nama);
+          formData.set(type, nama);
 
           try {
-            addSumber(formData);
+            addFunction(formData);
             if (inputRef.current) {
               inputRef.current.value = "";
             }
             notifications.show({
               title: "Sukses",
-              message: "Sumber berhasil ditambahkan",
+              message: `${stringCapitalize(type)} berhasil ditambahkan`,
               color: "green",
             });
           } catch (error) {
             notifications.show({
               title: "Error",
-              message: "Gagal menambahkan sumber",
+              message: `Gagal menambahkan ${type}`,
               color: "red",
             });
           } finally {
@@ -49,7 +55,7 @@ export default function AddSumberForm() {
     } else {
       notifications.show({
         title: "Error",
-        message: "Nama sumber tidak boleh kosong",
+        message: `Nama ${type} tidak boleh kosong`,
         color: "red",
       });
     }
@@ -60,7 +66,7 @@ export default function AddSumberForm() {
       <Flex gap="sm" align="center">
         <Input
           ref={inputRef}
-          name="sumber"
+          name={type}
           type="text"
           placeholder="Tambahkan sumber baru"
           style={{ width: "100%" }}

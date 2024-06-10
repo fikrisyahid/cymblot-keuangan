@@ -5,9 +5,17 @@ import { IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { openConfirmModal } from "@mantine/modals";
-import { deleteSumber } from "@/app/actions/sumber";
+import stringCapitalize from "@/utils/string-capitalize";
 
-export default function DeleteSumberButton({ id }: { id: string }) {
+export default function DeleteButton({
+  id,
+  type,
+  deleteFunction,
+}: {
+  id: string;
+  type: "sumber" | "tujuan";
+  deleteFunction: (id: string) => Promise<void>;
+}) {
   const [loading, setLoading] = useState(false);
 
   function handleDelete() {
@@ -15,10 +23,10 @@ export default function DeleteSumberButton({ id }: { id: string }) {
       title: "Konfirmasi Penghapusan",
       children: (
         <>
-          <Text>Apakah Anda yakin ingin menghapus sumber ini?</Text>
+          <Text>Apakah Anda yakin ingin menghapus {type} ini?</Text>
           <br />
           <Text fw={700}>
-            Seluruh data keuangan yang terkait dengan sumber ini akan dihapus.
+            Seluruh data keuangan yang terkait dengan {type} ini akan dihapus.
           </Text>
         </>
       ),
@@ -27,16 +35,16 @@ export default function DeleteSumberButton({ id }: { id: string }) {
       onConfirm: async () => {
         setLoading(true);
         try {
-          deleteSumber(id);
+          deleteFunction(id);
           notifications.show({
             title: "Sukses",
-            message: "Sumber berhasil dihapus",
+            message: `${stringCapitalize(type)} berhasil dihapus`,
             color: "green",
           });
         } catch (error) {
           notifications.show({
             title: "Error",
-            message: "Gagal menghapus sumber",
+            message: `Gagal menghapus ${type}`,
             color: "red",
           });
         } finally {

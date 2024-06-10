@@ -1,19 +1,32 @@
 import MainCard from "@/components/main-card";
 import { BUTTON_BASE_COLOR, TEXT_COLOR } from "@/config";
-import { Button, Title } from "@mantine/core";
+import { Button, Text, Title } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
-import SumberSection from "./c-sumber-section";
-import TujuanSection from "./c-tujuan-section";
 import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import Section from "./c-section";
+import prisma from "@/app/db/init";
 
 export default async function Page() {
   const user = await currentUser();
+  const email = user?.emailAddresses[0].emailAddress;
 
-  if (!user) {
-    redirect("/");
+  if (!email) {
+    return <Text>Anda belum login</Text>;
   }
+
+  const [daftarSumber, daftarTujuan] = await Promise.all([
+    prisma.sumber.findMany({
+      where: {
+        email,
+      },
+    }),
+    prisma.tujuan.findMany({
+      where: {
+        email,
+      },
+    }),
+  ]);
 
   return (
     <MainCard>
@@ -41,10 +54,10 @@ export default async function Page() {
       </MainCard>
       <MainCard row transparent noPadding fullWidth>
         <MainCard noPadding transparent fullWidth>
-          <SumberSection user={user} />
+          <Section data={daftarSumber} type="sumber" />
         </MainCard>
         <MainCard noPadding transparent fullWidth>
-          <TujuanSection user={user} />
+          <Section data={daftarTujuan} type="tujuan" />
         </MainCard>
       </MainCard>
     </MainCard>
