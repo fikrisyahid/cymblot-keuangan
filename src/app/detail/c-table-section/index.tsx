@@ -19,7 +19,7 @@ import {
   matchDate,
   matchGeneralSearch,
   matchInformation,
-  matchKind,
+  matchType,
   matchPurpose,
   matchSource,
 } from "./filter";
@@ -69,7 +69,7 @@ export default function TableSection({
           matchGeneralSearch({ generalSearch, item }) &&
           matchDate({ item, filter }) &&
           matchInformation({ item, filter }) &&
-          matchKind({ item, filter }) &&
+          matchType({ item, filter }) &&
           matchSource({ item, filter }) &&
           matchPurpose({ item, filter }) &&
           matchBalance({ item, filter }) &&

@@ -48,14 +48,14 @@ const matchInformation = ({
   filter: filterDetailTable;
 }) => item.keterangan.toLowerCase().includes(filter.keterangan.toLowerCase());
 
-const matchKindIgnore = (filter: filterDetailTable) => filter.jenis === "SEMUA";
-const matchKind = ({
+const matchTypeIgnore = (filter: filterDetailTable) => filter.jenis === "SEMUA";
+const matchType = ({
   item,
   filter,
 }: {
   item: tableData;
   filter: filterDetailTable;
-}) => matchKindIgnore(filter) || item.jenis === filter.jenis;
+}) => matchTypeIgnore(filter) || item.jenis === filter.jenis;
 
 const matchSourceIgnore = (filter: filterDetailTable) =>
   filter.sumber.length === 0;
@@ -111,7 +111,7 @@ export {
   matchGeneralSearch,
   matchDate,
   matchInformation,
-  matchKind,
+  matchType,
   matchSource,
   matchPurpose,
   matchBalance,
