@@ -63,10 +63,17 @@ export default function RootLayout({
                 <Notifications />
                 <ModalsProvider>
                   <RootShell>
-                    <div style={{ position: "fixed", top: 16, right: 16 }}>
+                    <div
+                      style={{
+                        position: "fixed",
+                        top: 16,
+                        right: 16,
+                        zIndex: 0,
+                      }}
+                    >
                       <UserButton />
                     </div>
-                    {children}
+                    <div style={{ zIndex: 1 }}>{children}</div>
                   </RootShell>
                 </ModalsProvider>
               </MantineProvider>
