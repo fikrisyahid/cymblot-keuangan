@@ -46,10 +46,11 @@ export default async function Page() {
     await getUserTransactions(email);
 
   const dataForTable = mapTransactionsToTableData(transaksiUser);
-  const oldestDate =
-    dayjs(transaksiUser[transaksiUser.length - 1].tanggal)
-      .startOf("day")
-      .toDate() || new Date();
+  const oldestDate = dayjs(
+    transaksiUser[transaksiUser.length - 1]?.tanggal || new Date()
+  )
+    .startOf("day")
+    .toDate();
 
   return (
     <MainCard>
