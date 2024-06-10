@@ -3,9 +3,9 @@ import { BUTTON_BASE_COLOR, TEXT_COLOR } from "@/config";
 import { Button, Title } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
-import TambahDataKeuangan from "./tambah-data-keuangan-form";
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "@/app/db/init";
+import AddDataKeuanganForm from "./c-add-data-keuangan-form/add-data-keuangan-form";
 
 async function getUserSumberTujuan(email: string) {
   const [daftarSumber, daftarTujuan] = await Promise.all([
@@ -41,7 +41,7 @@ export default async function Page() {
           Tambah Data Keuangan
         </Title>
       </MainCard>
-      <TambahDataKeuangan
+      <AddDataKeuanganForm
         email={email}
         daftarSumber={daftarSumber}
         daftarTujuan={daftarTujuan}

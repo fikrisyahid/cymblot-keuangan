@@ -21,8 +21,9 @@ import { openConfirmModal } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next-nprogress-bar";
 import { ITujuanSumber } from "@/types/db";
+import CustomAlert from "./custom-alert";
 
-export default function TambahDataKeuangan({
+export default function AddDataKeuanganForm({
   email,
   daftarSumber,
   daftarTujuan,
@@ -82,7 +83,7 @@ export default function TambahDataKeuangan({
           });
 
           try {
-            tambahTransaksi(formData);
+            await tambahTransaksi(formData);
             notifications.show({
               title: "Sukses",
               message: "Data keuangan berhasil ditambahkan",
@@ -149,9 +150,8 @@ export default function TambahDataKeuangan({
           required
           error={errors.jenis}
         />
-        {formState.jenis === "PEMASUKAN" && (
+        {formState.jenis === "PEMASUKAN" ? (
           <Select
-            required
             label="Sumber"
             placeholder="Pilih sumber"
             data={daftarSumber.map((sumber) => ({
@@ -161,11 +161,11 @@ export default function TambahDataKeuangan({
             value={formState.sumberId}
             onChange={(value) => handleChange({ sumberId: value as string })}
             error={errors.sumberId}
-          />
-        )}
-        {formState.jenis === "PENGELUARAN" && (
-          <Select
             required
+            disabled={daftarSumber.length === 0}
+          />
+        ) : (
+          <Select
             label="Tujuan"
             placeholder="Pilih tujuan"
             data={daftarTujuan.map((tujuan) => ({
@@ -175,7 +175,26 @@ export default function TambahDataKeuangan({
             value={formState.tujuanId}
             onChange={(value) => handleChange({ tujuanId: value as string })}
             error={errors.tujuanId}
+            required
+            disabled={daftarTujuan.length === 0}
           />
+        )}
+        {((daftarSumber.length === 0 && formState.jenis === "PEMASUKAN") ||
+          (daftarTujuan.length === 0 && formState.jenis === "PENGELUARAN")) && (
+          <>
+            <CustomAlert
+              buttonString={
+                formState.jenis === "PEMASUKAN"
+                  ? "Tambah sumber"
+                  : "Tambah tujuan"
+              }
+              message={
+                formState.jenis === "PEMASUKAN"
+                  ? "Kamu belum memiliki sumber keuangan. Silakan tambahkan sumber."
+                  : "Kamu belum memiliki tujuan keuangan. Silakan tambahkan tujuan."
+              }
+            />
+          </>
         )}
         <NumberInput
           label="Nominal"
@@ -191,7 +210,6 @@ export default function TambahDataKeuangan({
           label="Bank"
           checked={formState.bank}
           onChange={(e) => handleChange({ bank: e.currentTarget.checked })}
-          error={errors.bank}
         />
         <Button type="submit" style={{ backgroundColor: BUTTON_BASE_COLOR }}>
           Submit
