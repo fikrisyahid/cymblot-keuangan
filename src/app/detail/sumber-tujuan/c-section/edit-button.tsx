@@ -41,7 +41,7 @@ export default function EditButton({
         try {
           const newEditName = inputRef.current?.value;
           if (!newEditName) {
-            throw new Error("Nama tidak boleh kosong");
+            throw new Error(`${stringCapitalize(type)} tidak boleh kosong`);
           }
           editFunction({ id, nama: newEditName });
           notifications.show({
@@ -49,10 +49,10 @@ export default function EditButton({
             message: `${stringCapitalize(type)} berhasil diubah`,
             color: "green",
           });
-        } catch (error) {
+        } catch (error: any) {
           notifications.show({
             title: "Error",
-            message: `Gagal mengubah ${type}`,
+            message: error.message || `Gagal mengubah ${type}`,
             color: "red",
           });
         } finally {
