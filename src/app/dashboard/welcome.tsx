@@ -1,11 +1,27 @@
 import prisma from "@/app/db/init";
 import { currentUser } from "@clerk/nextjs/server";
-import { Title } from "@mantine/core";
+import { Flex, Skeleton, Title } from "@mantine/core";
 import { TEXT_COLOR } from "@/config";
 import MainCard from "../../components/main-card";
 import { IconBuildingBank, IconCash, IconCoins } from "@tabler/icons-react";
 import stringToRupiah from "@/utils/string-to-rupiah";
 import DataCard from "@/components/data-card";
+
+export function WelcomeSkeleton() {
+  return (
+    <>
+      <Flex gap="sm" align="center">
+        <Title style={{ color: TEXT_COLOR }}>Halo,</Title>
+        <Skeleton height={30} width={100} />
+      </Flex>
+      <MainCard transparent row noPadding>
+        <Skeleton height={120} radius="md" />
+        <Skeleton height={120} radius="md" />
+        <Skeleton height={120} radius="md" />
+      </MainCard>
+    </>
+  );
+}
 
 export default async function Welcome() {
   const user = await currentUser();
@@ -40,7 +56,7 @@ export default async function Welcome() {
 
   return (
     <>
-      <Title style={{ color: TEXT_COLOR }}>Halo {user?.fullName}</Title>
+      <Title style={{ color: TEXT_COLOR }}>Halo, {user?.fullName}</Title>
       <MainCard transparent row noPadding>
         <DataCard
           backgroundColor="#38598b"

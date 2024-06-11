@@ -1,10 +1,13 @@
 import MainCard from "@/components/main-card";
-import Welcome from "./welcome";
+import Welcome, { WelcomeSkeleton } from "./welcome";
+import { Suspense } from "react";
 
 export default function Page() {
   return (
     <MainCard>
-      <Welcome />
+      <Suspense fallback={<WelcomeSkeleton />}>
+        <Welcome />
+      </Suspense>
     </MainCard>
   );
 }
