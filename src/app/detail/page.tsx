@@ -13,8 +13,8 @@ async function getUserTransactions(email: string) {
       include: { sumber: true, tujuan: true },
       orderBy: { tanggal: "desc" },
     }),
-    prisma.sumber.findMany({ where: { email } }),
-    prisma.tujuan.findMany({ where: { email } }),
+    prisma.sumber.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
+    prisma.tujuan.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
   ]);
 
   return { transaksiUser, daftarSumber, daftarTujuan };

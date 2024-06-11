@@ -23,6 +23,15 @@ export async function addSumber(formData: FormData) {
   }
 }
 
+export async function editSumber({ id, nama }: { id: string; nama: string }) {
+  await prisma.sumber.update({
+    where: { id },
+    data: { nama },
+  });
+
+  revalidatePath("/detail/sumber-tujuan");
+}
+
 export async function deleteSumber(id: string) {
   await prisma.sumber.delete({
     where: { id },

@@ -20,11 +20,17 @@ export default async function Page() {
       where: {
         email,
       },
+      orderBy: {
+        createdAt: "asc",
+      }
     }),
     prisma.tujuan.findMany({
       where: {
         email,
       },
+      orderBy: {
+        createdAt: "asc",
+      }
     }),
   ]);
 

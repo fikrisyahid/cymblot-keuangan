@@ -23,6 +23,15 @@ export async function addTujuan(formData: FormData) {
   }
 }
 
+export async function editTujuan({ id, nama }: { id: string; nama: string }) {
+  await prisma.tujuan.update({
+    where: { id },
+    data: { nama },
+  });
+
+  revalidatePath("/detail/sumber-tujuan");
+}
+
 export async function deleteTujuan(id: string) {
   await prisma.tujuan.delete({
     where: { id },
