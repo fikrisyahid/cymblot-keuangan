@@ -3,9 +3,22 @@ import { TEXT_COLOR } from "@/config";
 import { currentUser } from "@clerk/nextjs/server";
 import { Title } from "@mantine/core";
 import prisma from "../db/init";
-import PrettyJSON from "@/components/pretty-json";
 import BalanceBarChart from "./barchart";
 import dayjs from "dayjs";
+
+async function getUserTransactions(email: string) {
+  const [transaksiUser, daftarSumber, daftarTujuan] = await Promise.all([
+    prisma.transaksi.findMany({
+      where: { email },
+      include: { sumber: true, tujuan: true },
+      orderBy: { tanggal: "desc" },
+    }),
+    prisma.sumber.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
+    prisma.tujuan.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
+  ]);
+
+  return { transaksiUser, daftarSumber, daftarTujuan };
+}
 
 export default async function Page() {
   const user = await currentUser();
@@ -15,18 +28,11 @@ export default async function Page() {
     return <div>Anda belum login</div>;
   }
 
-  const transaksi = await prisma.transaksi.findMany({
-    where: {
-      email,
-    },
-    include: {
-      sumber: true,
-      tujuan: true,
-    },
-  });
+  const { transaksiUser, daftarSumber, daftarTujuan } =
+    await getUserTransactions(email);
 
   const oldestDate = dayjs(
-    transaksi[transaksi.length - 1]?.tanggal || new Date()
+    transaksiUser[transaksiUser.length - 1]?.tanggal || new Date()
   )
     .startOf("day")
     .toDate();
@@ -39,8 +45,12 @@ export default async function Page() {
       >
         Visualisasi Data Keuangan
       </Title>
-      <BalanceBarChart transaksi={transaksi} oldestDate={oldestDate} />
-      <PrettyJSON text={transaksi} />
+      <BalanceBarChart
+        data={transaksiUser}
+        oldestDate={oldestDate}
+        daftarSumber={daftarSumber}
+        daftarTujuan={daftarTujuan}
+      />
     </MainCard>
   );
 }

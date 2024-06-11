@@ -1,6 +1,6 @@
 "use client";
 
-import { ITransaksi } from "@/types/db";
+import { ITransaksi, ITujuanSumber } from "@/types/db";
 import { BarChart } from "@mantine/charts";
 import { Select, SegmentedControl, Stack, rem } from "@mantine/core";
 import { useState } from "react";
@@ -10,20 +10,30 @@ import MainCard from "@/components/main-card";
 import { DatePickerInput, DateValue } from "@mantine/dates";
 import { IconCalendar } from "@tabler/icons-react";
 import { IFilterGraph } from "./types";
+import FilterType from "./c-filter/filter-type";
+import FilterInformation from "./c-filter/filter-information";
+import FilterSource from "./c-filter/filter-source";
+import FilterPurpose from "./c-filter/filter-purpose";
+import FilterBalance from "./c-filter/filter-balance";
+import FilterBank from "./c-filter/filter-bank";
 
 export default function BalanceBarChart({
-  transaksi,
+  data,
   oldestDate,
+  daftarSumber,
+  daftarTujuan,
 }: {
-  transaksi: ITransaksi[];
+  data: ITransaksi[];
   oldestDate: Date;
+  daftarSumber: ITujuanSumber[];
+  daftarTujuan: ITujuanSumber[];
 }) {
   const [mode, setMode] = useState<"range" | "hari" | "bulan" | "tahun">(
     "bulan"
   );
   const [filter, setFilter] = useState<IFilterGraph>({
-    tanggal_sesudah: oldestDate,
-    tanggal_sebelum: new Date(),
+    tanggal_sebelum: oldestDate,
+    tanggal_sesudah: new Date(),
     keterangan: "",
     jenis: "SEMUA",
     sumber: [],
@@ -100,45 +110,58 @@ export default function BalanceBarChart({
             />
           </MainCard>
         )}
-        <Select
-          value={month}
-          onChange={(e) => setMonth(e as string)}
-          data={months.map((m) => ({
-            value: m,
-            label: dayjs()
-              .month(parseInt(m) - 1)
-              .locale("id")
-              .format("MMMM"),
-          }))}
-          placeholder="Pilih Bulan"
-        />
-        <Select
-          value={year}
-          onChange={(e) => setYear(e as string)}
-          data={years.map((y) => ({ value: y, label: y }))}
-          placeholder="Pilih Tahun"
-        />
-        <Select
-          value={day}
-          onChange={(e) => setDay(e as string)}
-          data={days.map((d) => ({ value: d, label: d }))}
-          placeholder="Pilih Hari"
-        />
+        {mode === "hari" && (
+          <Select
+            value={day}
+            onChange={(e) => setDay(e as string)}
+            data={days.map((d) => ({ value: d, label: d }))}
+            placeholder="Pilih Hari"
+          />
+        )}
+        {(mode === "bulan" || mode === "hari") && (
+          <Select
+            value={month}
+            onChange={(e) => setMonth(e as string)}
+            data={months.map((m) => ({
+              value: m,
+              label: dayjs()
+                .month(parseInt(m) - 1)
+                .locale("id")
+                .format("MMMM"),
+            }))}
+            placeholder="Pilih Bulan"
+          />
+        )}
+        {(mode === "tahun" || mode === "bulan" || mode === "hari") && (
+          <Select
+            value={year}
+            onChange={(e) => setYear(e as string)}
+            data={years.map((y) => ({ value: y, label: y }))}
+            placeholder="Pilih Tahun"
+          />
+        )}
       </MainCard>
       <MainCard transparent noPadding row>
-        <Select
-          value={filter.jenis}
-          onChange={(e) => handleChangeFilter({ jenis: e as string })}
-          data={[
-            {
-              value: "Pemasukan & Pengeluaran",
-              label: "Pemasukan & Pengeluaran",
-            },
-            { value: "Pemasukan", label: "Pemasukan" },
-            { value: "Pengeluaran", label: "Pengeluaran" },
-          ]}
-          placeholder="Jenis"
+        <FilterInformation
+          filter={filter}
+          handleChangeFilter={handleChangeFilter}
         />
+        <FilterType filter={filter} handleChangeFilter={handleChangeFilter} />
+        <FilterSource
+          filter={filter}
+          handleChangeFilter={handleChangeFilter}
+          daftarSumber={daftarSumber}
+        />
+        <FilterPurpose
+          filter={filter}
+          handleChangeFilter={handleChangeFilter}
+          daftarTujuan={daftarTujuan}
+        />
+        <FilterBalance
+          filter={filter}
+          handleChangeFilter={handleChangeFilter}
+        />
+        <FilterBank filter={filter} handleChangeFilter={handleChangeFilter} />
       </MainCard>
       <BarChart
         h={400}
