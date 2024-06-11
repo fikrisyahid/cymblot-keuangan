@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
+import { Notifications } from "@mantine/notifications";
 
 import ProgressProvider from "@/components/progressbar-provider";
 import RootShell from "./shell";
@@ -17,7 +18,7 @@ import "@mantine/core/styles.css";
 import "mantine-datatable/styles.layer.css";
 import "@mantine/dates/styles.css";
 import "@mantine/notifications/styles.css";
-import { Notifications } from "@mantine/notifications";
+import "@mantine/charts/styles.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
