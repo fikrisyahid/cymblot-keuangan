@@ -2,7 +2,7 @@
 
 import { ITransaksi, ITujuanSumber } from "@/types/db";
 import { BarChart } from "@mantine/charts";
-import { Spoiler, Stack } from "@mantine/core";
+import { Spoiler, Stack, Text } from "@mantine/core";
 import { useMemo, useState } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
@@ -68,8 +68,6 @@ export default function MainBarChart({
     [data, filter]
   );
 
-  console.log(filteredData);
-
   const {
     data: chartData,
     dataKey,
@@ -122,6 +120,7 @@ export default function MainBarChart({
           </MainCard>
         </Stack>
       </Spoiler>
+      {filteredData.length === 0 && <Text style={{alignSelf: "center"}}>Tidak ada data yang sesuai</Text>}
       <BarChart
         h={400}
         data={chartData}
