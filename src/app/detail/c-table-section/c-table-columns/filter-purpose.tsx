@@ -37,8 +37,8 @@ export default function FilterPurpose({
       {filter.sumber.length > 0 && (
         <Alert
           variant="filled"
-          color="red"
-          title="Peringatan"
+          color="indigo"
+          title="Info"
           icon={<IconInfoCircle />}
           p="xs"
           style={{ maxWidth: "300px" }}
