@@ -1,35 +1,6 @@
-import stringToRupiah from "@/utils/string-to-rupiah";
 import dayjs from "dayjs";
-import { isBoolean, isNumber } from "lodash";
 import { IFilterGraph } from "./types";
 import { ITransaksi } from "@/types/db";
-
-const matchGeneralSearch = ({
-  generalSearch,
-  item,
-}: {
-  generalSearch: string;
-  item: ITransaksi[];
-}) =>
-  Object.values(item).some((value: any) => {
-    if (value instanceof Date) {
-      return dayjs(value)
-        .locale("id")
-        .format("DD MMMM YYYY pukul H:m:s")
-        .toLowerCase()
-        .includes(generalSearch.toLowerCase());
-    }
-    if (isBoolean(value)) {
-      const booleanString = value ? "ya" : "tidak";
-      return booleanString.toLowerCase().includes(generalSearch.toLowerCase());
-    }
-    if (isNumber(value)) {
-      return stringToRupiah(value.toString())
-        .toLowerCase()
-        .includes(generalSearch);
-    }
-    return value.toString().toLowerCase().includes(generalSearch.toLowerCase());
-  });
 
 const matchDate = ({
   item,
@@ -37,9 +8,32 @@ const matchDate = ({
 }: {
   item: ITransaksi;
   filter: IFilterGraph;
-}) =>
-  dayjs(item.tanggal).isBefore(filter.tanggal_sebelum) &&
-  dayjs(item.tanggal).isAfter(filter.tanggal_sesudah);
+}) => {
+  const itemDate = dayjs(item.tanggal);
+  const year = parseInt(filter.year, 10);
+  const month = parseInt(filter.month, 10);
+  const day = parseInt(filter.day, 10);
+
+  switch (filter.mode) {
+    case "range":
+      return (
+        itemDate.isAfter(dayjs(filter.tanggal_sesudah)) &&
+        itemDate.isBefore(dayjs(filter.tanggal_sebelum))
+      );
+    case "hari":
+      return (
+        itemDate.year() === year &&
+        itemDate.month() + 1 === month &&
+        itemDate.date() === day
+      );
+    case "bulan":
+      return itemDate.year() === year && itemDate.month() + 1 === month;
+    case "tahun":
+      return itemDate.year() === year;
+    default:
+      return false;
+  }
+};
 
 const matchInformation = ({
   item,
@@ -111,7 +105,6 @@ const matchBank = ({
   (filter.bank === "CASH" && !item.bank);
 
 export {
-  matchGeneralSearch,
   matchDate,
   matchInformation,
   matchType,

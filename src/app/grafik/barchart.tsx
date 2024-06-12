@@ -3,7 +3,7 @@
 import { ITransaksi, ITujuanSumber } from "@/types/db";
 import { BarChart } from "@mantine/charts";
 import { Spoiler, Stack } from "@mantine/core";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import MainCard from "@/components/main-card";
@@ -15,6 +15,16 @@ import FilterPurpose from "./c-filter/filter-purpose";
 import FilterBalance from "./c-filter/filter-balance";
 import FilterBank from "./c-filter/filter-bank";
 import FilterDate from "./c-filter/filter-date";
+import {
+  matchBalance,
+  matchBank,
+  matchDate,
+  matchInformation,
+  matchPurpose,
+  matchSource,
+  matchType,
+} from "./filter";
+import PrettyJSON from "@/components/pretty-json";
 
 export default function MainBarChart({
   data,
@@ -45,6 +55,21 @@ export default function MainBarChart({
   });
   const handleChangeFilter = (newObj: Partial<IFilterGraph>) =>
     setFilter((old) => ({ ...old, ...newObj }));
+
+  const filteredData = useMemo(
+    () =>
+      data.filter(
+        (item) =>
+          matchDate({ item, filter }) &&
+          matchType({ item, filter }) &&
+          matchInformation({ item, filter }) &&
+          matchSource({ item, filter }) &&
+          matchPurpose({ item, filter }) &&
+          matchBalance({ item, filter }) &&
+          matchBank({ item, filter })
+      ),
+    [data, filter]
+  );
 
   return (
     <Stack gap="lg">
@@ -96,6 +121,7 @@ export default function MainBarChart({
           </MainCard>
         </Stack>
       </Spoiler>
+      <PrettyJSON text={filteredData} />
       <BarChart
         h={400}
         data={[]}
