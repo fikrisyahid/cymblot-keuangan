@@ -1,4 +1,4 @@
-import { Button, Flex, NumberInput } from "@mantine/core";
+import { Button, Flex, NumberInput, Text } from "@mantine/core";
 import { IFilterGraph } from "../types";
 
 export default function FilterBalance({
@@ -16,7 +16,6 @@ export default function FilterBalance({
   const filterConfigurations = [
     {
       label: "Filter keuangan di atas nominal",
-      description: "Filter data keuangan di atas nominal tertentu",
       placeholder: "Masukkan nominal di sini",
       value: filter.nominal_di_atas,
       onChange: (value: string | number) =>
@@ -24,7 +23,6 @@ export default function FilterBalance({
     },
     {
       label: "Filter keuangan di bawah nominal",
-      description: "Filter data keuangan di bawah nominal tertentu",
       placeholder: "Masukkan nominal di sini",
       value: filter.nominal_di_bawah,
       onChange: (value: string | number) =>
@@ -32,7 +30,6 @@ export default function FilterBalance({
     },
     {
       label: "Filter keuangan pada nominal",
-      description: "Filter data keuangan pada nominal tertentu",
       placeholder: "Masukkan nominal di sini",
       value: filter.nominal_sama_dengan,
       onChange: (value: string | number) =>
@@ -41,12 +38,12 @@ export default function FilterBalance({
   ];
 
   return (
-    <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
+    <Flex direction="column" gap="sm">
+      <Text fw={700}>Jumlah Nominal</Text>
       {filterConfigurations.map((input) => (
         <NumberInput
           key={input.label}
           label={input.label}
-          description={input.description}
           placeholder={input.placeholder}
           thousandSeparator=","
           value={input.value}

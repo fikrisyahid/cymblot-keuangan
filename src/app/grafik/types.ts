@@ -1,6 +1,10 @@
 import { DateValue } from "@mantine/dates";
 
 interface IFilterGraph {
+  mode: "range" | "hari" | "bulan" | "tahun";
+  year: string;
+  month: string;
+  day: string;
   tanggal_sebelum: DateValue;
   tanggal_sesudah: DateValue;
   keterangan: string;

@@ -1,4 +1,4 @@
-import { Checkbox, Flex } from "@mantine/core";
+import { Checkbox, Flex, Text } from "@mantine/core";
 import { IFilterGraph } from "../types";
 
 export default function FilterType({
@@ -11,7 +11,8 @@ export default function FilterType({
   const filterTypeConfigurations = ["SEMUA", "PEMASUKAN", "PENGELUARAN"];
 
   return (
-    <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
+    <Flex direction="column" gap="sm">
+      <Text fw={700}>Jenis Keuangan</Text>
       {filterTypeConfigurations.map((jenis) => (
         <Checkbox
           key={jenis}

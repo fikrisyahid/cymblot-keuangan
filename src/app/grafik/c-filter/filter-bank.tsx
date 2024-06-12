@@ -1,4 +1,4 @@
-import { Checkbox, Flex } from "@mantine/core";
+import { Checkbox, Flex, Text } from "@mantine/core";
 import { IFilterGraph } from "../types";
 
 export default function FilterBank({
@@ -11,7 +11,8 @@ export default function FilterBank({
   const filterBankConfiguration = ["SEMUA", "BANK", "CASH"];
 
   return (
-    <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
+    <Flex direction="column" gap="sm">
+      <Text fw={700}>Tipe Penyimpanan</Text>
       {filterBankConfiguration.map((option) => (
         <Checkbox
           key={option}

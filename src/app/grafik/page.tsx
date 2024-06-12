@@ -3,7 +3,7 @@ import { TEXT_COLOR } from "@/config";
 import { currentUser } from "@clerk/nextjs/server";
 import { Title } from "@mantine/core";
 import prisma from "../db/init";
-import BalanceBarChart from "./barchart";
+import MainBarChart from "./barchart";
 import dayjs from "dayjs";
 
 async function getUserTransactions(email: string) {
@@ -45,7 +45,7 @@ export default async function Page() {
       >
         Visualisasi Data Keuangan
       </Title>
-      <BalanceBarChart
+      <MainBarChart
         data={transaksiUser}
         oldestDate={oldestDate}
         daftarSumber={daftarSumber}

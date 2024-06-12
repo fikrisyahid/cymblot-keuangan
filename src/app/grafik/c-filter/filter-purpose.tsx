@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, Flex } from "@mantine/core";
+import { Alert, Button, Checkbox, Flex, Text } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { ITujuanSumber } from "@/types/db";
 import { IFilterGraph } from "../types";
@@ -13,7 +13,8 @@ export default function FilterPurpose({
   daftarTujuan: ITujuanSumber[];
 }) {
   return (
-    <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
+    <Flex direction="column" gap="sm">
+      <Text fw={700}>Daftar Tujuan</Text>
       {daftarTujuan.map((item) => (
         <Checkbox
           key={item.id}
@@ -37,8 +38,8 @@ export default function FilterPurpose({
       {filter.sumber.length > 0 && (
         <Alert
           variant="filled"
-          color="red"
-          title="Peringatan"
+          color="indigo"
+          title="Info"
           icon={<IconInfoCircle />}
           p="xs"
           style={{ maxWidth: "300px" }}
