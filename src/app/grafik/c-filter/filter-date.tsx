@@ -74,8 +74,9 @@ export default function FilterDate({
   return (
     <>
       <SegmentedControl
+        key={filter.mode}
         value={filter.mode}
-        onChange={(e) =>
+        onChange={(e) => 
           handleChangeFilter({ mode: e as IFilterGraph["mode"] })
         }
         data={[
