@@ -7,24 +7,22 @@ import { useMemo, useState } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import MainCard from "@/components/main-card";
-import { IFilterGraph } from "./types";
-import FilterType from "./c-filter/filter-type";
-import FilterInformation from "./c-filter/filter-information";
-import FilterSource from "./c-filter/filter-source";
-import FilterPurpose from "./c-filter/filter-purpose";
-import FilterBalance from "./c-filter/filter-balance";
-import FilterBank from "./c-filter/filter-bank";
-import FilterDate from "./c-filter/filter-date";
+import { IFilterGraph } from "../types";
+import FilterType from "../c-filter/filter-type";
+import FilterSource from "../c-filter/filter-source";
+import FilterPurpose from "../c-filter/filter-purpose";
+import FilterBalance from "../c-filter/filter-balance";
+import FilterBank from "../c-filter/filter-bank";
+import FilterDate from "../c-filter/filter-date";
 import {
   matchBalance,
   matchBank,
   matchDate,
-  matchInformation,
   matchPurpose,
   matchSource,
   matchType,
-} from "./filter";
-import PrettyJSON from "@/components/pretty-json";
+} from "../filter";
+import generateChartData from "./helper";
 
 export default function MainBarChart({
   data,
@@ -62,7 +60,6 @@ export default function MainBarChart({
         (item) =>
           matchDate({ item, filter }) &&
           matchType({ item, filter }) &&
-          matchInformation({ item, filter }) &&
           matchSource({ item, filter }) &&
           matchPurpose({ item, filter }) &&
           matchBalance({ item, filter }) &&
@@ -70,6 +67,14 @@ export default function MainBarChart({
       ),
     [data, filter]
   );
+
+  console.log(filteredData);
+
+  const {
+    data: chartData,
+    dataKey,
+    series,
+  } = generateChartData({ filter, filteredData });
 
   return (
     <Stack gap="lg">
@@ -92,10 +97,6 @@ export default function MainBarChart({
             center
             style={{ justifyContent: "space-around" }}
           >
-            <FilterInformation
-              filter={filter}
-              handleChangeFilter={handleChangeFilter}
-            />
             <FilterType
               filter={filter}
               handleChangeFilter={handleChangeFilter}
@@ -121,18 +122,11 @@ export default function MainBarChart({
           </MainCard>
         </Stack>
       </Spoiler>
-      <PrettyJSON text={filteredData} />
       <BarChart
         h={400}
-        data={[]}
-        dataKey={
-          filter.mode === "hari"
-            ? "hour"
-            : filter.mode === "bulan"
-            ? "day"
-            : "month"
-        }
-        series={[]}
+        data={chartData}
+        dataKey={dataKey}
+        series={series}
         tickLine="y"
       />
     </Stack>

@@ -35,14 +35,6 @@ const matchDate = ({
   }
 };
 
-const matchInformation = ({
-  item,
-  filter,
-}: {
-  item: ITransaksi;
-  filter: IFilterGraph;
-}) => item.keterangan.toLowerCase().includes(filter.keterangan.toLowerCase());
-
 const matchTypeIgnore = (filter: IFilterGraph) => filter.jenis === "SEMUA";
 const matchType = ({
   item,
@@ -106,7 +98,6 @@ const matchBank = ({
 
 export {
   matchDate,
-  matchInformation,
   matchType,
   matchSource,
   matchPurpose,

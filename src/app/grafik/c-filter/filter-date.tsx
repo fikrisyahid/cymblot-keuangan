@@ -81,9 +81,9 @@ export default function FilterDate({
         }
         data={[
           { label: "Range", value: "range" },
-          { label: "Per Hari", value: "hari" },
-          { label: "Per Bulan", value: "bulan" },
-          { label: "Per Tahun", value: "tahun" },
+          { label: "Hari", value: "hari" },
+          { label: "Bulan", value: "bulan" },
+          { label: "Tahun", value: "tahun" },
         ]}
       />
       {filter.mode === "range" && (
