@@ -1,11 +1,25 @@
-import prisma from "@/app/db/init";
-import { currentUser } from "@clerk/nextjs/server";
-import { Flex, Skeleton, Title } from "@mantine/core";
+import { User } from "@clerk/nextjs/server";
+import {
+  Alert,
+  Button,
+  Flex,
+  Skeleton,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { TEXT_COLOR } from "@/config";
 import MainCard from "../../components/main-card";
-import { IconBuildingBank, IconCash, IconCoins } from "@tabler/icons-react";
+import {
+  IconBuildingBank,
+  IconCash,
+  IconCoins,
+  IconInfoCircle,
+} from "@tabler/icons-react";
 import stringToRupiah from "@/utils/string-to-rupiah";
 import DataCard from "@/components/data-card";
+import Link from "next/link";
+import { JENIS_TRANSAKSI } from "@prisma/client";
 
 export function WelcomeSkeleton() {
   return (
@@ -23,15 +37,25 @@ export function WelcomeSkeleton() {
   );
 }
 
-export default async function Welcome() {
-  const user = await currentUser();
-
-  const transaksiUser = await prisma.transaksi.findMany({
-    where: {
-      email: user?.emailAddresses[0].emailAddress,
-    },
-  });
-
+export default async function Welcome({
+  user,
+  transaksiUser,
+}: {
+  user: User;
+  transaksiUser: {
+    id: string;
+    email: string;
+    tanggal: Date;
+    keterangan: string;
+    jenis: JENIS_TRANSAKSI;
+    sumberId: string | null;
+    tujuanId: string | null;
+    nominal: number;
+    bank: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+}) {
   const totalSaldo = transaksiUser.reduce(
     (acc, cur) =>
       acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
@@ -89,6 +113,24 @@ export default async function Welcome() {
           <IconCash style={{ height: "100%", width: "20%" }} />
         </DataCard>
       </MainCard>
+      {transaksiUser.length === 0 && (
+        <Alert
+          variant="filled"
+          color="blue"
+          title="Alert title"
+          icon={<IconInfoCircle />}
+        >
+          <Stack gap="sm" align="flex-start">
+            <Text>
+              Kamu belum memiliki data keuangan. Silahkan buat data keuangan
+              terlebih dahulu
+            </Text>
+            <Button color="teal" component={Link} href="/detail/tambah">
+              Buat data keuangan
+            </Button>
+          </Stack>
+        </Alert>
+      )}
     </>
   );
 }
