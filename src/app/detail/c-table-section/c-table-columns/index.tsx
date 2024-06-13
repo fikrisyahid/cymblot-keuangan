@@ -33,6 +33,10 @@ export default function generateDetailTableColumns({
     </Text>
   );
 
+  const renderKeterangan = ({ keterangan }: { keterangan: string }) => (
+    <Text style={{whiteSpace: "pre-wrap"}}>{keterangan}</Text>
+  );
+
   const renderJenis = ({ jenis }: { jenis: string }) => (
     <Badge color={jenis === "PEMASUKAN" ? "teal" : "pink"}>{jenis}</Badge>
   );
@@ -69,13 +73,13 @@ export default function generateDetailTableColumns({
     {
       accessor: "keterangan",
       sortable: true,
+      render: renderKeterangan,
       filter: (
         <FilterInformation
           filter={filter}
           handleChangeFilter={handleChangeFilter}
         />
       ),
-      filtering: filter.keterangan !== "",
     },
     {
       accessor: "jenis",
