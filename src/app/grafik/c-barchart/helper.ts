@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import "dayjs/locale/id";
 import { ITransaksi } from "@/types/db";
 import { IFilterGraph } from "../types";
 
@@ -110,11 +111,11 @@ const generateChartData = ({
   } else if (filter.mode === "tahun") {
     dataKey = "month";
     data = Array.from({ length: 12 }, (_, i) => ({
-      month: dayjs().month(i).format("MMMM"),
+      month: dayjs().month(i).locale('id').format("MMMM"),
     }));
 
     filteredData.forEach((item) => {
-      const month = dayjs(item.tanggal).format("MMMM");
+      const month = dayjs(item.tanggal).locale("id").format("MMMM");
       const monthData = data.find((d) => d.month === month);
       if (monthData) {
         if (filter.jenis === "SEMUA") {
