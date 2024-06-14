@@ -32,7 +32,7 @@ function mapTransactionsToTableData(transaksiUser: ITransaksi[]) {
     sumber: transaksi.sumber?.nama || "-",
     tujuan: transaksi.tujuan?.nama || "-",
     nominal: transaksi.nominal,
-    bank: transaksi.bank && transaksi.bankName?.nama || "Cash",
+    bank: transaksi.bank ? transaksi.bankName?.nama || "-" : "Cash",
   }));
 }
 
