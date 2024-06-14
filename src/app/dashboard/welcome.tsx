@@ -1,13 +1,5 @@
 import { User } from "@clerk/nextjs/server";
-import {
-  Alert,
-  Button,
-  Flex,
-  Skeleton,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Alert, Button, Stack, Text, Title } from "@mantine/core";
 import { TEXT_COLOR } from "@/config";
 import MainCard from "../../components/main-card";
 import {
@@ -19,42 +11,14 @@ import {
 import stringToRupiah from "@/utils/string-to-rupiah";
 import DataCard from "@/components/data-card";
 import Link from "next/link";
-import { JENIS_TRANSAKSI } from "@prisma/client";
-
-export function WelcomeSkeleton() {
-  return (
-    <>
-      <Flex gap="sm" align="center">
-        <Title style={{ color: TEXT_COLOR }}>Halo,</Title>
-        <Skeleton height={30} width={100} />
-      </Flex>
-      <MainCard transparent row noPadding>
-        <Skeleton height={120} radius="md" />
-        <Skeleton height={120} radius="md" />
-        <Skeleton height={120} radius="md" />
-      </MainCard>
-    </>
-  );
-}
+import { ITransaksi } from "@/types/db";
 
 export default async function Welcome({
   user,
   transaksiUser,
 }: {
   user: User;
-  transaksiUser: {
-    id: string;
-    email: string;
-    tanggal: Date;
-    keterangan: string;
-    jenis: JENIS_TRANSAKSI;
-    sumberId: string | null;
-    tujuanId: string | null;
-    nominal: number;
-    bank: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-  }[];
+  transaksiUser: ITransaksi[];
 }) {
   const totalSaldo = transaksiUser.reduce(
     (acc, cur) =>
