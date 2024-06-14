@@ -10,7 +10,7 @@ async function getUserTransactions(email: string) {
   const [transaksiUser, daftarSumber, daftarTujuan] = await Promise.all([
     prisma.transaksi.findMany({
       where: { email },
-      include: { sumber: true, tujuan: true },
+      include: { sumber: true, tujuan: true, bankName: true },
       orderBy: { tanggal: "desc" },
     }),
     prisma.sumber.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
