@@ -41,6 +41,7 @@ export async function tambahTransaksi(data: FormData) {
     },
   });
 
+  revalidatePath("/dashboard");
   revalidatePath("/detail");
 }
 
@@ -79,11 +80,13 @@ export async function editTransaksi(id: string, data: FormData) {
     },
   });
 
+  revalidatePath("/dashboard");
   revalidatePath("/detail");
 }
 
 export async function deleteTransaksi(id: string) {
   await prisma.transaksi.delete({ where: { id } });
+  revalidatePath("/dashboard");
   revalidatePath("/detail");
 }
 

@@ -16,15 +16,7 @@ export default function EditButton({
   id: string;
   nama: string;
   type: "sumber" | "tujuan";
-  editFunction: ({
-    id,
-    nama,
-    pathToRevalidate,
-  }: {
-    id: string;
-    nama: string;
-    pathToRevalidate: string;
-  }) => Promise<void>;
+  editFunction: ({ id, nama }: { id: string; nama: string }) => Promise<void>;
 }) {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,7 +46,6 @@ export default function EditButton({
           editFunction({
             id,
             nama: newEditName,
-            pathToRevalidate: "/detail/sumber-tujuan",
           });
           notifications.show({
             title: "Sukses",

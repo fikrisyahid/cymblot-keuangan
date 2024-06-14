@@ -12,13 +12,7 @@ export default function AddForm({
   addFunction,
 }: {
   type: "sumber" | "tujuan";
-  addFunction: ({
-    formData,
-    pathToRevalidate,
-  }: {
-    formData: FormData;
-    pathToRevalidate: string;
-  }) => Promise<void>;
+  addFunction: ({ formData }: { formData: FormData }) => Promise<void>;
 }) {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,10 +32,7 @@ export default function AddForm({
           formData.set(type, nama);
 
           try {
-            addFunction({
-              formData,
-              pathToRevalidate: "/detail/sumber-tujuan",
-            });
+            addFunction({ formData });
             if (inputRef.current) {
               inputRef.current.value = "";
             }

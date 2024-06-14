@@ -4,13 +4,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import prisma from "../db/init";
 import { revalidatePath } from "next/cache";
 
-export async function addTujuan({
-  formData,
-  pathToRevalidate,
-}: {
-  formData: FormData;
-  pathToRevalidate: string;
-}) {
+export async function addTujuan({ formData }: { formData: FormData }) {
   const user = await currentUser();
   if (user) {
     const { emailAddress: email } = user.emailAddresses[0];
@@ -24,38 +18,27 @@ export async function addTujuan({
         },
       });
 
-      revalidatePath(pathToRevalidate);
+      revalidatePath("/detail");
+      revalidatePath("/detail/sumber-tujuan");
     }
   }
 }
 
-export async function editTujuan({
-  id,
-  nama,
-  pathToRevalidate,
-}: {
-  id: string;
-  nama: string;
-  pathToRevalidate: string;
-}) {
+export async function editTujuan({ id, nama }: { id: string; nama: string }) {
   await prisma.tujuan.update({
     where: { id },
     data: { nama },
   });
 
-  revalidatePath(pathToRevalidate);
+  revalidatePath("/detail");
+  revalidatePath("/detail/sumber-tujuan");
 }
 
-export async function deleteTujuan({
-  id,
-  pathToRevalidate,
-}: {
-  id: string;
-  pathToRevalidate: string;
-}) {
+export async function deleteTujuan({ id }: { id: string }) {
   await prisma.tujuan.delete({
     where: { id },
   });
 
-  revalidatePath(pathToRevalidate);
+  revalidatePath("/detail");
+  revalidatePath("/detail/sumber-tujuan");
 }

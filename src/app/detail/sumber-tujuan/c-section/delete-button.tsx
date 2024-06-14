@@ -14,13 +14,7 @@ export default function DeleteButton({
 }: {
   id: string;
   type: "sumber" | "tujuan";
-  deleteFunction: ({
-    id,
-    pathToRevalidate,
-  }: {
-    id: string;
-    pathToRevalidate: string;
-  }) => Promise<void>;
+  deleteFunction: ({ id }: { id: string }) => Promise<void>;
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -41,7 +35,7 @@ export default function DeleteButton({
       onConfirm: async () => {
         setLoading(true);
         try {
-          deleteFunction({ id, pathToRevalidate: "/detail/sumber-tujuan" });
+          deleteFunction({ id });
           notifications.show({
             title: "Sukses",
             message: `${stringCapitalize(type)} berhasil dihapus`,
