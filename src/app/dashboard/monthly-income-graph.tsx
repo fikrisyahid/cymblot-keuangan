@@ -90,7 +90,7 @@ export default function MonthlyIncomeGraph({
             {title}
           </Text>
           <Text>Total Pemasukan:</Text>
-          <Badge color="lime" variant="filled">
+          <Badge color="teal" variant="filled">
             {stringToRupiah(totalPemasukan.toString())}
           </Badge>
         </Stack>

@@ -1,5 +1,5 @@
 import { User } from "@clerk/nextjs/server";
-import { Alert, Button, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Button, Stack, Text, Title } from "@mantine/core";
 import { TEXT_COLOR } from "@/config";
 import MainCard from "../../components/main-card";
 import {
@@ -11,14 +11,16 @@ import {
 import stringToRupiah from "@/utils/string-to-rupiah";
 import DataCard from "@/components/data-card";
 import Link from "next/link";
-import { ITransaksi } from "@/types/db";
+import { IBanks, ITransaksi } from "@/types/db";
 
 export default async function Welcome({
   user,
   transaksiUser,
+  daftarBank,
 }: {
   user: User;
   transaksiUser: ITransaksi[];
+  daftarBank: IBanks[];
 }) {
   const totalSaldo = transaksiUser.reduce(
     (acc, cur) =>
@@ -41,6 +43,17 @@ export default async function Welcome({
         acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
       0
     );
+
+  const totalSaldoBankDetail: any = {};
+  daftarBank.forEach((item) => {
+    totalSaldoBankDetail[item.nama] = transaksiUser
+      .filter((transaksi) => transaksi.bankName?.id === item.id)
+      .reduce(
+        (acc, cur) =>
+          acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
+        0
+      );
+  });
 
   return (
     <>
@@ -76,6 +89,16 @@ export default async function Welcome({
         >
           <IconCash style={{ height: "100%", width: "20%" }} />
         </DataCard>
+      </MainCard>
+      <MainCard transparent noPadding>
+        {daftarBank.map((item) => (
+          <Stack key={item.id} gap={0}>
+            <Text>Saldo Bank {item.nama}</Text>
+            <Badge color={totalSaldoBankDetail[item.nama] > 0 ? "teal" : "red"}>
+              {stringToRupiah(totalSaldoBankDetail[item.nama].toString())}
+            </Badge>
+          </Stack>
+        ))}
       </MainCard>
       {transaksiUser.length === 0 && (
         <Alert
