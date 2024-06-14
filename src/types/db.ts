@@ -24,4 +24,12 @@ interface ITransaksi {
   updatedAt: Date;
 }
 
-export type { ITujuanSumber, ITransaksi };
+interface IBanks {
+  id: string;
+  email: string;
+  nama: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type { ITujuanSumber, ITransaksi, IBanks };

@@ -166,6 +166,15 @@ export default function TableSection({
           >
             Daftar sumber & tujuan
           </Button>
+          <Button
+            fullWidth={isMobile}
+            leftSection={<IconList />}
+            style={{ backgroundColor: BUTTON_BASE_COLOR }}
+            component={Link}
+            href="/detail/bank"
+          >
+            Daftar Bank
+          </Button>
         </Flex>
       </MainCard>
       <Input
