@@ -120,14 +120,19 @@ export default function MainBarChart({
           </MainCard>
         </Stack>
       </Spoiler>
-      {filteredData.length === 0 && <Text style={{alignSelf: "center"}}>Tidak ada data yang sesuai</Text>}
-      <BarChart
-        h={400}
-        data={chartData}
-        dataKey={dataKey}
-        series={series}
-        tickLine="y"
-      />
+      {filteredData.length === 0 ? (
+        <Text style={{ alignSelf: "center" }}>
+          Tidak ada data keuangan yang sesuai di periode dan filter ini
+        </Text>
+      ) : (
+        <BarChart
+          h={400}
+          data={chartData}
+          dataKey={dataKey}
+          series={series}
+          tickLine="y"
+        />
+      )}
     </Stack>
   );
 }
