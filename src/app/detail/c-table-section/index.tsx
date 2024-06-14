@@ -22,7 +22,7 @@ import {
   matchPurpose,
   matchSource,
 } from "./filter";
-import { ITujuanSumber } from "@/types/db";
+import { IBanks, ITujuanSumber } from "@/types/db";
 import { IFilterDetailTable, ITableData } from "../types";
 
 const PAGE_SIZES = [10, 15, 25, 50, 75, 100];
@@ -31,11 +31,13 @@ export default function TableSection({
   data,
   daftarSumber,
   daftarTujuan,
+  daftarBank,
   oldestDate,
 }: {
   data: ITableData[];
   daftarSumber: ITujuanSumber[];
   daftarTujuan: ITujuanSumber[];
+  daftarBank: IBanks[];
   oldestDate: Date;
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -52,7 +54,7 @@ export default function TableSection({
     nominal_di_bawah: 0,
     nominal_di_atas: 0,
     nominal_sama_dengan: 0,
-    bank: "SEMUA",
+    bank: [],
   });
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<any>>({
     columnAccessor: "no",
@@ -134,7 +136,7 @@ export default function TableSection({
                 nominal_di_bawah: 0,
                 nominal_di_atas: 0,
                 nominal_sama_dengan: 0,
-                bank: "SEMUA",
+                bank: [],
               })
             }
           >
@@ -192,6 +194,7 @@ export default function TableSection({
           handleChangeFilter,
           daftarSumber,
           daftarTujuan,
+          daftarBank,
           oldestDate,
         })}
         totalRecords={filteredData.length}

@@ -1,29 +1,45 @@
 import { Checkbox, Flex } from "@mantine/core";
 import { IFilterDetailTable } from "../../types";
+import { IBanks } from "@/types/db";
 
 export default function FilterBank({
   filter,
   handleChangeFilter,
+  daftarBank,
 }: {
   filter: IFilterDetailTable;
   handleChangeFilter: (newObj: Partial<IFilterDetailTable>) => void;
+  daftarBank: IBanks[];
 }) {
-  const filterBankConfiguration = ["SEMUA", "BANK", "CASH"];
-
   return (
     <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
-      {filterBankConfiguration.map((option) => (
+      {daftarBank.map((item) => (
         <Checkbox
-          key={option}
-          label={option}
-          checked={filter.bank === option}
+          key={item.id}
+          label={item.nama}
+          checked={filter.bank.includes(item.nama)}
+          disabled={filter.sumber.length > 0}
           onChange={(e) =>
             handleChangeFilter({
-              bank: e.currentTarget.checked ? option : "SEMUA",
+              bank: e.currentTarget.checked
+                ? [...filter.bank, item.nama]
+                : filter.bank.filter((x: string) => x !== item.nama),
             })
           }
         />
       ))}
+      <Checkbox
+        label="Cash"
+        checked={filter.bank.includes("Cash")}
+        disabled={filter.sumber.length > 0}
+        onChange={(e) =>
+          handleChangeFilter({
+            bank: e.currentTarget.checked
+              ? [...filter.bank, "Cash"]
+              : filter.bank.filter((x: string) => x !== "Cash"),
+          })
+        }
+      />
     </Flex>
   );
 }

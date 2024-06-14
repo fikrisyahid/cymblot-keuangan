@@ -1,14 +1,15 @@
-import { BUTTON_BASE_COLOR } from "@/config";
-import { Alert, Button } from "@mantine/core";
+import { Alert, Button, Stack } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 import Link from "next/link";
 
 export default function CustomAlert({
   message,
   buttonString,
+  href,
 }: {
   message: string;
   buttonString: string;
+  href: string;
 }) {
   return (
     <>
@@ -19,15 +20,17 @@ export default function CustomAlert({
         icon={<IconInfoCircle />}
         p="xs"
       >
-        {message}
+        <Stack align="start">
+          {message}
+          <Button
+            component={Link}
+            href={href}
+            color="teal"
+          >
+            {buttonString}
+          </Button>
+        </Stack>
       </Alert>
-      <Button
-        component={Link}
-        href="/detail/sumber-tujuan"
-        style={{ backgroundColor: BUTTON_BASE_COLOR }}
-      >
-        {buttonString}
-      </Button>
     </>
   );
 }

@@ -20,6 +20,7 @@ interface ITransaksi {
   tujuan: ITujuanSumber | null;
   nominal: number;
   bank: boolean;
+  bankName: IBanks | null;
   createdAt: Date;
   updatedAt: Date;
 }

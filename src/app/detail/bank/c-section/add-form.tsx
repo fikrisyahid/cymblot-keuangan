@@ -63,7 +63,6 @@ export default function AddForm({
       <Flex gap="sm" align="center">
         <Input
           ref={inputRef}
-          name="bank"
           type="text"
           placeholder="Tambahkan bank baru"
           style={{ width: "100%" }}

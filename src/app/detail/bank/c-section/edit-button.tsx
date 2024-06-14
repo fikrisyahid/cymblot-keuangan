@@ -5,7 +5,6 @@ import { IconEdit } from "@tabler/icons-react";
 import { useRef, useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { openConfirmModal } from "@mantine/modals";
-import stringCapitalize from "@/utils/string-capitalize";
 
 export default function EditButton({
   id,

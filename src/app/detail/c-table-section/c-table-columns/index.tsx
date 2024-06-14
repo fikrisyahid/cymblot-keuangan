@@ -10,7 +10,7 @@ import FilterBalance from "./filter-balance";
 import FilterBank from "./filter-bank";
 import FilterType from "./filter-type";
 import DeleteDataKeuanganButton from "../delete-data-keuangan-button";
-import { ITujuanSumber } from "@/types/db";
+import { IBanks, ITujuanSumber } from "@/types/db";
 import { IFilterDetailTable } from "../../types";
 import EditDataKeuanganButton from "../edit-data-keuangan-button";
 
@@ -19,12 +19,14 @@ export default function generateDetailTableColumns({
   handleChangeFilter,
   daftarSumber,
   daftarTujuan,
+  daftarBank,
   oldestDate,
 }: {
   filter: IFilterDetailTable;
   handleChangeFilter: (newObj: Partial<IFilterDetailTable>) => void;
   daftarSumber: ITujuanSumber[];
   daftarTujuan: ITujuanSumber[];
+  daftarBank: IBanks[];
   oldestDate: Date;
 }): DataTableColumn<any>[] {
   const renderTanggal = ({ tanggal }: { tanggal: Date }) => (
@@ -34,7 +36,7 @@ export default function generateDetailTableColumns({
   );
 
   const renderKeterangan = ({ keterangan }: { keterangan: string }) => (
-    <Text style={{whiteSpace: "pre-wrap"}}>{keterangan}</Text>
+    <Text style={{ whiteSpace: "pre-wrap" }}>{keterangan}</Text>
   );
 
   const renderJenis = ({ jenis }: { jenis: string }) => (
@@ -45,9 +47,7 @@ export default function generateDetailTableColumns({
     <Text>{stringToRupiah(nominal.toString())}</Text>
   );
 
-  const renderBank = ({ bank }: { bank: string }) => (
-    <Text>{bank ? "Ya" : "Tidak"}</Text>
-  );
+  const renderBank = ({ bank }: { bank: string }) => <Text>{bank}</Text>;
 
   const renderAction = ({ id }: { id: string }) => (
     <Flex gap="sm">
@@ -127,7 +127,11 @@ export default function generateDetailTableColumns({
       sortable: true,
       render: renderBank,
       filter: (
-        <FilterBank filter={filter} handleChangeFilter={handleChangeFilter} />
+        <FilterBank
+          filter={filter}
+          handleChangeFilter={handleChangeFilter}
+          daftarBank={daftarBank}
+        />
       ),
     },
     {

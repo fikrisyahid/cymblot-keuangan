@@ -24,7 +24,7 @@ import { IconCalendar } from "@tabler/icons-react";
 import { openConfirmModal } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next-nprogress-bar";
-import { ITujuanSumber } from "@/types/db";
+import { IBanks, ITujuanSumber } from "@/types/db";
 import CustomAlert from "./custom-alert";
 
 interface IInitialFormData extends ITransaksiFormState {
@@ -35,12 +35,14 @@ export default function AddEditDataKeuanganForm({
   email,
   daftarSumber,
   daftarTujuan,
+  daftarBank,
   initialFormData,
   isEdit,
 }: {
   email: string;
   daftarSumber: ITujuanSumber[];
   daftarTujuan: ITujuanSumber[];
+  daftarBank: IBanks[];
   initialFormData?: IInitialFormData;
   isEdit?: boolean;
 }) {
@@ -54,6 +56,7 @@ export default function AddEditDataKeuanganForm({
     tujuanId: initialFormData?.tujuanId || "",
     nominal: initialFormData?.nominal || 0,
     bank: initialFormData?.bank || false,
+    namaBankId: initialFormData?.namaBankId || "",
   });
   const [errors, setErrors] = useState<any>({});
 
@@ -71,6 +74,8 @@ export default function AddEditDataKeuanganForm({
       newErrors.tujuanId = "Tujuan harus dipilih";
     if (formState.nominal <= 0)
       newErrors.nominal = "Nominal harus lebih dari 0";
+    if (formState.bank && !formState.namaBankId)
+      newErrors.namaBankId = "Nama bank harus diisi";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -206,6 +211,7 @@ export default function AddEditDataKeuanganForm({
           (daftarTujuan.length === 0 && formState.jenis === "PENGELUARAN")) && (
           <>
             <CustomAlert
+              href="/detail/sumber-tujuan"
               buttonString={
                 formState.jenis === "PEMASUKAN"
                   ? "Tambah sumber"
@@ -234,6 +240,28 @@ export default function AddEditDataKeuanganForm({
           checked={formState.bank}
           onChange={(e) => handleChange({ bank: e.currentTarget.checked })}
         />
+        {formState.bank && (
+          <Select
+            label="Nama Bank"
+            placeholder="Pilih nama bank"
+            data={daftarBank.map((bank) => ({
+              value: bank.id,
+              label: bank.nama,
+            }))}
+            value={formState.namaBankId}
+            onChange={(value) => handleChange({ namaBankId: value as string })}
+            error={errors.namaBankId}
+            required
+            disabled={daftarBank.length === 0}
+          />
+        )}
+        {daftarBank.length === 0 && formState.bank && (
+          <CustomAlert
+            buttonString="Tambah Bank"
+            message="Kamu belum memiliki Bank keuangan. Silakan tambahkan bank."
+            href="/detail/bank"
+          />
+        )}
         <Button type="submit" style={{ backgroundColor: BUTTON_BASE_COLOR }}>
           Submit
         </Button>

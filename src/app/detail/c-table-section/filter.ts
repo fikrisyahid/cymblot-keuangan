@@ -48,7 +48,8 @@ const matchInformation = ({
   filter: IFilterDetailTable;
 }) => item.keterangan.toLowerCase().includes(filter.keterangan.toLowerCase());
 
-const matchTypeIgnore = (filter: IFilterDetailTable) => filter.jenis === "SEMUA";
+const matchTypeIgnore = (filter: IFilterDetailTable) =>
+  filter.jenis === "SEMUA";
 const matchType = ({
   item,
   filter,
@@ -95,17 +96,15 @@ const matchBalance = ({
     (filter.nominal_sama_dengan === 0 ||
       item.nominal === filter.nominal_sama_dengan));
 
-const matchBankIgnore = (filter: IFilterDetailTable) => filter.bank === "SEMUA";
+const matchBankIgnore = (filter: IFilterDetailTable) =>
+  filter.bank.length === 0;
 const matchBank = ({
   item,
   filter,
 }: {
   item: ITableData;
   filter: IFilterDetailTable;
-}) =>
-  matchBankIgnore(filter) ||
-  (filter.bank === "BANK" && item.bank) ||
-  (filter.bank === "CASH" && !item.bank);
+}) => matchBankIgnore(filter) || filter.bank.includes(item.bank);
 
 export {
   matchGeneralSearch,

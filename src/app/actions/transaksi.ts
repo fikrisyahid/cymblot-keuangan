@@ -14,6 +14,7 @@ export async function tambahTransaksi(data: FormData) {
   const tujuanId = data.get("tujuanId") as string;
   const nominal = parseInt(data.get("nominal") as string, 10);
   const bank = data.get("bank") === "true";
+  const namaBankId = data.get("namaBankId") as string;
 
   // Validasi
   if (!email || !tanggal || !keterangan || !jenis || nominal <= 0) {
@@ -38,6 +39,7 @@ export async function tambahTransaksi(data: FormData) {
       tujuanId: jenis === "PENGELUARAN" ? tujuanId : null,
       nominal,
       bank,
+      bankNameId: bank ? namaBankId : null,
     },
   });
 
@@ -53,6 +55,7 @@ export async function editTransaksi(id: string, data: FormData) {
   const tujuanId = data.get("tujuanId") as string;
   const nominal = parseInt(data.get("nominal") as string, 10);
   const bank = data.get("bank") === "true";
+  const namaBankId = data.get("namaBankId") as string;
 
   // Validasi
   if (!tanggal || !keterangan || !jenis || nominal <= 0) {
@@ -77,6 +80,7 @@ export async function editTransaksi(id: string, data: FormData) {
       tujuanId: jenis === "PENGELUARAN" ? tujuanId : null,
       nominal,
       bank,
+      bankNameId: bank ? namaBankId : null,
     },
   });
 
@@ -99,4 +103,5 @@ export interface ITransaksiFormState {
   tujuanId: string;
   nominal: number;
   bank: boolean;
+  namaBankId: string;
 }

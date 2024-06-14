@@ -8,12 +8,13 @@ import prisma from "@/app/db/init";
 import AddEditDataKeuanganForm from "../c-add-edit-data-keuangan-form";
 
 async function getUserSumberTujuan(email: string) {
-  const [daftarSumber, daftarTujuan] = await Promise.all([
+  const [daftarSumber, daftarTujuan, daftarBank] = await Promise.all([
     prisma.sumber.findMany({ where: { email } }),
     prisma.tujuan.findMany({ where: { email } }),
+    prisma.banks.findMany({ where: { email } }),
   ]);
 
-  return { daftarSumber, daftarTujuan };
+  return { daftarSumber, daftarTujuan, daftarBank };
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
@@ -24,7 +25,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     return <p>Anda harus login terlebih dahulu</p>;
   }
 
-  const { daftarSumber, daftarTujuan } = await getUserSumberTujuan(email);
+  const { daftarSumber, daftarTujuan, daftarBank } = await getUserSumberTujuan(email);
 
   const { id } = params;
   const dataKeuangan = await prisma.transaksi.findUnique({
@@ -55,6 +56,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         email={email}
         daftarSumber={daftarSumber}
         daftarTujuan={daftarTujuan}
+        daftarBank={daftarBank}
         initialFormData={{
           email,
           id: dataKeuangan.id,
@@ -65,6 +67,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           tujuanId: dataKeuangan.tujuanId || "",
           nominal: dataKeuangan.nominal,
           bank: dataKeuangan.bank,
+          namaBankId: dataKeuangan.bankNameId || "",
         }}
       />
     </MainCard>

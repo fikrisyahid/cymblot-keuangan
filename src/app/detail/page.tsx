@@ -5,22 +5,24 @@ import MainCard from "@/components/main-card";
 import { Title } from "@mantine/core";
 import { TEXT_COLOR } from "@/config";
 import dayjs from "dayjs";
+import { ITransaksi } from "@/types/db";
 
 async function getUserTransactions(email: string) {
-  const [transaksiUser, daftarSumber, daftarTujuan] = await Promise.all([
+  const [transaksiUser, daftarSumber, daftarTujuan, daftarBank] = await Promise.all([
     prisma.transaksi.findMany({
       where: { email },
-      include: { sumber: true, tujuan: true },
+      include: { sumber: true, tujuan: true, bankName: true },
       orderBy: { tanggal: "desc" },
     }),
     prisma.sumber.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
     prisma.tujuan.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
+    prisma.banks.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
   ]);
 
-  return { transaksiUser, daftarSumber, daftarTujuan };
+  return { transaksiUser, daftarSumber, daftarTujuan, daftarBank };
 }
 
-function mapTransactionsToTableData(transaksiUser: any[]) {
+function mapTransactionsToTableData(transaksiUser: ITransaksi[]) {
   return transaksiUser.map((transaksi, index) => ({
     id: transaksi.id,
     no: index + 1,
@@ -30,7 +32,7 @@ function mapTransactionsToTableData(transaksiUser: any[]) {
     sumber: transaksi.sumber?.nama || "-",
     tujuan: transaksi.tujuan?.nama || "-",
     nominal: transaksi.nominal,
-    bank: transaksi.bank,
+    bank: transaksi.bank && transaksi.bankName?.nama || "Cash",
   }));
 }
 
@@ -42,7 +44,7 @@ export default async function Page() {
     return <div>User not found</div>;
   }
 
-  const { transaksiUser, daftarSumber, daftarTujuan } =
+  const { transaksiUser, daftarSumber, daftarTujuan, daftarBank } =
     await getUserTransactions(email);
 
   const dataForTable = mapTransactionsToTableData(transaksiUser);
@@ -61,6 +63,7 @@ export default async function Page() {
         data={dataForTable}
         daftarSumber={daftarSumber}
         daftarTujuan={daftarTujuan}
+        daftarBank={daftarBank}
         oldestDate={oldestDate}
       />
     </MainCard>
