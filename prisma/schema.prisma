@@ -18,6 +18,25 @@ enum JENIS_TRANSAKSI {
   PENGELUARAN
 }
 
+model Banks {
+  id        String      @id @default(cuid())
+  email     String
+  nama      String
+  saldo     Int         @default(0)
+  Transaksi Transaksi[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Notes {
+  id        String   @id @default(cuid())
+  email     String
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Sumber {
   id        String      @id @default(cuid())
   email     String
@@ -48,6 +67,8 @@ model Transaksi {
   tujuanId   String?
   nominal    Int             @default(0)
   bank       Boolean         @default(false)
+  bankNameId String?
+  bankName   Banks?          @relation(fields: [bankNameId], references: [id])
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
 }
