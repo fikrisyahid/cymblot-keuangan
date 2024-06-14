@@ -22,7 +22,6 @@ model Banks {
   id        String      @id @default(cuid())
   email     String
   nama      String
-  saldo     Int         @default(0)
   Transaksi Transaksi[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
