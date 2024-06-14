@@ -14,8 +14,22 @@ export default function TableSection({
 }: {
   data: ITujuanSumber[];
   type: "sumber" | "tujuan";
-  deleteFunction: (id: string) => Promise<void>;
-  editFunction: ({ id, nama }: { id: string; nama: string }) => Promise<void>;
+  deleteFunction: ({
+    id,
+    pathToRevalidate,
+  }: {
+    id: string;
+    pathToRevalidate: string;
+  }) => Promise<void>;
+  editFunction: ({
+    id,
+    nama,
+    pathToRevalidate,
+  }: {
+    id: string;
+    nama: string;
+    pathToRevalidate: string;
+  }) => Promise<void>;
 }) {
   return (
     <DataTable

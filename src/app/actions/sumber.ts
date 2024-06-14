@@ -4,7 +4,13 @@ import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import prisma from "../db/init";
 
-export async function addSumber(formData: FormData) {
+export async function addSumber({
+  formData,
+  pathToRevalidate,
+}: {
+  formData: FormData;
+  pathToRevalidate: string;
+}) {
   const user = await currentUser();
   if (user) {
     const { emailAddress: email } = user.emailAddresses[0];
@@ -18,24 +24,38 @@ export async function addSumber(formData: FormData) {
         },
       });
 
-      revalidatePath("/detail/sumber-tujuan");
+      revalidatePath(pathToRevalidate);
     }
   }
 }
 
-export async function editSumber({ id, nama }: { id: string; nama: string }) {
+export async function editSumber({
+  id,
+  nama,
+  pathToRevalidate,
+}: {
+  id: string;
+  nama: string;
+  pathToRevalidate: string;
+}) {
   await prisma.sumber.update({
     where: { id },
     data: { nama },
   });
 
-  revalidatePath("/detail/sumber-tujuan");
+  revalidatePath(pathToRevalidate);
 }
 
-export async function deleteSumber(id: string) {
+export async function deleteSumber({
+  id,
+  pathToRevalidate,
+}: {
+  id: string;
+  pathToRevalidate: string;
+}) {
   await prisma.sumber.delete({
     where: { id },
   });
 
-  revalidatePath("/detail/sumber-tujuan");
+  revalidatePath(pathToRevalidate);
 }
