@@ -19,7 +19,7 @@ export async function addSumber({ formData }: { formData: FormData }) {
       });
 
       revalidatePath("/detail");
-      revalidatePath("/detail/sumber-tujuan");
+      revalidatePath("/sumber-tujuan");
     }
   }
 }
@@ -31,7 +31,7 @@ export async function editSumber({ id, nama }: { id: string; nama: string }) {
   });
 
   revalidatePath("/detail");
-  revalidatePath("/detail/sumber-tujuan");
+  revalidatePath("/sumber-tujuan");
 }
 
 export async function deleteSumber({ id }: { id: string }) {
@@ -40,5 +40,5 @@ export async function deleteSumber({ id }: { id: string }) {
   });
 
   revalidatePath("/detail");
-  revalidatePath("/detail/sumber-tujuan");
+  revalidatePath("/sumber-tujuan");
 }

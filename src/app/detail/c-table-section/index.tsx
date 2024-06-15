@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import sortBy from "lodash/sortBy";
 import { Badge, Button, Flex, Input, Text } from "@mantine/core";
 import stringToRupiah from "@/utils/string-to-rupiah";
-import { IconList, IconPlus, IconRestore } from "@tabler/icons-react";
+import { IconCash, IconPlus, IconRestore } from "@tabler/icons-react";
 import "dayjs/locale/id";
 import { BUTTON_BASE_COLOR, TEXT_COLOR } from "@/config";
 import { useDebouncedState, useMediaQuery } from "@mantine/hooks";
@@ -161,21 +161,12 @@ export default function TableSection({
           </Button>
           <Button
             fullWidth={isMobile}
-            leftSection={<IconList />}
+            leftSection={<IconCash />}
             style={{ backgroundColor: BUTTON_BASE_COLOR }}
             component={Link}
-            href="/detail/sumber-tujuan"
+            href="/detail/tambah"
           >
-            Daftar sumber & tujuan
-          </Button>
-          <Button
-            fullWidth={isMobile}
-            leftSection={<IconList />}
-            style={{ backgroundColor: BUTTON_BASE_COLOR }}
-            component={Link}
-            href="/detail/bank"
-          >
-            Daftar Bank
+            Penarikan & Penyetoran
           </Button>
         </Flex>
       </MainCard>

@@ -28,7 +28,7 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
       layout="alt"
       padding="md"
       navbar={{
-        width: 200,
+        width: 250,
         breakpoint: "sm",
         collapsed: { mobile: !opened, desktop: !opened },
       }}

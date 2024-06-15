@@ -19,7 +19,8 @@ export async function addTujuan({ formData }: { formData: FormData }) {
       });
 
       revalidatePath("/detail");
-      revalidatePath("/detail/sumber-tujuan");
+      revalidatePath("/sumber-tujuan");
+      revalidatePath("/dashboard");
     }
   }
 }
@@ -31,7 +32,8 @@ export async function editTujuan({ id, nama }: { id: string; nama: string }) {
   });
 
   revalidatePath("/detail");
-  revalidatePath("/detail/sumber-tujuan");
+  revalidatePath("/sumber-tujuan");
+  revalidatePath("/dashboard");
 }
 
 export async function deleteTujuan({ id }: { id: string }) {
@@ -40,5 +42,6 @@ export async function deleteTujuan({ id }: { id: string }) {
   });
 
   revalidatePath("/detail");
-  revalidatePath("/detail/sumber-tujuan");
+  revalidatePath("/sumber-tujuan");
+  revalidatePath("/dashboard");
 }

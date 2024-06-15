@@ -19,7 +19,8 @@ export async function addBank({ formData }: { formData: FormData }) {
       });
 
       revalidatePath("/detail");
-      revalidatePath("/detail/bank");
+      revalidatePath("/bank");
+      revalidatePath("/dashboard");
     }
   }
 }
@@ -31,7 +32,8 @@ export async function editBank({ id, nama }: { id: string; nama: string }) {
   });
 
   revalidatePath("/detail");
-  revalidatePath("/detail/bank");
+  revalidatePath("/bank");
+  revalidatePath("/dashboard");
 }
 
 export async function deleteBank({ id }: { id: string }) {
@@ -40,5 +42,6 @@ export async function deleteBank({ id }: { id: string }) {
   });
 
   revalidatePath("/detail");
-  revalidatePath("/detail/bank");
+  revalidatePath("/bank");
+  revalidatePath("/dashboard");
 }

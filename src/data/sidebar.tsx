@@ -1,7 +1,9 @@
 import {
+  IconBuildingBank,
   IconChartHistogram,
   IconDashboard,
   IconTable,
+  IconTargetArrow,
 } from "@tabler/icons-react";
 
 const sidebarMenu = [
@@ -19,6 +21,16 @@ const sidebarMenu = [
     title: "Detail",
     icon: <IconTable />,
     route: "/detail",
+  },
+  {
+    title: "Sumber & Tujuan",
+    icon: <IconTargetArrow />,
+    route: "/sumber-tujuan",
+  },
+  {
+    title: "Bank",
+    icon: <IconBuildingBank />,
+    route: "/bank",
   },
 ];
 

@@ -211,7 +211,7 @@ export default function AddEditDataKeuanganForm({
           (daftarTujuan.length === 0 && formState.jenis === "PENGELUARAN")) && (
           <>
             <CustomAlert
-              href="/detail/sumber-tujuan"
+              href="/sumber-tujuan"
               buttonString={
                 formState.jenis === "PEMASUKAN"
                   ? "Tambah sumber"
@@ -259,7 +259,7 @@ export default function AddEditDataKeuanganForm({
           <CustomAlert
             buttonString="Tambah Bank"
             message="Kamu belum memiliki Bank keuangan. Silakan tambahkan bank."
-            href="/detail/bank"
+            href="/bank"
           />
         )}
         <Button type="submit" style={{ backgroundColor: BUTTON_BASE_COLOR }}>
