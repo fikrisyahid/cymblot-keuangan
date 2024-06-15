@@ -23,14 +23,9 @@ export default async function Welcome({
   transaksiUser: ITransaksi[];
   daftarBank: IBanks[];
 }) {
-  const totalSaldo = transaksiUser.reduce(
-    (acc, cur) =>
-      acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
-    0
-  );
-
   const totalSaldoBank = getBalanceBank(transaksiUser);
   const totalSaldoCash = getBalanceCash(transaksiUser);
+  const totalSaldo = totalSaldoBank + totalSaldoCash;
 
   const totalSaldoBankDetail: any = {};
   daftarBank.forEach((item) => {
