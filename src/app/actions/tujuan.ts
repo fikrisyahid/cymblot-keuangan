@@ -2,7 +2,7 @@
 
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "../db/init";
-import { revalidatePath } from "next/cache";
+import revalidateAllRoute from "./revalidate-all-route";
 
 export async function addTujuan({ formData }: { formData: FormData }) {
   const user = await currentUser();
@@ -18,9 +18,7 @@ export async function addTujuan({ formData }: { formData: FormData }) {
         },
       });
 
-      revalidatePath("/detail");
-      revalidatePath("/sumber-tujuan");
-      revalidatePath("/dashboard");
+      revalidateAllRoute();
     }
   }
 }
@@ -31,9 +29,7 @@ export async function editTujuan({ id, nama }: { id: string; nama: string }) {
     data: { nama },
   });
 
-  revalidatePath("/detail");
-  revalidatePath("/sumber-tujuan");
-  revalidatePath("/dashboard");
+  revalidateAllRoute();
 }
 
 export async function deleteTujuan({ id }: { id: string }) {
@@ -41,7 +37,5 @@ export async function deleteTujuan({ id }: { id: string }) {
     where: { id },
   });
 
-  revalidatePath("/detail");
-  revalidatePath("/sumber-tujuan");
-  revalidatePath("/dashboard");
+  revalidateAllRoute();
 }

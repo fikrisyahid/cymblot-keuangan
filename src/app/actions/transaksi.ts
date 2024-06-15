@@ -3,7 +3,7 @@
 import { JENIS_TRANSAKSI } from "@prisma/client";
 import prisma from "../db/init";
 import { DateValue } from "@mantine/dates";
-import { revalidatePath } from "next/cache";
+import revalidateAllRoute from "./revalidate-all-route";
 
 export async function tambahTransaksi(data: FormData) {
   const email = data.get("email") as string;
@@ -43,8 +43,7 @@ export async function tambahTransaksi(data: FormData) {
     },
   });
 
-  revalidatePath("/dashboard");
-  revalidatePath("/detail");
+  revalidateAllRoute();
 }
 
 export async function editTransaksi(id: string, data: FormData) {
@@ -84,14 +83,12 @@ export async function editTransaksi(id: string, data: FormData) {
     },
   });
 
-  revalidatePath("/dashboard");
-  revalidatePath("/detail");
+  revalidateAllRoute();
 }
 
 export async function deleteTransaksi(id: string) {
   await prisma.transaksi.delete({ where: { id } });
-  revalidatePath("/dashboard");
-  revalidatePath("/detail");
+  revalidateAllRoute();
 }
 
 export interface ITransaksiFormState {

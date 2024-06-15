@@ -2,7 +2,7 @@
 
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "../db/init";
-import { revalidatePath } from "next/cache";
+import revalidateAllRoute from "./revalidate-all-route";
 
 export async function addBank({ formData }: { formData: FormData }) {
   const user = await currentUser();
@@ -18,9 +18,7 @@ export async function addBank({ formData }: { formData: FormData }) {
         },
       });
 
-      revalidatePath("/detail");
-      revalidatePath("/bank");
-      revalidatePath("/dashboard");
+      revalidateAllRoute();
     }
   }
 }
@@ -31,9 +29,7 @@ export async function editBank({ id, nama }: { id: string; nama: string }) {
     data: { nama },
   });
 
-  revalidatePath("/detail");
-  revalidatePath("/bank");
-  revalidatePath("/dashboard");
+  revalidateAllRoute();
 }
 
 export async function deleteBank({ id }: { id: string }) {
@@ -41,7 +37,5 @@ export async function deleteBank({ id }: { id: string }) {
     where: { id },
   });
 
-  revalidatePath("/detail");
-  revalidatePath("/bank");
-  revalidatePath("/dashboard");
+  revalidateAllRoute();
 }

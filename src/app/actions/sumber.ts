@@ -1,8 +1,8 @@
 "use server";
 
 import { currentUser } from "@clerk/nextjs/server";
-import { revalidatePath } from "next/cache";
 import prisma from "../db/init";
+import revalidateAllRoute from "./revalidate-all-route";
 
 export async function addSumber({ formData }: { formData: FormData }) {
   const user = await currentUser();
@@ -18,8 +18,7 @@ export async function addSumber({ formData }: { formData: FormData }) {
         },
       });
 
-      revalidatePath("/detail");
-      revalidatePath("/sumber-tujuan");
+      revalidateAllRoute();
     }
   }
 }
@@ -30,8 +29,7 @@ export async function editSumber({ id, nama }: { id: string; nama: string }) {
     data: { nama },
   });
 
-  revalidatePath("/detail");
-  revalidatePath("/sumber-tujuan");
+  revalidateAllRoute();
 }
 
 export async function deleteSumber({ id }: { id: string }) {
@@ -39,6 +37,5 @@ export async function deleteSumber({ id }: { id: string }) {
     where: { id },
   });
 
-  revalidatePath("/detail");
-  revalidatePath("/sumber-tujuan");
+  revalidateAllRoute();
 }
