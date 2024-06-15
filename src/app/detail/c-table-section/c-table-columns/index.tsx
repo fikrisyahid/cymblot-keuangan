@@ -40,7 +40,17 @@ export default function generateDetailTableColumns({
   );
 
   const renderJenis = ({ jenis }: { jenis: string }) => (
-    <Badge color={jenis === "PEMASUKAN" ? "teal" : "pink"}>{jenis}</Badge>
+    <Badge
+      color={
+        jenis === "PEMASUKAN"
+          ? "teal"
+          : jenis === "PENARIKAN" || jenis === "PENYETORAN"
+          ? "violet"
+          : "pink"
+      }
+    >
+      {jenis}
+    </Badge>
   );
 
   const renderNominal = ({ nominal }: { nominal: number }) => (
@@ -123,6 +133,7 @@ export default function generateDetailTableColumns({
       ),
     },
     {
+      title: "Penyimpanan",
       accessor: "bank",
       sortable: true,
       render: renderBank,
