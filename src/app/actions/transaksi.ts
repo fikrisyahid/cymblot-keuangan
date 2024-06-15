@@ -4,6 +4,8 @@ import { JENIS_TRANSAKSI } from "@prisma/client";
 import prisma from "../db/init";
 import { DateValue } from "@mantine/dates";
 import revalidateAllRoute from "./revalidate-all-route";
+import { currentUser } from "@clerk/nextjs/server";
+import stringToRupiah from "@/utils/string-to-rupiah";
 
 export async function tambahTransaksi(data: FormData) {
   const email = data.get("email") as string;
@@ -89,6 +91,52 @@ export async function editTransaksi(id: string, data: FormData) {
 export async function deleteTransaksi(id: string) {
   await prisma.transaksi.delete({ where: { id } });
   revalidateAllRoute();
+}
+
+export async function penarikanPenyetoran(formData: FormData) {
+  const user = await currentUser();
+  const email = user?.emailAddresses[0].emailAddress;
+
+  if (!email) {
+    throw new Error("Anda belum login");
+  }
+
+  const nominal = parseInt(formData.get("nominal") as string, 10);
+  const mode = formData.get("mode") as "PENYETORAN" | "PENARIKAN";
+  const bankNameId = formData.get("bankNameId") as string;
+  const bankName = formData.get("bankName") as string;
+
+  if (mode === "PENARIKAN") {
+    await prisma.transaksi.create({
+      data: {
+        email,
+        tanggal: new Date(),
+        keterangan: `Penarikan uang sebesar ${stringToRupiah(
+          nominal.toString()
+        )} dari ${bankName}`,
+        jenis: "PENARIKAN",
+        nominal,
+        bank: true,
+        bankNameId,
+      },
+    });
+  }
+
+  if (mode === "PENYETORAN") {
+    await prisma.transaksi.create({
+      data: {
+        email,
+        tanggal: new Date(),
+        keterangan: `Penyetoran uang sebesar ${stringToRupiah(
+          nominal.toString()
+        )} ke ${bankName}`,
+        jenis: "PENYETORAN",
+        nominal,
+        bank: true,
+        bankNameId,
+      },
+    });
+  }
 }
 
 export interface ITransaksiFormState {
