@@ -164,7 +164,7 @@ export default function TableSection({
             leftSection={<IconCash />}
             style={{ backgroundColor: BUTTON_BASE_COLOR }}
             component={Link}
-            href="/detail/tambah"
+            href="/detail/penarikan-penyetoran"
           >
             Penarikan & Penyetoran
           </Button>

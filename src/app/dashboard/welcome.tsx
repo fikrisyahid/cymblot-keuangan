@@ -28,31 +28,61 @@ export default async function Welcome({
     0
   );
 
-  const totalSaldoBank = transaksiUser
-    .filter((item) => item.bank)
-    .reduce(
-      (acc, cur) =>
-        acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
-      0
-    );
+  const saldoBank = {
+    add: transaksiUser
+      .filter(
+        (transaksi) =>
+          transaksi.bank &&
+          (transaksi.jenis === "PEMASUKAN" || transaksi.jenis === "PENYETORAN")
+      )
+      .reduce((acc, cur) => acc + cur.nominal, 0),
+    subtract: transaksiUser
+      .filter(
+        (transaksi) =>
+          transaksi.bank &&
+          (transaksi.jenis === "PENGELUARAN" || transaksi.jenis === "PENARIKAN")
+      )
+      .reduce((acc, cur) => acc + cur.nominal, 0),
+  };
 
-  const totalSaldoCash = transaksiUser
-    .filter((item) => !item.bank)
-    .reduce(
-      (acc, cur) =>
-        acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
-      0
-    );
+  const saldoCash = {
+    add: transaksiUser
+      .filter(
+        (transaksi) =>
+          !transaksi.bank || (transaksi.bank && transaksi.jenis === "PENARIKAN")
+      )
+      .reduce((acc, cur) => acc + cur.nominal, 0),
+    subtract: transaksiUser
+      .filter(
+        (transaksi) =>
+          (!transaksi.bank && transaksi.jenis === "PENGELUARAN") ||
+          (transaksi.bank && transaksi.jenis === "PENYETORAN")
+      )
+      .reduce((acc, cur) => acc + cur.nominal, 0),
+  };
+
+  const totalSaldoBank = saldoBank.add - saldoBank.subtract;
+  const totalSaldoCash = saldoCash.add - saldoCash.subtract;
 
   const totalSaldoBankDetail: any = {};
   daftarBank.forEach((item) => {
-    totalSaldoBankDetail[item.nama] = transaksiUser
-      .filter((transaksi) => transaksi.bankName?.id === item.id)
-      .reduce(
-        (acc, cur) =>
-          acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
-        0
-      );
+    const saldoBankAdd = transaksiUser
+      .filter(
+        (transaksi) =>
+          transaksi.bankName?.id === item.id &&
+          transaksi.bank &&
+          (transaksi.jenis === "PEMASUKAN" || transaksi.jenis === "PENYETORAN")
+      )
+      .reduce((acc, cur) => acc + cur.nominal, 0);
+    const saldoBankSubtract = transaksiUser
+      .filter(
+        (transaksi) =>
+          transaksi.bankName?.id === item.id &&
+          transaksi.bank &&
+          (transaksi.jenis === "PENGELUARAN" || transaksi.jenis === "PENARIKAN")
+      )
+      .reduce((acc, cur) => acc + cur.nominal, 0);
+    totalSaldoBankDetail[item.nama] = saldoBankAdd - saldoBankSubtract;
   });
 
   return (

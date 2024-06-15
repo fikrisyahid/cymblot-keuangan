@@ -8,7 +8,7 @@ export default function FilterType({
   filter: IFilterGraph;
   handleChangeFilter: (newObj: Partial<IFilterGraph>) => void;
 }) {
-  const filterTypeConfigurations = ["SEMUA", "PEMASUKAN", "PENGELUARAN"];
+  const filterTypeConfigurations = ["SEMUA", "PEMASUKAN", "PENGELUARAN", "PENARIKAN", "PENYETORAN"];
 
   return (
     <Flex direction="column" gap="sm">

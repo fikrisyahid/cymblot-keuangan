@@ -1,4 +1,5 @@
 import { DateValue } from "@mantine/dates";
+import { JENIS_TRANSAKSI } from "@prisma/client";
 
 interface IFilterDetailTable {
   tanggal_sebelum: DateValue;
@@ -18,7 +19,7 @@ interface ITableData {
   no: number;
   tanggal: Date;
   keterangan: string;
-  jenis: "PEMASUKAN" | "PENGELUARAN";
+  jenis: JENIS_TRANSAKSI;
   sumber: string;
   tujuan: string;
   nominal: number;

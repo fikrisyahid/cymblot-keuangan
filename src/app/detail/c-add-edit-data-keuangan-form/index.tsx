@@ -167,9 +167,14 @@ export default function AddEditDataKeuanganForm({
         <Select
           label="Jenis Transaksi"
           placeholder="Pilih jenis transaksi"
+          disabled={
+            formState.jenis === "PENYETORAN" || formState.jenis === "PENARIKAN"
+          }
           data={[
             { value: "PEMASUKAN", label: "Pemasukan" },
             { value: "PENGELUARAN", label: "Pengeluaran" },
+            { value: "PENARIKAN", label: "Penarikan" },
+            { value: "PENYETORAN", label: "Penyetoran" },
           ]}
           value={formState.jenis}
           onChange={(value) =>
@@ -193,19 +198,21 @@ export default function AddEditDataKeuanganForm({
             disabled={daftarSumber.length === 0}
           />
         ) : (
-          <Select
-            label="Tujuan"
-            placeholder="Pilih tujuan"
-            data={daftarTujuan.map((tujuan) => ({
-              value: tujuan.id,
-              label: tujuan.nama,
-            }))}
-            value={formState.tujuanId}
-            onChange={(value) => handleChange({ tujuanId: value as string })}
-            error={errors.tujuanId}
-            required
-            disabled={daftarTujuan.length === 0}
-          />
+          formState.jenis === "PENGELUARAN" && (
+            <Select
+              label="Tujuan"
+              placeholder="Pilih tujuan"
+              data={daftarTujuan.map((tujuan) => ({
+                value: tujuan.id,
+                label: tujuan.nama,
+              }))}
+              value={formState.tujuanId}
+              onChange={(value) => handleChange({ tujuanId: value as string })}
+              error={errors.tujuanId}
+              required
+              disabled={daftarTujuan.length === 0}
+            />
+          )
         )}
         {((daftarSumber.length === 0 && formState.jenis === "PEMASUKAN") ||
           (daftarTujuan.length === 0 && formState.jenis === "PENGELUARAN")) && (
@@ -236,6 +243,9 @@ export default function AddEditDataKeuanganForm({
           error={errors.nominal}
         />
         <Checkbox
+          disabled={
+            formState.jenis === "PENARIKAN" || formState.jenis === "PENYETORAN"
+          }
           label="Bank"
           checked={formState.bank}
           onChange={(e) => handleChange({ bank: e.currentTarget.checked })}

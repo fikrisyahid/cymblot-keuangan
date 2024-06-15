@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { ITransaksi } from "@/types/db";
 import { IFilterGraph } from "../types";
+import stringCapitalize from "@/utils/string-capitalize";
 
 interface ChartData {
   [key: string]: any;
@@ -19,8 +20,10 @@ const generateChartData = ({
   let series: { name: string; color: string }[] = [];
 
   const colors = {
-    Pemasukan: "violet.6",
-    Pengeluaran: "blue.6",
+    Pemasukan: "teal.6",
+    Pengeluaran: "red.6",
+    Penyetoran: "violet.6",
+    Penarikan: "blue.6",
   };
 
   const generateColor = (index: number, length: number) =>
@@ -39,8 +42,12 @@ const generateChartData = ({
       const date = dayjs(item.tanggal).format("YYYY-MM-DD");
       const dayData = data.find((d) => d.day === date);
       if (dayData) {
-        if (filter.jenis === "SEMUA") {
-          const key = item.jenis === "PEMASUKAN" ? "Pemasukan" : "Pengeluaran";
+        if (
+          filter.jenis === "SEMUA" ||
+          filter.jenis === "PENYETORAN" ||
+          filter.jenis === "PENARIKAN"
+        ) {
+          const key = stringCapitalize(item.jenis);
           dayData[key] = (dayData[key] || 0) + item.nominal;
         } else if (filter.jenis === "PEMASUKAN") {
           const key = item.sumber?.nama;
@@ -65,8 +72,12 @@ const generateChartData = ({
       const hour = dayjs(item.tanggal).hour();
       const hourData = data.find((d) => d.hour === hour);
       if (hourData) {
-        if (filter.jenis === "SEMUA") {
-          const key = item.jenis === "PEMASUKAN" ? "Pemasukan" : "Pengeluaran";
+        if (
+          filter.jenis === "SEMUA" ||
+          filter.jenis === "PENYETORAN" ||
+          filter.jenis === "PENARIKAN"
+        ) {
+          const key = stringCapitalize(item.jenis);
           hourData[key] = (hourData[key] || 0) + item.nominal;
         } else if (filter.jenis === "PEMASUKAN") {
           const key = item.sumber?.nama;
@@ -92,8 +103,12 @@ const generateChartData = ({
       const day = dayjs(item.tanggal).date();
       const dayData = data.find((d) => d.day === day);
       if (dayData) {
-        if (filter.jenis === "SEMUA") {
-          const key = item.jenis === "PEMASUKAN" ? "Pemasukan" : "Pengeluaran";
+        if (
+          filter.jenis === "SEMUA" ||
+          filter.jenis === "PENYETORAN" ||
+          filter.jenis === "PENARIKAN"
+        ) {
+          const key = stringCapitalize(item.jenis);
           dayData[key] = (dayData[key] || 0) + item.nominal;
         } else if (filter.jenis === "PEMASUKAN") {
           const key = item.sumber?.nama;
@@ -111,15 +126,19 @@ const generateChartData = ({
   } else if (filter.mode === "tahun") {
     dataKey = "month";
     data = Array.from({ length: 12 }, (_, i) => ({
-      month: dayjs().month(i).locale('id').format("MMMM"),
+      month: dayjs().month(i).locale("id").format("MMMM"),
     }));
 
     filteredData.forEach((item) => {
       const month = dayjs(item.tanggal).locale("id").format("MMMM");
       const monthData = data.find((d) => d.month === month);
       if (monthData) {
-        if (filter.jenis === "SEMUA") {
-          const key = item.jenis === "PEMASUKAN" ? "Pemasukan" : "Pengeluaran";
+        if (
+          filter.jenis === "SEMUA" ||
+          filter.jenis === "PENYETORAN" ||
+          filter.jenis === "PENARIKAN"
+        ) {
+          const key = stringCapitalize(item.jenis);
           monthData[key] = (monthData[key] || 0) + item.nominal;
         } else if (filter.jenis === "PEMASUKAN") {
           const key = item.sumber?.nama;
@@ -136,10 +155,16 @@ const generateChartData = ({
     });
   }
 
-  if (filter.jenis === "SEMUA") {
+  if (
+    filter.jenis === "SEMUA" ||
+    filter.jenis === "PENYETORAN" ||
+    filter.jenis === "PENARIKAN"
+  ) {
     series = [
       { name: "Pemasukan", color: colors.Pemasukan },
       { name: "Pengeluaran", color: colors.Pengeluaran },
+      { name: "Penyetoran", color: colors.Penyetoran },
+      { name: "Penarikan", color: colors.Penarikan },
     ];
   } else if (filter.jenis === "PEMASUKAN") {
     const sources = Array.from(

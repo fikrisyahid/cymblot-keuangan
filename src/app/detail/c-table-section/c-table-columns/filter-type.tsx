@@ -8,7 +8,7 @@ export default function FilterType({
   filter: IFilterDetailTable;
   handleChangeFilter: (newObj: Partial<IFilterDetailTable>) => void;
 }) {
-  const filterTypeConfigurations = ["SEMUA", "PEMASUKAN", "PENGELUARAN"];
+  const filterTypeConfigurations = ["SEMUA", "PEMASUKAN", "PENGELUARAN", "PENYETORAN", "PENARIKAN"];
 
   return (
     <Flex direction="column" gap="sm" style={{ maxWidth: "300px" }}>
