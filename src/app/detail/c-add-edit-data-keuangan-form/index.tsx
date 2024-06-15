@@ -15,7 +15,6 @@ import {
   Flex,
   rem,
   Text,
-  Stack,
 } from "@mantine/core";
 import { BUTTON_BASE_COLOR } from "@/config";
 import { JENIS_TRANSAKSI } from "@prisma/client";
@@ -172,10 +171,33 @@ export default function AddEditDataKeuanganForm({
           disabled={isPenyetoranOrPenarikan}
         />
         {isPenyetoranOrPenarikan ? (
-          <Stack gap={0}>
-            <Text fw={700}>Jenis Transaksi</Text>
-            <Text>{formState.jenis}</Text>
-          </Stack>
+          <Select
+            label="Jenis Transaksi"
+            placeholder="Pilih jenis transaksi"
+            data={[
+              { value: "PENARIKAN", label: "Penarikan" },
+              { value: "PENYETORAN", label: "Penyetoran" },
+            ]}
+            value={formState.jenis}
+            onChange={(value) => {
+              handleChange({ jenis: value as JENIS_TRANSAKSI });
+              if (isPenyetoranOrPenarikan) {
+                handleChange({
+                  keterangan: `${stringCapitalize(
+                    value as JENIS_TRANSAKSI
+                  )} uang sebesar ${stringToRupiah(
+                    formState.nominal.toString()
+                  )} ${value === "PENARIKAN" ? "dari" : "ke"} ${
+                    daftarBank.filter(
+                      (bank) => bank.id === formState.namaBankId
+                    )[0].nama
+                  }`,
+                });
+              }
+            }}
+            required
+            error={errors.jenis}
+          />
         ) : (
           <Select
             label="Jenis Transaksi"
