@@ -9,6 +9,7 @@ import { IconArrowLeft, IconBuildingBank, IconCash } from "@tabler/icons-react";
 import Link from "next/link";
 import PenarikanPenyetoranForm from "./form";
 import { getBalanceBank, getBalanceCash } from "@/utils/get-balance";
+import ListBankBalance from "@/components/list-bank-balance";
 
 async function getPageData(email: string) {
   const [transaksiUser, daftarBank] = await Promise.all([
@@ -82,6 +83,7 @@ export default async function Page() {
           <IconCash style={{ height: "100%", width: "20%" }} />
         </DataCard>
       </MainCard>
+      <ListBankBalance daftarBank={daftarBank} transaksiUser={transaksiUser} />
       <PenarikanPenyetoranForm daftarBank={daftarBank} />
     </MainCard>
   );

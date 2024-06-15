@@ -1,5 +1,5 @@
 import { User } from "@clerk/nextjs/server";
-import { Alert, Badge, Button, Stack, Text, Title } from "@mantine/core";
+import { Alert, Button, Stack, Text, Title } from "@mantine/core";
 import { TEXT_COLOR } from "@/config";
 import MainCard from "../../components/main-card";
 import {
@@ -13,6 +13,7 @@ import DataCard from "@/components/data-card";
 import Link from "next/link";
 import { IBanks, ITransaksi } from "@/types/db";
 import { getBalanceBank, getBalanceCash } from "@/utils/get-balance";
+import ListBankBalance from "@/components/list-bank-balance";
 
 export default async function Welcome({
   user,
@@ -26,27 +27,6 @@ export default async function Welcome({
   const totalSaldoBank = getBalanceBank(transaksiUser);
   const totalSaldoCash = getBalanceCash(transaksiUser);
   const totalSaldo = totalSaldoBank + totalSaldoCash;
-
-  const totalSaldoBankDetail: any = {};
-  daftarBank.forEach((item) => {
-    const saldoBankAdd = transaksiUser
-      .filter(
-        (transaksi) =>
-          transaksi.bankName?.id === item.id &&
-          transaksi.bank &&
-          (transaksi.jenis === "PEMASUKAN" || transaksi.jenis === "PENYETORAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0);
-    const saldoBankSubtract = transaksiUser
-      .filter(
-        (transaksi) =>
-          transaksi.bankName?.id === item.id &&
-          transaksi.bank &&
-          (transaksi.jenis === "PENGELUARAN" || transaksi.jenis === "PENARIKAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0);
-    totalSaldoBankDetail[item.nama] = saldoBankAdd - saldoBankSubtract;
-  });
 
   return (
     <>
@@ -83,16 +63,7 @@ export default async function Welcome({
           <IconCash style={{ height: "100%", width: "20%" }} />
         </DataCard>
       </MainCard>
-      <MainCard transparent noPadding>
-        {daftarBank.map((item) => (
-          <Stack key={item.id} gap={0}>
-            <Text>Saldo Bank {item.nama}</Text>
-            <Badge color={totalSaldoBankDetail[item.nama] > 0 ? "teal" : "red"}>
-              {stringToRupiah(totalSaldoBankDetail[item.nama].toString())}
-            </Badge>
-          </Stack>
-        ))}
-      </MainCard>
+      <ListBankBalance daftarBank={daftarBank} transaksiUser={transaksiUser} />
       {transaksiUser.length === 0 && (
         <Alert
           variant="filled"
