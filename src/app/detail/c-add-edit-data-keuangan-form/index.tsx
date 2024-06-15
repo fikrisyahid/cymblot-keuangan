@@ -15,6 +15,7 @@ import {
   Flex,
   rem,
   Text,
+  Stack,
 } from "@mantine/core";
 import { BUTTON_BASE_COLOR } from "@/config";
 import { JENIS_TRANSAKSI } from "@prisma/client";
@@ -26,6 +27,8 @@ import { notifications } from "@mantine/notifications";
 import { useRouter } from "next-nprogress-bar";
 import { IBanks, ITujuanSumber } from "@/types/db";
 import CustomAlert from "./custom-alert";
+import stringCapitalize from "@/utils/string-capitalize";
+import stringToRupiah from "@/utils/string-to-rupiah";
 
 interface IInitialFormData extends ITransaksiFormState {
   id: string;
@@ -80,6 +83,9 @@ export default function AddEditDataKeuanganForm({
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  const isPenyetoranOrPenarikan =
+    formState.jenis === "PENYETORAN" || formState.jenis === "PENARIKAN";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,26 +169,29 @@ export default function AddEditDataKeuanganForm({
           value={formState.keterangan}
           onChange={(e) => handleChange({ keterangan: e.currentTarget.value })}
           error={errors.keterangan}
+          disabled={isPenyetoranOrPenarikan}
         />
-        <Select
-          label="Jenis Transaksi"
-          placeholder="Pilih jenis transaksi"
-          disabled={
-            formState.jenis === "PENYETORAN" || formState.jenis === "PENARIKAN"
-          }
-          data={[
-            { value: "PEMASUKAN", label: "Pemasukan" },
-            { value: "PENGELUARAN", label: "Pengeluaran" },
-            { value: "PENARIKAN", label: "Penarikan" },
-            { value: "PENYETORAN", label: "Penyetoran" },
-          ]}
-          value={formState.jenis}
-          onChange={(value) =>
-            handleChange({ jenis: value as JENIS_TRANSAKSI })
-          }
-          required
-          error={errors.jenis}
-        />
+        {isPenyetoranOrPenarikan ? (
+          <Stack gap={0}>
+            <Text fw={700}>Jenis Transaksi</Text>
+            <Text>{formState.jenis}</Text>
+          </Stack>
+        ) : (
+          <Select
+            label="Jenis Transaksi"
+            placeholder="Pilih jenis transaksi"
+            data={[
+              { value: "PEMASUKAN", label: "Pemasukan" },
+              { value: "PENGELUARAN", label: "Pengeluaran" },
+            ]}
+            value={formState.jenis}
+            onChange={(value) =>
+              handleChange({ jenis: value as JENIS_TRANSAKSI })
+            }
+            required
+            error={errors.jenis}
+          />
+        )}
         {formState.jenis === "PEMASUKAN" ? (
           <Select
             label="Sumber"
@@ -236,7 +245,22 @@ export default function AddEditDataKeuanganForm({
           label="Nominal"
           placeholder="Nominal"
           value={formState.nominal}
-          onChange={(value) => handleChange({ nominal: +value })}
+          onChange={(value) => {
+            handleChange({ nominal: +value });
+            if (isPenyetoranOrPenarikan) {
+              handleChange({
+                keterangan: `${stringCapitalize(
+                  formState.jenis
+                )} uang sebesar ${stringToRupiah(value.toString())} ${
+                  formState.jenis === "PENARIKAN" ? "dari" : "ke"
+                } ${
+                  daftarBank.filter(
+                    (bank) => bank.id === formState.namaBankId
+                  )[0].nama
+                }`,
+              });
+            }
+          }}
           thousandSeparator=","
           prefix="Rp"
           required
@@ -259,7 +283,20 @@ export default function AddEditDataKeuanganForm({
               label: bank.nama,
             }))}
             value={formState.namaBankId}
-            onChange={(value) => handleChange({ namaBankId: value as string })}
+            onChange={(value) => {
+              handleChange({ namaBankId: value as string });
+              if (isPenyetoranOrPenarikan) {
+                handleChange({
+                  keterangan: `${stringCapitalize(
+                    formState.jenis
+                  )} uang sebesar ${stringToRupiah(
+                    formState.nominal.toString()
+                  )} ${formState.jenis === "PENARIKAN" ? "dari" : "ke"} ${
+                    daftarBank.filter((bank) => bank.id === value)[0].nama
+                  }`,
+                });
+              }
+            }}
             error={errors.namaBankId}
             required
             disabled={daftarBank.length === 0}
