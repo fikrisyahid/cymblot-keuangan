@@ -12,6 +12,7 @@ import stringToRupiah from "@/utils/string-to-rupiah";
 import DataCard from "@/components/data-card";
 import Link from "next/link";
 import { IBanks, ITransaksi } from "@/types/db";
+import { getBalanceBank, getBalanceCash } from "@/utils/get-balance";
 
 export default async function Welcome({
   user,
@@ -28,41 +29,8 @@ export default async function Welcome({
     0
   );
 
-  const saldoBank = {
-    add: transaksiUser
-      .filter(
-        (transaksi) =>
-          transaksi.bank &&
-          (transaksi.jenis === "PEMASUKAN" || transaksi.jenis === "PENYETORAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0),
-    subtract: transaksiUser
-      .filter(
-        (transaksi) =>
-          transaksi.bank &&
-          (transaksi.jenis === "PENGELUARAN" || transaksi.jenis === "PENARIKAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0),
-  };
-
-  const saldoCash = {
-    add: transaksiUser
-      .filter(
-        (transaksi) =>
-          !transaksi.bank || (transaksi.bank && transaksi.jenis === "PENARIKAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0),
-    subtract: transaksiUser
-      .filter(
-        (transaksi) =>
-          (!transaksi.bank && transaksi.jenis === "PENGELUARAN") ||
-          (transaksi.bank && transaksi.jenis === "PENYETORAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0),
-  };
-
-  const totalSaldoBank = saldoBank.add - saldoBank.subtract;
-  const totalSaldoCash = saldoCash.add - saldoCash.subtract;
+  const totalSaldoBank = getBalanceBank(transaksiUser);
+  const totalSaldoCash = getBalanceCash(transaksiUser);
 
   const totalSaldoBankDetail: any = {};
   daftarBank.forEach((item) => {

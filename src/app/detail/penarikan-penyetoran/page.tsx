@@ -8,6 +8,7 @@ import { Button, Title } from "@mantine/core";
 import { IconArrowLeft, IconBuildingBank, IconCash } from "@tabler/icons-react";
 import Link from "next/link";
 import PenarikanPenyetoranForm from "./form";
+import { getBalanceBank, getBalanceCash } from "@/utils/get-balance";
 
 async function getPageData(email: string) {
   const [transaksiUser, daftarBank] = await Promise.all([
@@ -41,41 +42,8 @@ export default async function Page() {
 
   const { transaksiUser, daftarBank } = await getPageData(email);
 
-  const saldoBank = {
-    add: transaksiUser
-      .filter(
-        (transaksi) =>
-          transaksi.bank &&
-          (transaksi.jenis === "PEMASUKAN" || transaksi.jenis === "PENYETORAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0),
-    subtract: transaksiUser
-      .filter(
-        (transaksi) =>
-          transaksi.bank &&
-          (transaksi.jenis === "PENGELUARAN" || transaksi.jenis === "PENARIKAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0),
-  };
-
-  const saldoCash = {
-    add: transaksiUser
-      .filter(
-        (transaksi) =>
-          !transaksi.bank || (transaksi.bank && transaksi.jenis === "PENARIKAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0),
-    subtract: transaksiUser
-      .filter(
-        (transaksi) =>
-          (!transaksi.bank && transaksi.jenis === "PENGELUARAN") ||
-          (transaksi.bank && transaksi.jenis === "PENYETORAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0),
-  };
-
-  const totalSaldoBank = saldoBank.add - saldoBank.subtract;
-  const totalSaldoCash = saldoCash.add - saldoCash.subtract;
+  const totalSaldoBank = getBalanceBank(transaksiUser);
+  const totalSaldoCash = getBalanceCash(transaksiUser);
 
   return (
     <MainCard>
