@@ -16,6 +16,8 @@ datasource db {
 enum JENIS_TRANSAKSI {
   PEMASUKAN
   PENGELUARAN
+  PENARIKAN
+  PENYIMPANAN
 }
 
 model Banks {
