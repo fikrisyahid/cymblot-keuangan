@@ -3,15 +3,11 @@
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import { useEffect, useState, useMemo } from "react";
 import sortBy from "lodash/sortBy";
-import { Badge, Button, Flex, Input, Text } from "@mantine/core";
-import stringToRupiah from "@/utils/string-to-rupiah";
-import { IconCash, IconPlus, IconRestore } from "@tabler/icons-react";
+import { Flex } from "@mantine/core";
 import "dayjs/locale/id";
-import { BUTTON_BASE_COLOR, TEXT_COLOR } from "@/config";
-import { useDebouncedState, useMediaQuery } from "@mantine/hooks";
-import MainCard from "@/components/main-card";
+import { TEXT_COLOR } from "@/config";
+import { useDebouncedState } from "@mantine/hooks";
 import generateDetailTableColumns from "./c-table-columns";
-import Link from "next/link";
 import {
   matchBalance,
   matchBank,
@@ -24,6 +20,7 @@ import {
 } from "./filter";
 import { IBanks, ITujuanSumber } from "@/types/db";
 import { IFilterDetailTable, ITableData } from "../types";
+import DetailHeader from "./header";
 
 const PAGE_SIZES = [10, 15, 25, 50, 75, 100];
 
@@ -40,7 +37,6 @@ export default function TableSection({
   daftarBank: IBanks[];
   oldestDate: Date;
 }) {
-  const isMobile = useMediaQuery("(max-width: 768px)");
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [page, setPage] = useState(1);
   const [generalSearch, setGeneralSearch] = useDebouncedState("", 200);
@@ -107,73 +103,12 @@ export default function TableSection({
 
   return (
     <Flex direction="column" gap="sm">
-      <MainCard transparent noPadding row>
-        <Flex
-          direction={isMobile ? "column" : "row"}
-          justify={isMobile ? "center" : "flex-start"}
-          align={isMobile ? "center" : "flex-end"}
-          gap="sm"
-          w="100%"
-        >
-          <Flex direction="column" align={isMobile ? "center" : "flex-start"}>
-            <Text>Total saldo:</Text>
-            <Badge color={totalSaldo > 0 ? "teal" : "red"}>
-              {stringToRupiah(totalSaldo.toString())}
-            </Badge>
-          </Flex>
-          <Button
-            fullWidth={isMobile}
-            leftSection={<IconRestore />}
-            style={{ backgroundColor: BUTTON_BASE_COLOR }}
-            onClick={() =>
-              handleChangeFilter({
-                tanggal_sesudah: oldestDate,
-                tanggal_sebelum: new Date(),
-                keterangan: "",
-                jenis: "SEMUA",
-                sumber: [],
-                tujuan: [],
-                nominal_di_bawah: 0,
-                nominal_di_atas: 0,
-                nominal_sama_dengan: 0,
-                bank: [],
-              })
-            }
-          >
-            Reset Filter
-          </Button>
-        </Flex>
-        <Flex
-          direction={isMobile ? "column" : "row"}
-          justify={isMobile ? "center" : "flex-end"}
-          align={isMobile ? "center" : "flex-end"}
-          gap="sm"
-          w="100%"
-        >
-          <Button
-            fullWidth={isMobile}
-            leftSection={<IconPlus />}
-            style={{ backgroundColor: BUTTON_BASE_COLOR }}
-            component={Link}
-            href="/detail/tambah"
-          >
-            Tambah Data Keuangan
-          </Button>
-          <Button
-            fullWidth={isMobile}
-            leftSection={<IconCash />}
-            style={{ backgroundColor: BUTTON_BASE_COLOR }}
-            component={Link}
-            href="/detail/penarikan-penyetoran"
-          >
-            Penarikan & Penyetoran
-          </Button>
-        </Flex>
-      </MainCard>
-      <Input
-        placeholder="Cari seluruh data keuangan"
-        defaultValue={generalSearch}
-        onChange={(e) => setGeneralSearch(e.currentTarget.value)}
+      <DetailHeader
+        totalSaldo={totalSaldo}
+        oldestDate={oldestDate}
+        generalSearch={generalSearch}
+        setGeneralSearch={setGeneralSearch}
+        handleChangeFilter={handleChangeFilter}
       />
       <DataTable
         minHeight={filteredData.length === 0 ? 200 : 0}
