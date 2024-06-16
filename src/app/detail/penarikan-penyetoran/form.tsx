@@ -12,8 +12,12 @@ import { useRouter } from "next-nprogress-bar";
 
 export default function PenarikanPenyetoranForm({
   daftarBank,
+  totalSaldoCash,
+  totalSaldoBankDetail,
 }: {
   daftarBank: IBanks[];
+  totalSaldoCash: number;
+  totalSaldoBankDetail: any;
 }) {
   const router = useRouter();
   const [formState, setFormState] = useState({
@@ -30,6 +34,27 @@ export default function PenarikanPenyetoranForm({
     e.preventDefault();
 
     const { mode, nominal, bankNameId } = formState;
+
+    const bankName = daftarBank.filter((item) => item.id === bankNameId)[0]
+      .nama;
+
+    if (mode === "PENYETORAN" && nominal > totalSaldoCash) {
+      notifications.show({
+        title: "Error",
+        message: `Saldo cash tidak cukup`,
+        color: "red",
+      });
+      return;
+    }
+
+    if (mode === "PENARIKAN" && nominal > totalSaldoBankDetail[bankName]) {
+      notifications.show({
+        title: "Error",
+        message: `Saldo bank ${bankName} tidak cukup`,
+        color: "red",
+      });
+      return;
+    }
 
     if (mode && nominal && bankNameId) {
       openConfirmModal({

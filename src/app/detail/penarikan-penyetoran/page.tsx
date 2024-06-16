@@ -8,7 +8,11 @@ import { Button, Title } from "@mantine/core";
 import { IconArrowLeft, IconBuildingBank, IconCash } from "@tabler/icons-react";
 import Link from "next/link";
 import PenarikanPenyetoranForm from "./form";
-import { getBalanceBank, getBalanceCash } from "@/utils/get-balance";
+import {
+  getBalanceBank,
+  getBalanceBankDetail,
+  getBalanceCash,
+} from "@/utils/get-balance";
 import ListBankBalance from "@/components/list-bank-balance";
 
 async function getPageData(email: string) {
@@ -45,6 +49,10 @@ export default async function Page() {
 
   const totalSaldoBank = getBalanceBank(transaksiUser);
   const totalSaldoCash = getBalanceCash(transaksiUser);
+  const totalSaldoBankDetail = getBalanceBankDetail({
+    daftarBank,
+    transaksiUser,
+  });
 
   return (
     <MainCard>
@@ -83,8 +91,15 @@ export default async function Page() {
           <IconCash style={{ height: "100%", width: "20%" }} />
         </DataCard>
       </MainCard>
-      <ListBankBalance daftarBank={daftarBank} transaksiUser={transaksiUser} />
-      <PenarikanPenyetoranForm daftarBank={daftarBank} />
+      <ListBankBalance
+        daftarBank={daftarBank}
+        totalSaldoBankDetail={totalSaldoBankDetail}
+      />
+      <PenarikanPenyetoranForm
+        daftarBank={daftarBank}
+        totalSaldoCash={totalSaldoCash}
+        totalSaldoBankDetail={totalSaldoBankDetail}
+      />
     </MainCard>
   );
 }

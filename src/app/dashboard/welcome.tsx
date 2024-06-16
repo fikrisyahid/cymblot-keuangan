@@ -12,7 +12,11 @@ import stringToRupiah from "@/utils/string-to-rupiah";
 import DataCard from "@/components/data-card";
 import Link from "next/link";
 import { IBanks, ITransaksi } from "@/types/db";
-import { getBalanceBank, getBalanceCash } from "@/utils/get-balance";
+import {
+  getBalanceBank,
+  getBalanceBankDetail,
+  getBalanceCash,
+} from "@/utils/get-balance";
 import ListBankBalance from "@/components/list-bank-balance";
 
 export default async function Welcome({
@@ -27,6 +31,11 @@ export default async function Welcome({
   const totalSaldoBank = getBalanceBank(transaksiUser);
   const totalSaldoCash = getBalanceCash(transaksiUser);
   const totalSaldo = totalSaldoBank + totalSaldoCash;
+
+  const totalSaldoBankDetail = getBalanceBankDetail({
+    daftarBank,
+    transaksiUser,
+  });
 
   return (
     <>
@@ -63,7 +72,10 @@ export default async function Welcome({
           <IconCash style={{ height: "100%", width: "20%" }} />
         </DataCard>
       </MainCard>
-      <ListBankBalance daftarBank={daftarBank} transaksiUser={transaksiUser} />
+      <ListBankBalance
+        daftarBank={daftarBank}
+        totalSaldoBankDetail={totalSaldoBankDetail}
+      />
       {transaksiUser.length === 0 && (
         <Alert
           variant="filled"

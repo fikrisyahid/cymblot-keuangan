@@ -1,36 +1,15 @@
-import { IBanks, ITransaksi } from "@/types/db";
+import { IBanks } from "@/types/db";
 import MainCard from "./main-card";
 import { Badge, Stack, Text } from "@mantine/core";
 import stringToRupiah from "@/utils/string-to-rupiah";
 
 export default function ListBankBalance({
-  transaksiUser,
+  totalSaldoBankDetail,
   daftarBank,
 }: {
-  transaksiUser: ITransaksi[];
+  totalSaldoBankDetail: any;
   daftarBank: IBanks[];
 }) {
-  const totalSaldoBankDetail: any = {};
-  daftarBank.forEach((item) => {
-    const saldoBankAdd = transaksiUser
-      .filter(
-        (transaksi) =>
-          transaksi.bankName?.id === item.id &&
-          transaksi.bank &&
-          (transaksi.jenis === "PEMASUKAN" || transaksi.jenis === "PENYETORAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0);
-    const saldoBankSubtract = transaksiUser
-      .filter(
-        (transaksi) =>
-          transaksi.bankName?.id === item.id &&
-          transaksi.bank &&
-          (transaksi.jenis === "PENGELUARAN" || transaksi.jenis === "PENARIKAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0);
-    totalSaldoBankDetail[item.nama] = saldoBankAdd - saldoBankSubtract;
-  });
-
   return (
     <MainCard transparent noPadding>
       {daftarBank.map((item) => (
