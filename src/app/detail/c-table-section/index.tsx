@@ -21,6 +21,7 @@ import {
 import { IBanks, ITujuanSumber } from "@/types/db";
 import { IFilterDetailTable, ITableData } from "../types";
 import DetailHeader from "./header";
+import getBalanceFiltered from "./helper";
 
 const PAGE_SIZES = [10, 15, 25, 50, 75, 100];
 
@@ -90,11 +91,7 @@ export default function TableSection({
     return sortedData.slice(from, to);
   }, [sortedData, page, pageSize]);
 
-  const totalSaldo = filteredData.reduce(
-    (acc, cur) =>
-      acc + (cur.jenis === "PEMASUKAN" ? cur.nominal : -cur.nominal),
-    0
-  );
+  const totalSaldo = getBalanceFiltered({ filter, filteredData });
 
   // Reset to first page when page size or sort status changes
   useEffect(() => {
