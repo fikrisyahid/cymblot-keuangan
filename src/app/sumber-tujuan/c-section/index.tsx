@@ -4,6 +4,7 @@ import { addTujuan, deleteTujuan, editTujuan } from "@/app/actions/tujuan";
 import { addSumber, deleteSumber, editSumber } from "@/app/actions/sumber";
 import TableSection from "./table-section";
 import { ITujuanSumber } from "@/types/db";
+import stringCapitalize from "@/utils/string-capitalize";
 
 export default async function Section({
   type,
@@ -14,7 +15,7 @@ export default async function Section({
 }) {
   return (
     <>
-      <Text fw={700}>Daftar Tujuan</Text>
+      <Text fw={700}>Daftar {stringCapitalize(type)}</Text>
       <AddForm
         addFunction={type === "sumber" ? addSumber : addTujuan}
         type={type}
