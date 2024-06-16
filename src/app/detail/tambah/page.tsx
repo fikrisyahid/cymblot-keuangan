@@ -6,15 +6,22 @@ import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "@/app/db/init";
 import AddEditDataKeuanganForm from "../c-add-edit-data-keuangan-form";
+import { getBalanceBankDetail, getBalanceCash } from "@/utils/get-balance";
 
-async function getUserSumberTujuan(email: string) {
-  const [daftarSumber, daftarTujuan, daftarBank] = await Promise.all([
-    prisma.sumber.findMany({ where: { email } }),
-    prisma.tujuan.findMany({ where: { email } }),
-    prisma.banks.findMany({ where: { email } }),
-  ]);
+async function getPageData(email: string) {
+  const [transaksiUser, daftarSumber, daftarTujuan, daftarBank] =
+    await Promise.all([
+      prisma.transaksi.findMany({
+        where: { email },
+        include: { sumber: true, tujuan: true, bankName: true },
+        orderBy: { tanggal: "desc" },
+      }),
+      prisma.sumber.findMany({ where: { email } }),
+      prisma.tujuan.findMany({ where: { email } }),
+      prisma.banks.findMany({ where: { email } }),
+    ]);
 
-  return { daftarSumber, daftarTujuan, daftarBank };
+  return { transaksiUser, daftarSumber, daftarTujuan, daftarBank };
 }
 
 export default async function Page() {
@@ -25,7 +32,14 @@ export default async function Page() {
     return <p>Anda harus login terlebih dahulu</p>;
   }
 
-  const { daftarSumber, daftarTujuan, daftarBank } = await getUserSumberTujuan(email);
+  const { transaksiUser, daftarSumber, daftarTujuan, daftarBank } =
+    await getPageData(email);
+
+  const totalSaldoCash = getBalanceCash(transaksiUser);
+  const totalSaldoBankDetail = getBalanceBankDetail({
+    daftarBank,
+    transaksiUser,
+  });
 
   return (
     <MainCard>
@@ -47,6 +61,8 @@ export default async function Page() {
         daftarSumber={daftarSumber}
         daftarTujuan={daftarTujuan}
         daftarBank={daftarBank}
+        totalSaldoCash={totalSaldoCash}
+        totalSaldoBankDetail={totalSaldoBankDetail}
       />
     </MainCard>
   );

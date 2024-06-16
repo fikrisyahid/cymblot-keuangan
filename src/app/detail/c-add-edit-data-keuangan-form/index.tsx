@@ -40,6 +40,8 @@ export default function AddEditDataKeuanganForm({
   daftarBank,
   initialFormData,
   isEdit,
+  totalSaldoCash,
+  totalSaldoBankDetail,
 }: {
   email: string;
   daftarSumber: ITujuanSumber[];
@@ -47,6 +49,8 @@ export default function AddEditDataKeuanganForm({
   daftarBank: IBanks[];
   initialFormData?: IInitialFormData;
   isEdit?: boolean;
+  totalSaldoCash: number;
+  totalSaldoBankDetail: any;
 }) {
   const router = useRouter();
   const [formState, setFormState] = useState<ITransaksiFormState>({
@@ -88,6 +92,37 @@ export default function AddEditDataKeuanganForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const bankName =
+      daftarBank.filter((item) => item.id === formState.namaBankId)[0]?.nama ||
+      "";
+
+    if (
+      !formState.bank &&
+      (formState.jenis === "PENYETORAN" || formState.jenis === "PENGELUARAN") &&
+      formState.nominal > totalSaldoCash
+    ) {
+      notifications.show({
+        title: "Error",
+        message: `Saldo cash tidak cukup`,
+        color: "red",
+      });
+      return;
+    }
+
+    if (
+      formState.bank &&
+      (formState.jenis === "PENARIKAN" || formState.jenis === "PENGELUARAN") &&
+      formState.nominal > totalSaldoBankDetail[bankName]
+    ) {
+      notifications.show({
+        title: "Error",
+        message: `Saldo bank ${bankName} tidak cukup`,
+        color: "red",
+      });
+      return;
+    }
+
     if (validateForm()) {
       openConfirmModal({
         title: "Konfirmasi Penambahan",
