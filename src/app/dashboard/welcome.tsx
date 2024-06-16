@@ -80,7 +80,7 @@ export default async function Welcome({
         <Alert
           variant="filled"
           color="blue"
-          title="Alert title"
+          title="Info"
           icon={<IconInfoCircle />}
         >
           <Stack gap="sm" align="flex-start">
