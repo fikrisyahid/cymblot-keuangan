@@ -56,7 +56,7 @@ export default async function Page() {
 
   return (
     <MainCard>
-      <Title style={{ color: TEXT_COLOR, alignSelf: "center" }}>
+      <Title style={{ color: TEXT_COLOR, textAlign: "center" }}>
         Detail data keuangan
       </Title>
       <TableSection
