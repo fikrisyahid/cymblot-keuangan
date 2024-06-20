@@ -97,10 +97,12 @@ export default function AddEditDataKeuanganForm({
       daftarBank.filter((item) => item.id === formState.namaBankId)[0]?.nama ||
       "";
 
+    const balanceOffset = initialFormData?.nominal || 0;
+
     if (
       !formState.bank &&
       (formState.jenis === "PENYETORAN" || formState.jenis === "PENGELUARAN") &&
-      formState.nominal > totalSaldoCash
+      formState.nominal > totalSaldoCash + balanceOffset
     ) {
       notifications.show({
         title: "Error",
@@ -113,7 +115,7 @@ export default function AddEditDataKeuanganForm({
     if (
       formState.bank &&
       (formState.jenis === "PENARIKAN" || formState.jenis === "PENGELUARAN") &&
-      formState.nominal > totalSaldoBankDetail[bankName]
+      formState.nominal > totalSaldoBankDetail[bankName] + balanceOffset
     ) {
       notifications.show({
         title: "Error",
@@ -125,7 +127,7 @@ export default function AddEditDataKeuanganForm({
 
     if (validateForm()) {
       openConfirmModal({
-        title: "Konfirmasi Penambahan",
+        title: `Konfirmasi ${isEdit ? "Perubahan" : "Penambahan"}`,
         children: (
           <Text>
             Apakah Anda yakin ingin {isEdit ? "mengubah" : "menambahkan"} data
