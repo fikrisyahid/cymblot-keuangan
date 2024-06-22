@@ -1,7 +1,6 @@
 import MainCard from "./main-card";
 import { ActionIcon, Badge, Text } from "@mantine/core";
 import stringToRupiah from "@/utils/string-to-rupiah";
-import PrettyJSON from "./pretty-json";
 import { IBalanceBankDetailAdmin } from "@/app/dashboard/types";
 import { TEXT_COLOR } from "@/config";
 import { IconEye } from "@tabler/icons-react";
@@ -12,10 +11,10 @@ export default function ListBankBalanceAdmin({
   balanceBankDetailAdmin: IBalanceBankDetailAdmin[];
 }) {
   return (
-    <MainCard transparent noPadding>
+    <MainCard transparent noPadding gap={16}>
       {balanceBankDetailAdmin.map(
         (item: IBalanceBankDetailAdmin, index: number) => (
-          <MainCard key={item?.email}>
+          <MainCard key={item?.email} transparent noPadding>
             <Text fw={700} c={TEXT_COLOR}>
               {index === 0 ? "Pribadi" : item?.email || "Email tidak diketahui"}
             </Text>
@@ -44,7 +43,6 @@ export default function ListBankBalanceAdmin({
           </MainCard>
         )
       )}
-      <PrettyJSON text={balanceBankDetailAdmin} />
     </MainCard>
   );
 }
