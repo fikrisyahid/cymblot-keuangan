@@ -86,3 +86,18 @@ export async function getBalanceBankDetailAdmin({
 
   return userBanksWithEmail;
 }
+
+export async function getBalanceBankAdmin({ email }: { email: string }) {
+  const allTransaksi = await prisma.transaksi.findMany({
+    where: {
+      OR: [{ email: { in: MONITORED_EMAIL } }, { email }],
+    },
+    include: {
+      sumber: true,
+      tujuan: true,
+      bankName: true,
+    },
+  });
+
+  return calculateSaldo({ transaksiUser: allTransaksi });
+}
