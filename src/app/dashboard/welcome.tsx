@@ -20,6 +20,7 @@ import ListBankBalance from "@/components/list-bank-balance";
 import isAdmin from "@/utils/is-admin";
 import ListBankBalanceAdmin from "@/components/list-bank-balance-admin";
 import { getBalanceBankDetailAdmin } from "@/utils/get-balance-admin";
+import { IBalanceBankDetailAdmin } from "./types";
 
 export default async function Welcome({
   fullName,
@@ -38,14 +39,14 @@ export default async function Welcome({
   const totalSaldoCash = getBalanceCash(transaksiUser);
   const totalSaldo = totalSaldoBank + totalSaldoCash;
 
-  const totalSaldoBankDetail =
+  const totalBalanceBankDetail =
     !loggedInAsAdmin &&
     getBalanceBankDetail({
       daftarBank,
       transaksiUser,
     });
 
-  const detailBankData =
+  const balanceBankDetailAdmin =
     loggedInAsAdmin &&
     (await getBalanceBankDetailAdmin({
       email,
@@ -88,12 +89,13 @@ export default async function Welcome({
         </DataCard>
       </MainCard>
       {loggedInAsAdmin ? (
-        <ListBankBalanceAdmin detailBankData={detailBankData} />
-      ) : (
-        <ListBankBalance
-          daftarBank={daftarBank}
-          totalSaldoBankDetail={totalSaldoBankDetail}
+        <ListBankBalanceAdmin
+          balanceBankDetailAdmin={
+            balanceBankDetailAdmin as IBalanceBankDetailAdmin[]
+          }
         />
+      ) : (
+        <ListBankBalance totalBalanceBankDetail={totalBalanceBankDetail} />
       )}
       {transaksiUser.length === 0 && (
         <Alert

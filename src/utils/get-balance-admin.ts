@@ -2,6 +2,10 @@ import prisma from "@/app/db/init";
 import { MONITORED_EMAIL } from "@/config";
 import { IBanks, ITransaksi } from "@/types/db";
 
+interface IBanksWithSaldo extends IBanks {
+  saldo: number;
+}
+
 function calculateSaldo({ transaksiUser }: { transaksiUser: ITransaksi[] }) {
   const balanceBank = {
     add: transaksiUser
@@ -37,6 +41,10 @@ function addBankWithSaldo({
   return { ...bank, saldo };
 }
 
+function calculateTotalSaldo(banks: IBanksWithSaldo[]) {
+  return banks.reduce((acc, bank) => acc + bank.saldo, 0);
+}
+
 export async function getBalanceBankDetailAdmin({
   email,
   daftarBank,
@@ -65,14 +73,15 @@ export async function getBalanceBankDetailAdmin({
     })
   );
 
-  const myBanks = await Promise.all(
-    daftarBank.map((bank) => addBankWithSaldo({ bank, allTransaksi }))
+  const myBanks = daftarBank.map((bank) =>
+    addBankWithSaldo({ bank, allTransaksi })
   );
 
   const allUserBanks = [myBanks, ...banksFromEachMonitoredEmail];
   const userBanksWithEmail = allUserBanks.map((userBanks, index) => ({
     email: index === 0 ? email : MONITORED_EMAIL[index - 1],
     banks: userBanks,
+    total_saldo: calculateTotalSaldo(userBanks),
   }));
 
   return userBanksWithEmail;
