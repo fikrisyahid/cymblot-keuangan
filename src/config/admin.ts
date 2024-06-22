@@ -1,0 +1,7 @@
+const ADMIN_EMAIL_ENV = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+const MONITORED_EMAIL_ENV = process.env.NEXT_PUBLIC_MONITORED_EMAIL;
+
+const ADMIN_EMAIL = ADMIN_EMAIL_ENV?.split(",") || [];
+const MONITORED_EMAIL = MONITORED_EMAIL_ENV?.split(",") || [];
+
+export { ADMIN_EMAIL, MONITORED_EMAIL };
