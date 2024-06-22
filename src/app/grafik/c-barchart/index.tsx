@@ -130,6 +130,7 @@ export default function MainBarChart({
           data={chartData}
           dataKey={dataKey}
           series={series}
+          type="stacked"
           tickLine="y"
         />
       )}
