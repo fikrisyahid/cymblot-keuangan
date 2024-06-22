@@ -1,4 +1,3 @@
-import { User } from "@clerk/nextjs/server";
 import { Alert, Button, Stack, Text, Title } from "@mantine/core";
 import { TEXT_COLOR } from "@/config";
 import MainCard from "../../components/main-card";
@@ -18,28 +17,44 @@ import {
   getBalanceCash,
 } from "@/utils/get-balance";
 import ListBankBalance from "@/components/list-bank-balance";
+import isAdmin from "@/utils/is-admin";
+import ListBankBalanceAdmin from "@/components/list-bank-balance-admin";
+import { getBalanceBankDetailAdmin } from "@/utils/get-balance-admin";
 
 export default async function Welcome({
-  user,
+  fullName,
+  email,
   transaksiUser,
   daftarBank,
 }: {
-  user: User;
+  fullName: string;
+  email: string;
   transaksiUser: ITransaksi[];
   daftarBank: IBanks[];
 }) {
+  const loggedInAsAdmin = isAdmin(email);
+
   const totalSaldoBank = getBalanceBank(transaksiUser);
   const totalSaldoCash = getBalanceCash(transaksiUser);
   const totalSaldo = totalSaldoBank + totalSaldoCash;
 
-  const totalSaldoBankDetail = getBalanceBankDetail({
-    daftarBank,
-    transaksiUser,
-  });
+  const totalSaldoBankDetail =
+    !loggedInAsAdmin &&
+    getBalanceBankDetail({
+      daftarBank,
+      transaksiUser,
+    });
+
+  const detailBankData =
+    loggedInAsAdmin &&
+    (await getBalanceBankDetailAdmin({
+      email,
+      daftarBank,
+    }));
 
   return (
     <>
-      <Title style={{ color: TEXT_COLOR }}>Halo, {user?.fullName}</Title>
+      <Title style={{ color: TEXT_COLOR }}>Halo, {fullName}</Title>
       <MainCard transparent row noPadding>
         <DataCard
           backgroundColor="#38598b"
@@ -72,10 +87,14 @@ export default async function Welcome({
           <IconCash style={{ height: "100%", width: "20%" }} />
         </DataCard>
       </MainCard>
-      <ListBankBalance
-        daftarBank={daftarBank}
-        totalSaldoBankDetail={totalSaldoBankDetail}
-      />
+      {loggedInAsAdmin ? (
+        <ListBankBalanceAdmin detailBankData={detailBankData} />
+      ) : (
+        <ListBankBalance
+          daftarBank={daftarBank}
+          totalSaldoBankDetail={totalSaldoBankDetail}
+        />
+      )}
       {transaksiUser.length === 0 && (
         <Alert
           variant="filled"

@@ -3,7 +3,7 @@ import Welcome from "./welcome";
 import MonthlyCostGraph from "./monthly-cost-graph";
 import { Stack } from "@mantine/core";
 import MonthlyIncomeGraph from "./monthly-income-graph";
-import { User, currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import prisma from "../db/init";
 
 async function getPageData(email: string) {
@@ -30,6 +30,7 @@ async function getPageData(email: string) {
 export default async function Page() {
   const user = await currentUser();
 
+  const fullName = user?.fullName || "Tamu";
   const email = user?.emailAddresses[0].emailAddress;
 
   if (!email) {
@@ -46,7 +47,8 @@ export default async function Page() {
     <Stack>
       <MainCard>
         <Welcome
-          user={user as User}
+          fullName={fullName}
+          email={email}
           transaksiUser={transaksiUser}
           daftarBank={daftarBank}
         />
