@@ -1,4 +1,4 @@
-interface IBalanceBankDetailAdmin {
+interface ITotalSaldoBankDetail {
   email: string;
   banks: {
     saldo: number;
@@ -11,4 +11,4 @@ interface IBalanceBankDetailAdmin {
   total_saldo: number;
 }
 
-export type { IBalanceBankDetailAdmin };
+export type { ITotalSaldoBankDetail };

@@ -20,7 +20,6 @@ import ListBankBalance from "@/components/list-bank-balance";
 import isAdmin from "@/utils/is-admin";
 import ListBankBalanceAdmin from "@/components/list-bank-balance-admin";
 import { getBalanceBankDetailAdmin } from "@/utils/get-balance-admin";
-import { IBalanceBankDetailAdmin } from "./types";
 
 export default async function Welcome({
   fullName,
@@ -39,19 +38,15 @@ export default async function Welcome({
   const totalSaldoCash = getBalanceCash(transaksiUser);
   const totalSaldo = totalSaldoBank + totalSaldoCash;
 
-  const totalBalanceBankDetail =
-    !loggedInAsAdmin &&
-    getBalanceBankDetail({
-      daftarBank,
-      transaksiUser,
-    });
-
-  const balanceBankDetailAdmin =
-    loggedInAsAdmin &&
-    (await getBalanceBankDetailAdmin({
-      email,
-      daftarBank,
-    }));
+  const totalSaldoBankDetail = loggedInAsAdmin
+    ? await getBalanceBankDetailAdmin({
+        email,
+        daftarBank,
+      })
+    : getBalanceBankDetail({
+        daftarBank,
+        transaksiUser,
+      });
 
   return (
     <>
@@ -69,7 +64,7 @@ export default async function Welcome({
         </DataCard>
         <DataCard
           backgroundColor="#5177b0"
-          title="Bank"
+          title={`Bank ${loggedInAsAdmin ? "Total" : ""}`}
           text={stringToRupiah(totalSaldoBank.toString())}
           styleText={{
             color: totalSaldoBank < 0 ? "red" : "white",
@@ -79,7 +74,7 @@ export default async function Welcome({
         </DataCard>
         <DataCard
           backgroundColor="#72aad4"
-          title="Cash"
+          title={`Cash ${loggedInAsAdmin ? "Pribadi" : ""}`}
           text={stringToRupiah(totalSaldoCash.toString())}
           styleText={{
             color: totalSaldoCash < 0 ? "red" : "white",
@@ -89,13 +84,9 @@ export default async function Welcome({
         </DataCard>
       </MainCard>
       {loggedInAsAdmin ? (
-        <ListBankBalanceAdmin
-          balanceBankDetailAdmin={
-            balanceBankDetailAdmin as IBalanceBankDetailAdmin[]
-          }
-        />
+        <ListBankBalanceAdmin totalSaldoBankDetail={totalSaldoBankDetail} />
       ) : (
-        <ListBankBalance totalBalanceBankDetail={totalBalanceBankDetail} />
+        <ListBankBalance totalSaldoBankDetail={totalSaldoBankDetail} />
       )}
       {transaksiUser.length === 0 && (
         <Alert

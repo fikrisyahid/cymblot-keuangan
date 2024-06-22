@@ -4,9 +4,9 @@ import stringToRupiah from "@/utils/string-to-rupiah";
 import { TEXT_COLOR } from "@/config";
 
 export default function ListBankBalance({
-  totalBalanceBankDetail,
+  totalSaldoBankDetail,
 }: {
-  totalBalanceBankDetail: any;
+  totalSaldoBankDetail: any;
 }) {
   return (
     <Stack>
@@ -14,13 +14,13 @@ export default function ListBankBalance({
         Detail saldo bank
       </Text>
       <MainCard transparent noPadding row wrap>
-        {Object.keys(totalBalanceBankDetail).map((bankName) => (
+        {Object.keys(totalSaldoBankDetail).map((bankName) => (
           <MainCard key={bankName} row style={{ alignItems: "center" }}>
             <Text>Saldo {bankName}</Text>
             <Badge
-              color={totalBalanceBankDetail[bankName] > 0 ? "teal" : "red"}
+              color={totalSaldoBankDetail[bankName] > 0 ? "teal" : "red"}
             >
-              {stringToRupiah(totalBalanceBankDetail[bankName].toString())}
+              {stringToRupiah(totalSaldoBankDetail[bankName].toString())}
             </Badge>
           </MainCard>
         ))}
