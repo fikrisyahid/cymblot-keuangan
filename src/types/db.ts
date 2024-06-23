@@ -14,13 +14,14 @@ interface ITransaksi {
   tanggal: Date;
   keterangan: string;
   jenis: JENIS_TRANSAKSI;
-  sumberId: string | null;
-  sumber: ITujuanSumber | null;
-  tujuanId: string | null;
-  tujuan: ITujuanSumber | null;
+  sumberId?: string | null;
+  sumber?: ITujuanSumber | null;
+  tujuanId?: string | null;
+  tujuan?: ITujuanSumber | null;
   nominal: number;
-  bank: boolean;
-  bankName: IBanks | null;
+  bank?: boolean;
+  bankNameId?: string | null;
+  bankName?: IBanks | null;
   createdAt: Date;
   updatedAt: Date;
 }
