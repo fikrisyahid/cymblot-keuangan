@@ -133,6 +133,7 @@ export default function MainBarChart({
           type="stacked"
           tickLine="y"
           withLegend
+          tooltipAnimationDuration={200}
         />
       )}
     </Stack>

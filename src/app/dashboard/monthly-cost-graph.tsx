@@ -105,8 +105,9 @@ export default function MonthlyCostGraph({
           h={300}
           data={chartData}
           dataKey="tujuan"
-          series={[{ name: "Pengeluaran", color: "violet.6" }]}
+          series={[{ name: "Pengeluaran", color: "red" }]}
           tickLine="y"
+          tooltipAnimationDuration={200}
         />
       ) : (
         <Text>Tidak ada data keuangan di periode ini</Text>

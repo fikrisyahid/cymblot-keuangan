@@ -105,8 +105,9 @@ export default function MonthlyIncomeGraph({
           h={300}
           data={chartData}
           dataKey="sumber"
-          series={[{ name: "Pemasukan", color: "violet.6" }]}
+          series={[{ name: "Pemasukan", color: "teal" }]}
           tickLine="y"
+          tooltipAnimationDuration={200}
         />
       ) : (
         <Text>Tidak ada data keuangan di periode ini</Text>
