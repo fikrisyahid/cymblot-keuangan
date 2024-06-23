@@ -1,30 +1,10 @@
 import prisma from "@/app/db/init";
 import { MONITORED_EMAIL } from "@/config";
 import { IBanks, ITransaksi } from "@/types/db";
+import { getBalanceBank } from "./get-balance";
 
 interface IBanksWithSaldo extends IBanks {
   saldo: number;
-}
-
-function calculateSaldo({ transaksiUser }: { transaksiUser: ITransaksi[] }) {
-  const balanceBank = {
-    add: transaksiUser
-      .filter(
-        (transaksi) =>
-          transaksi.bank &&
-          (transaksi.jenis === "PEMASUKAN" || transaksi.jenis === "PENYETORAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0),
-    subtract: transaksiUser
-      .filter(
-        (transaksi) =>
-          transaksi.bank &&
-          (transaksi.jenis === "PENGELUARAN" || transaksi.jenis === "PENARIKAN")
-      )
-      .reduce((acc, cur) => acc + cur.nominal, 0),
-  };
-
-  return balanceBank.add - balanceBank.subtract;
 }
 
 function addBankWithSaldo({
@@ -37,7 +17,7 @@ function addBankWithSaldo({
   const bankTransaksi = allTransaksi.filter(
     (transaksi) => transaksi.bankName?.id === bank.id
   );
-  const saldo = calculateSaldo({ transaksiUser: bankTransaksi });
+  const saldo = getBalanceBank(bankTransaksi);
   return { ...bank, saldo };
 }
 
@@ -55,11 +35,6 @@ export async function getBalanceBankDetailAdmin({
   const allTransaksi = await prisma.transaksi.findMany({
     where: {
       OR: [{ email: { in: MONITORED_EMAIL } }, { email }],
-    },
-    include: {
-      sumber: true,
-      tujuan: true,
-      bankName: true,
     },
   });
 
@@ -92,12 +67,7 @@ export async function getBalanceBankAdmin({ email }: { email: string }) {
     where: {
       OR: [{ email: { in: MONITORED_EMAIL } }, { email }],
     },
-    include: {
-      sumber: true,
-      tujuan: true,
-      bankName: true,
-    },
   });
 
-  return calculateSaldo({ transaksiUser: allTransaksi });
+  return getBalanceBank(allTransaksi);
 }
