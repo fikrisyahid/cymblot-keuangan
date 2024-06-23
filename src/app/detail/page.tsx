@@ -7,21 +7,6 @@ import { TEXT_COLOR } from "@/config";
 import dayjs from "dayjs";
 import { ITransaksi } from "@/types/db";
 
-async function getUserTransactions(email: string) {
-  const [transaksiUser, daftarSumber, daftarTujuan, daftarBank] = await Promise.all([
-    prisma.transaksi.findMany({
-      where: { email },
-      include: { sumber: true, tujuan: true, bankName: true },
-      orderBy: { tanggal: "desc" },
-    }),
-    prisma.sumber.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
-    prisma.tujuan.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
-    prisma.banks.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
-  ]);
-
-  return { transaksiUser, daftarSumber, daftarTujuan, daftarBank };
-}
-
 function mapTransactionsToTableData(transaksiUser: ITransaksi[]) {
   return transaksiUser.map((transaksi, index) => ({
     id: transaksi.id,
@@ -34,6 +19,31 @@ function mapTransactionsToTableData(transaksiUser: ITransaksi[]) {
     nominal: transaksi.nominal,
     bank: transaksi.bank ? transaksi.bankName?.nama || "-" : "Cash",
   }));
+}
+
+async function getUserTransactions(email: string) {
+  const [transaksiUser, daftarSumber, daftarTujuan, daftarBank] =
+    await Promise.all([
+      prisma.transaksi.findMany({
+        where: { email },
+        include: { sumber: true, tujuan: true, bankName: true },
+        orderBy: { tanggal: "desc" },
+      }),
+      prisma.sumber.findMany({
+        where: { email },
+        orderBy: { createdAt: "asc" },
+      }),
+      prisma.tujuan.findMany({
+        where: { email },
+        orderBy: { createdAt: "asc" },
+      }),
+      prisma.banks.findMany({
+        where: { email },
+        orderBy: { createdAt: "asc" },
+      }),
+    ]);
+
+  return { transaksiUser, daftarSumber, daftarTujuan, daftarBank };
 }
 
 export default async function Page() {
