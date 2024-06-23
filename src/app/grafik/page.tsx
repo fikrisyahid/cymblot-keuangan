@@ -1,20 +1,25 @@
 import MainCard from "@/components/main-card";
-import { TEXT_COLOR } from "@/config";
+import { MONITORED_EMAIL, TEXT_COLOR } from "@/config";
 import { currentUser } from "@clerk/nextjs/server";
 import { Title } from "@mantine/core";
 import prisma from "../db/init";
 import MainBarChart from "./c-barchart";
 import dayjs from "dayjs";
+import isAdmin from "@/utils/is-admin";
 
 async function getUserTransactions(email: string) {
+  const loggedInAsAdmin = isAdmin(email);
+  const where = loggedInAsAdmin
+    ? { OR: [{ email: { in: MONITORED_EMAIL } }, { email }] }
+    : { email };
   const [transaksiUser, daftarSumber, daftarTujuan] = await Promise.all([
     prisma.transaksi.findMany({
-      where: { email },
+      where,
       include: { sumber: true, tujuan: true, bankName: true },
       orderBy: { tanggal: "desc" },
     }),
-    prisma.sumber.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
-    prisma.tujuan.findMany({ where: { email }, orderBy: { createdAt: "asc" } }),
+    prisma.sumber.findMany({ where, orderBy: { createdAt: "asc" } }),
+    prisma.tujuan.findMany({ where, orderBy: { createdAt: "asc" } }),
   ]);
 
   return { transaksiUser, daftarSumber, daftarTujuan };
