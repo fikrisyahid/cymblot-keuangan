@@ -15,7 +15,7 @@ function addBankWithSaldo({
   allTransaksi: ITransaksi[];
 }) {
   const bankTransaksi = allTransaksi.filter(
-    (transaksi) => transaksi.bankName?.id === bank.id
+    (transaksi) => transaksi.bankNameId === bank.id
   );
   const saldo = getBalanceBank(bankTransaksi);
   return { ...bank, saldo };
