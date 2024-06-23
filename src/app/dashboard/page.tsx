@@ -22,7 +22,7 @@ async function getPageData(email: string) {
         bankName: true,
       },
     }),
-    prisma.banks.findMany({ where: { email } }),
+    prisma.banks.findMany({ where }),
   ]);
 
   return {

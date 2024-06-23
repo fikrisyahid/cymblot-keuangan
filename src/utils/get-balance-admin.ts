@@ -1,5 +1,3 @@
-import prisma from "@/app/db/init";
-import { MONITORED_EMAIL } from "@/config";
 import { IBanks, ITransaksi } from "@/types/db";
 import { getBalanceBank } from "./get-balance";
 
@@ -25,35 +23,33 @@ function calculateTotalSaldo(banks: IBanksWithSaldo[]) {
   return banks.reduce((acc, bank) => acc + bank.saldo, 0);
 }
 
+function groupByEmail(userBanks: IBanksWithSaldo[]) {
+  const grouped = userBanks.reduce((acc, currentUserBank) => {
+    if (!acc[currentUserBank.email]) {
+      acc[currentUserBank.email] = {
+        email: currentUserBank.email,
+        banks: [],
+        total_saldo: 0,
+      };
+    }
+    acc[currentUserBank.email].banks.push(currentUserBank);
+    acc[currentUserBank.email].total_saldo = calculateTotalSaldo(userBanks);
+    return acc;
+  }, {} as { [key: string]: { email: string; banks: IBanksWithSaldo[]; total_saldo: number } });
+
+  return Object.values(grouped);
+}
+
 export async function getBalanceBankDetailAdmin({
-  email,
   daftarBank,
   transaksiUser,
 }: {
-  email: string;
   daftarBank: IBanks[];
   transaksiUser: ITransaksi[];
 }) {
-  const banksFromEachMonitoredEmail = await Promise.all(
-    MONITORED_EMAIL.map(async (email) => {
-      const banks = await prisma.banks.findMany({ where: { email } });
-      const banksWithSaldo = banks.map((bank) =>
-        addBankWithSaldo({ bank, transaksiUser })
-      );
-      return banksWithSaldo;
-    })
-  );
-
-  const myBanks = daftarBank.map((bank) =>
+  const userBanksWithSaldo = daftarBank.map((bank) =>
     addBankWithSaldo({ bank, transaksiUser })
   );
-
-  const allUserBanks = [myBanks, ...banksFromEachMonitoredEmail];
-  const userBanksWithEmail = allUserBanks.map((userBanks, index) => ({
-    email: index === 0 ? email : MONITORED_EMAIL[index - 1],
-    banks: userBanks,
-    total_saldo: calculateTotalSaldo(userBanks),
-  }));
-
+  const userBanksWithEmail = groupByEmail(userBanksWithSaldo);
   return userBanksWithEmail;
 }
