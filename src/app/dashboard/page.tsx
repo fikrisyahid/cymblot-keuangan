@@ -5,20 +5,24 @@ import { Stack } from "@mantine/core";
 import MonthlyIncomeGraph from "./monthly-income-graph";
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "../db/init";
+import { MONITORED_EMAIL } from "@/config";
+import isAdmin from "@/utils/is-admin";
 
 async function getPageData(email: string) {
+  const loggedInAsAdmin = isAdmin(email);
+  const where = loggedInAsAdmin
+    ? { OR: [{ email: { in: MONITORED_EMAIL } }, { email }] }
+    : { email };
   const [transaksiUser, daftarBank] = await Promise.all([
     prisma.transaksi.findMany({
-      where: { email },
+      where,
       include: {
         sumber: true,
         tujuan: true,
         bankName: true,
       },
     }),
-    prisma.banks.findMany({
-      where: { email },
-    }),
+    prisma.banks.findMany({ where: { email } }),
   ]);
 
   return {

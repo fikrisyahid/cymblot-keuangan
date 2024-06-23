@@ -9,12 +9,12 @@ interface IBanksWithSaldo extends IBanks {
 
 function addBankWithSaldo({
   bank,
-  allTransaksi,
+  transaksiUser,
 }: {
   bank: IBanks;
-  allTransaksi: ITransaksi[];
+  transaksiUser: ITransaksi[];
 }) {
-  const bankTransaksi = allTransaksi.filter(
+  const bankTransaksi = transaksiUser.filter(
     (transaksi) => transaksi.bankNameId === bank.id
   );
   const saldo = getBalanceBank(bankTransaksi);
@@ -28,28 +28,24 @@ function calculateTotalSaldo(banks: IBanksWithSaldo[]) {
 export async function getBalanceBankDetailAdmin({
   email,
   daftarBank,
+  transaksiUser,
 }: {
   email: string;
   daftarBank: IBanks[];
+  transaksiUser: ITransaksi[];
 }) {
-  const allTransaksi = await prisma.transaksi.findMany({
-    where: {
-      OR: [{ email: { in: MONITORED_EMAIL } }, { email }],
-    },
-  });
-
   const banksFromEachMonitoredEmail = await Promise.all(
     MONITORED_EMAIL.map(async (email) => {
       const banks = await prisma.banks.findMany({ where: { email } });
       const banksWithSaldo = banks.map((bank) =>
-        addBankWithSaldo({ bank, allTransaksi })
+        addBankWithSaldo({ bank, transaksiUser })
       );
       return banksWithSaldo;
     })
   );
 
   const myBanks = daftarBank.map((bank) =>
-    addBankWithSaldo({ bank, allTransaksi })
+    addBankWithSaldo({ bank, transaksiUser })
   );
 
   const allUserBanks = [myBanks, ...banksFromEachMonitoredEmail];
@@ -60,14 +56,4 @@ export async function getBalanceBankDetailAdmin({
   }));
 
   return userBanksWithEmail;
-}
-
-export async function getBalanceBankAdmin({ email }: { email: string }) {
-  const allTransaksi = await prisma.transaksi.findMany({
-    where: {
-      OR: [{ email: { in: MONITORED_EMAIL } }, { email }],
-    },
-  });
-
-  return getBalanceBank(allTransaksi);
 }

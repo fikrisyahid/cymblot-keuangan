@@ -4,6 +4,7 @@ import stringToRupiah from "@/utils/string-to-rupiah";
 import { TEXT_COLOR } from "@/config";
 import { IconEye } from "@tabler/icons-react";
 import { ITotalSaldoBankDetail } from "@/app/dashboard/types";
+import Link from "next/link";
 
 export default function ListBankBalanceAdmin({
   totalSaldoBankDetail,
@@ -37,7 +38,12 @@ export default function ListBankBalanceAdmin({
                   <Badge color={bank?.saldo > 0 ? "teal" : "red"}>
                     {stringToRupiah(bank?.saldo?.toString())}
                   </Badge>
-                  <ActionIcon variant="subtle" c={TEXT_COLOR}>
+                  <ActionIcon
+                    variant="subtle"
+                    c={TEXT_COLOR}
+                    component={Link}
+                    href={`/dashboard/${bank.id}`}
+                  >
                     <IconEye />
                   </ActionIcon>
                 </MainCard>

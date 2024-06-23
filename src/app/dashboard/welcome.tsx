@@ -19,10 +19,7 @@ import {
 import ListBankBalance from "@/components/list-bank-balance";
 import isAdmin from "@/utils/is-admin";
 import ListBankBalanceAdmin from "@/components/list-bank-balance-admin";
-import {
-  getBalanceBankAdmin,
-  getBalanceBankDetailAdmin,
-} from "@/utils/get-balance-admin";
+import { getBalanceBankDetailAdmin } from "@/utils/get-balance-admin";
 
 export default async function Welcome({
   fullName,
@@ -37,16 +34,19 @@ export default async function Welcome({
 }) {
   const loggedInAsAdmin = isAdmin(email);
 
-  const totalSaldoBank = loggedInAsAdmin
-    ? await getBalanceBankAdmin({ email })
-    : getBalanceBank(transaksiUser);
-  const totalSaldoCash = getBalanceCash(transaksiUser);
+  const totalSaldoBank = getBalanceBank(transaksiUser);
+  const totalSaldoCash = getBalanceCash(
+    loggedInAsAdmin
+      ? transaksiUser.filter((transaksi) => transaksi.email === email)
+      : transaksiUser
+  );
   const totalSaldo = totalSaldoBank + totalSaldoCash;
 
   const totalSaldoBankDetail = loggedInAsAdmin
     ? await getBalanceBankDetailAdmin({
         email,
         daftarBank,
+        transaksiUser,
       })
     : getBalanceBankDetail({
         daftarBank,
