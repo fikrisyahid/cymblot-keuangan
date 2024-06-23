@@ -49,7 +49,7 @@ export default async function Page() {
 
   const totalSaldoBank = getBalanceBank(transaksiUser);
   const totalSaldoCash = getBalanceCash(transaksiUser);
-  const totalBalanceBankDetail = getBalanceBankDetail({
+  const totalSaldoBankDetail = getBalanceBankDetail({
     daftarBank,
     transaksiUser,
   });
@@ -91,11 +91,11 @@ export default async function Page() {
           <IconCash style={{ height: "100%", width: "20%" }} />
         </DataCard>
       </MainCard>
-      <ListBankBalance totalBalanceBankDetail={totalBalanceBankDetail} />
+      <ListBankBalance totalSaldoBankDetail={totalSaldoBankDetail} />
       <PenarikanPenyetoranForm
         daftarBank={daftarBank}
         totalSaldoCash={totalSaldoCash}
-        totalBalanceBankDetail={totalBalanceBankDetail}
+        totalSaldoBankDetail={totalSaldoBankDetail}
       />
     </MainCard>
   );

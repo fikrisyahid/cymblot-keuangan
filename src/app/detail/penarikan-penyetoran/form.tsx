@@ -13,11 +13,11 @@ import { useRouter } from "next-nprogress-bar";
 export default function PenarikanPenyetoranForm({
   daftarBank,
   totalSaldoCash,
-  totalBalanceBankDetail,
+  totalSaldoBankDetail,
 }: {
   daftarBank: IBanks[];
   totalSaldoCash: number;
-  totalBalanceBankDetail: any;
+  totalSaldoBankDetail: any;
 }) {
   const router = useRouter();
   const [formState, setFormState] = useState({
@@ -47,7 +47,7 @@ export default function PenarikanPenyetoranForm({
       return;
     }
 
-    if (mode === "PENARIKAN" && nominal > totalBalanceBankDetail[bankName]) {
+    if (mode === "PENARIKAN" && nominal > totalSaldoBankDetail[bankName]) {
       notifications.show({
         title: "Error",
         message: `Saldo bank ${bankName} tidak cukup`,
