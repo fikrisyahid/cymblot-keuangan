@@ -1,22 +1,15 @@
-"use client";
-
 import { ActionIcon } from "@mantine/core";
 import { IconEdit } from "@tabler/icons-react";
-import { useRouter } from "next-nprogress-bar";
+import Link from "next/link";
 
 export default function EditDataKeuanganButton({ id }: { id: string }) {
-  const router = useRouter();
-
-  const handleClick = () => {
-    router.push(`/detail/${id}`);
-  };
-
   return (
     <ActionIcon
       variant="filled"
       aria-label="Delete"
-      onClick={handleClick}
       color="yellow"
+      component={Link}
+      href={`/detail/${id}`}
     >
       <IconEdit />
     </ActionIcon>
