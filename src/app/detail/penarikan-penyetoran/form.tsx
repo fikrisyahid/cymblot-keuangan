@@ -9,6 +9,7 @@ import { IconInfoCircle, IconPlus } from "@tabler/icons-react";
 import { IBanks } from "@/types/db";
 import Link from "next/link";
 import { useRouter } from "next-nprogress-bar";
+import { BUTTON_BASE_COLOR } from "@/config";
 
 export default function PenarikanPenyetoranForm({
   daftarBank,
@@ -147,8 +148,11 @@ export default function PenarikanPenyetoranForm({
           value={formState.nominal}
           onChange={(value) => handleChange({ nominal: +value })}
         />
-
-        <Button leftSection={<IconPlus />} type="submit">
+        <Button
+          leftSection={<IconPlus />}
+          type="submit"
+          style={{ backgroundColor: BUTTON_BASE_COLOR }}
+        >
           Submit
         </Button>
       </Stack>
