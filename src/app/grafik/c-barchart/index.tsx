@@ -132,6 +132,7 @@ export default function MainBarChart({
           series={series}
           type="stacked"
           tickLine="y"
+          withLegend
         />
       )}
     </Stack>
