@@ -6,7 +6,7 @@ import { addBank, deleteBank, editBank } from "@/app/actions/banks";
 export default async function Section({ userBanks }: { userBanks: IBanks[] }) {
   return (
     <>
-      <AddForm addFunction={addBank} />
+      <AddForm data={userBanks} addFunction={addBank} />
       <TableSection
         data={userBanks}
         deleteFunction={deleteBank}
