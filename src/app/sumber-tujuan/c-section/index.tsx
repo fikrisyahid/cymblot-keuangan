@@ -19,6 +19,7 @@ export default async function Section({
       <AddForm
         addFunction={type === "sumber" ? addSumber : addTujuan}
         type={type}
+        data={data}
       />
       <TableSection
         type={type}

@@ -6,13 +6,16 @@ import { IconPlus } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { openConfirmModal } from "@mantine/modals";
 import stringCapitalize from "@/utils/string-capitalize";
+import { ITujuanSumber } from "@/types/db";
 
 export default function AddForm({
   type,
   addFunction,
+  data,
 }: {
   type: "sumber" | "tujuan";
   addFunction: ({ formData }: { formData: FormData }) => Promise<void>;
+  data: ITujuanSumber[];
 }) {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -22,12 +25,27 @@ export default function AddForm({
 
     const nama = inputRef.current?.value;
     if (nama) {
+      const existingData = data.filter(
+        (item) => item.nama.toLowerCase() === nama.toLowerCase()
+      );
+      const alreadyExists = existingData.length > 0;
+
+      if (alreadyExists) {
+        notifications.show({
+          title: "Error",
+          message: `${stringCapitalize(type)} sudah ada`,
+          color: "red",
+        });
+        setLoading(false);
+        return;
+      }
       openConfirmModal({
         title: "Konfirmasi Penambahan",
         children: <Text>Apakah Anda yakin ingin menambahkan {type} ini?</Text>,
         labels: { confirm: "Tambah", cancel: "Batal" },
         onConfirm: async () => {
           setLoading(true);
+
           const formData = new FormData();
           formData.set(type, nama);
 
