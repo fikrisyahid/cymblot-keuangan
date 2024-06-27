@@ -1,5 +1,6 @@
 import { IBanks, ITransaksi } from "@/types/db";
 import { getBalanceBank } from "./get-balance";
+import { MONITORED_EMAIL } from "@/config";
 
 interface IBanksWithSaldo extends IBanks {
   saldo: number;
@@ -47,9 +48,25 @@ export async function getBalanceBankDetailAdmin({
   daftarBank: IBanks[];
   transaksiUser: ITransaksi[];
 }) {
+  const monitoredEmailWithBanks: string[] = [];
+  daftarBank.forEach((bank) => {
+    if (!monitoredEmailWithBanks.includes(bank.email)) {
+      monitoredEmailWithBanks.push(bank.email);
+    }
+  });
+  const monitoredEmailWithoutBanks: string[] = MONITORED_EMAIL.filter(
+    (email) => !monitoredEmailWithBanks.includes(email)
+  );
   const userBanksWithSaldo = daftarBank.map((bank) =>
     addBankWithSaldo({ bank, transaksiUser })
   );
   const userBanksWithEmail = groupByEmail(userBanksWithSaldo);
+  monitoredEmailWithoutBanks.forEach((email) => {
+    userBanksWithEmail.push({
+      email,
+      banks: [],
+      total_saldo: 0,
+    });
+  });
   return userBanksWithEmail;
 }
