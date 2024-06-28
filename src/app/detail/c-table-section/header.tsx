@@ -1,7 +1,7 @@
 import MainCard from "@/components/main-card";
 import { BUTTON_BASE_COLOR } from "@/config";
 import stringToRupiah from "@/utils/string-to-rupiah";
-import { Badge, Button, Flex, Input, Text } from "@mantine/core";
+import { Badge, Button, Input, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconCash, IconPlus, IconRestore } from "@tabler/icons-react";
 import Link from "next/link";
@@ -25,20 +25,19 @@ export default function DetailHeader({
 
   return (
     <>
-      <MainCard transparent noPadding row>
-        <Flex
-          direction={isMobile ? "column" : "row"}
-          justify={isMobile ? "center" : "flex-start"}
-          align={isMobile ? "center" : "flex-end"}
-          gap="sm"
-          w="100%"
-        >
-          <Flex direction="column" align={isMobile ? "center" : "flex-start"}>
+      <MainCard
+        transparent
+        noPadding
+        row
+        style={{ alignItems: "flex-end", justifyContent: "space-between" }}
+      >
+        <MainCard transparent noPadding row style={{ alignItems: "flex-end" }}>
+          <MainCard transparent noPadding noGap center>
             <Text>Total saldo:</Text>
             <Badge color={totalSaldo > 0 ? "teal" : "red"}>
               {stringToRupiah(totalSaldo.toString())}
             </Badge>
-          </Flex>
+          </MainCard>
           <Button
             fullWidth={isMobile}
             leftSection={<IconRestore />}
@@ -60,14 +59,8 @@ export default function DetailHeader({
           >
             Reset Filter
           </Button>
-        </Flex>
-        <Flex
-          direction={isMobile ? "column" : "row"}
-          justify={isMobile ? "center" : "flex-end"}
-          align={isMobile ? "center" : "flex-end"}
-          gap="sm"
-          w="100%"
-        >
+        </MainCard>
+        <MainCard transparent noPadding row>
           <Button
             fullWidth={isMobile}
             leftSection={<IconPlus />}
@@ -86,7 +79,7 @@ export default function DetailHeader({
           >
             Penarikan & Penyetoran
           </Button>
-        </Flex>
+        </MainCard>
       </MainCard>
       <Input
         placeholder="Cari seluruh data keuangan"
