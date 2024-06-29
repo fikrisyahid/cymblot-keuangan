@@ -16,7 +16,7 @@ export default function ListBankBalanceAdmin({
   return (
     <MainCard transparent noPadding gap={16}>
       {totalSaldoBankDetail.map(
-        (item: ITotalSaldoBankDetail, index: number) => (
+        (item: ITotalSaldoBankDetail) => (
           <MainCard key={item?.email} transparent noPadding>
             <Text fw={700} c={TEXT_COLOR}>
               {item?.email === email
