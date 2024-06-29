@@ -38,7 +38,6 @@ function mapTransactionsToTableData(transaksiUser: ITransaksi[]) {
     sumber: transaksi.sumber?.nama || "-",
     tujuan: transaksi.tujuan?.nama || "-",
     nominal: transaksi.nominal,
-    bank: transaksi.bank ? transaksi.bankName?.nama || "-" : "Cash",
   }));
 }
 
@@ -130,6 +129,7 @@ export default async function Page({
       </MainCard>
       <TableSection
         data={dataForTable}
+        bankId={bank_id}
         daftarSumber={daftarSumber}
         daftarTujuan={daftarTujuan}
         daftarBank={daftarBank}

@@ -11,7 +11,6 @@ interface IFilterDetailTable {
   nominal_di_bawah: number;
   nominal_di_atas: number;
   nominal_sama_dengan: number;
-  bank: string[];
 }
 
 interface ITableData {
@@ -23,7 +22,6 @@ interface ITableData {
   sumber: string;
   tujuan: string;
   nominal: number;
-  bank: string;
 }
 
 export type { IFilterDetailTable, ITableData };
