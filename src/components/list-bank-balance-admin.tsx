@@ -13,7 +13,6 @@ export default function ListBankBalanceAdmin({
   email: string;
   totalSaldoBankDetail: ITotalSaldoBankDetail[];
 }) {
-  console.log(totalSaldoBankDetail);
   return (
     <MainCard transparent noPadding gap={16}>
       {totalSaldoBankDetail

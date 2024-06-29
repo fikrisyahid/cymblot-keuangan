@@ -20,10 +20,6 @@ function addBankWithSaldo({
   return { ...bank, saldo };
 }
 
-function calculateTotalSaldo(banks: IBanksWithSaldo[]) {
-  return banks.reduce((acc, bank) => acc + bank.saldo, 0);
-}
-
 function groupByEmail(userBanks: IBanksWithSaldo[]) {
   const grouped = userBanks.reduce((acc, currentUserBank) => {
     if (!acc[currentUserBank.email]) {
@@ -34,7 +30,7 @@ function groupByEmail(userBanks: IBanksWithSaldo[]) {
       };
     }
     acc[currentUserBank.email].banks.push(currentUserBank);
-    acc[currentUserBank.email].total_saldo = calculateTotalSaldo(userBanks);
+    acc[currentUserBank.email].total_saldo += currentUserBank.saldo;
     return acc;
   }, {} as { [key: string]: { email: string; banks: IBanksWithSaldo[]; total_saldo: number } });
 
@@ -70,6 +66,16 @@ export async function getBalanceBankDetailAdmin({
       total_saldo: 0,
     });
   });
+  const adminHaveBank = userBanksWithEmail.some(
+    (userBank) => userBank.email === email
+  );
+  if (!adminHaveBank) {
+    userBanksWithEmail.push({
+      email,
+      banks: [],
+      total_saldo: 0,
+    });
+  }
   userBanksWithEmail.sort((a, b) => {
     if (a.email === email) return -1;
     if (b.email === email) return 1;
