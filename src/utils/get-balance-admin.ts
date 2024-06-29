@@ -42,9 +42,11 @@ function groupByEmail(userBanks: IBanksWithSaldo[]) {
 }
 
 export async function getBalanceBankDetailAdmin({
+  email,
   daftarBank,
   transaksiUser,
 }: {
+  email: string;
   daftarBank: IBanks[];
   transaksiUser: ITransaksi[];
 }) {
@@ -68,6 +70,10 @@ export async function getBalanceBankDetailAdmin({
       total_saldo: 0,
     });
   });
-  console.log(userBanksWithEmail)
+  userBanksWithEmail.sort((a, b) => {
+    if (a.email === email) return -1;
+    if (b.email === email) return 1;
+    return 0;
+  });
   return userBanksWithEmail;
 }

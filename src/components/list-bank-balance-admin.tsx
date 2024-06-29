@@ -13,10 +13,16 @@ export default function ListBankBalanceAdmin({
   email: string;
   totalSaldoBankDetail: ITotalSaldoBankDetail[];
 }) {
+  console.log(totalSaldoBankDetail);
   return (
     <MainCard transparent noPadding gap={16}>
-      {totalSaldoBankDetail.map(
-        (item: ITotalSaldoBankDetail) => (
+      {totalSaldoBankDetail
+        .sort((a, b) => {
+          if (a.email === email) return -1;
+          if (b.email === email) return 1;
+          return 0;
+        })
+        .map((item: ITotalSaldoBankDetail) => (
           <MainCard key={item?.email} transparent noPadding>
             <Text fw={700} c={TEXT_COLOR}>
               {item?.email === email
@@ -57,8 +63,7 @@ export default function ListBankBalanceAdmin({
               )}
             </MainCard>
           </MainCard>
-        )
-      )}
+        ))}
     </MainCard>
   );
 }

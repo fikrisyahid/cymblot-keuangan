@@ -44,6 +44,7 @@ export default async function Welcome({
 
   const totalSaldoBankDetail = loggedInAsAdmin
     ? await getBalanceBankDetailAdmin({
+        email,
         daftarBank,
         transaksiUser,
       })
