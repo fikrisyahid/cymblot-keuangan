@@ -7,8 +7,10 @@ import { ITotalSaldoBankDetail } from "@/app/dashboard/types";
 import Link from "next/link";
 
 export default function ListBankBalanceAdmin({
+  email,
   totalSaldoBankDetail,
 }: {
+  email: string;
   totalSaldoBankDetail: ITotalSaldoBankDetail[];
 }) {
   return (
@@ -17,7 +19,9 @@ export default function ListBankBalanceAdmin({
         (item: ITotalSaldoBankDetail, index: number) => (
           <MainCard key={item?.email} transparent noPadding>
             <Text fw={700} c={TEXT_COLOR}>
-              {index === 0 ? "Pribadi" : item?.email || "Email tidak diketahui"}
+              {item?.email === email
+                ? "Pribadi"
+                : item?.email || "Email tidak diketahui"}
             </Text>
             <MainCard
               transparent

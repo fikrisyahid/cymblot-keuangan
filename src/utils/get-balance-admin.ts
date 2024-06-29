@@ -68,5 +68,6 @@ export async function getBalanceBankDetailAdmin({
       total_saldo: 0,
     });
   });
+  console.log(userBanksWithEmail)
   return userBanksWithEmail;
 }

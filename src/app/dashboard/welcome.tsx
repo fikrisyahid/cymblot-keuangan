@@ -88,7 +88,10 @@ export default async function Welcome({
         </DataCard>
       </MainCard>
       {loggedInAsAdmin ? (
-        <ListBankBalanceAdmin totalSaldoBankDetail={totalSaldoBankDetail} />
+        <ListBankBalanceAdmin
+          email={email}
+          totalSaldoBankDetail={totalSaldoBankDetail}
+        />
       ) : (
         <ListBankBalance totalSaldoBankDetail={totalSaldoBankDetail} />
       )}
