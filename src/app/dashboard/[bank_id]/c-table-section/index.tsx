@@ -26,12 +26,14 @@ const PAGE_SIZES = [10, 15, 25, 50, 75, 100];
 
 export default function TableSection({
   data,
+  bankId,
   daftarSumber,
   daftarTujuan,
   daftarBank,
   oldestDate,
 }: {
   data: ITableData[];
+  bankId: string;
   daftarSumber: ITujuanSumber[];
   daftarTujuan: ITujuanSumber[];
   daftarBank: IBanks[];
@@ -50,7 +52,6 @@ export default function TableSection({
     nominal_di_bawah: 0,
     nominal_di_atas: 0,
     nominal_sama_dengan: 0,
-    bank: [],
   });
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<any>>({
     columnAccessor: "no",
@@ -99,6 +100,7 @@ export default function TableSection({
   return (
     <Flex direction="column" gap="sm">
       <DetailHeader
+        bankId={bankId}
         totalSaldo={totalSaldo}
         oldestDate={oldestDate}
         generalSearch={generalSearch}

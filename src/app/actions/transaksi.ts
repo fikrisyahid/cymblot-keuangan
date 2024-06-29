@@ -139,6 +139,59 @@ export async function penarikanPenyetoran(formData: FormData) {
   }
 }
 
+export async function transfer(formData: FormData) {
+  const user = await currentUser();
+  const email = user?.emailAddresses[0].emailAddress;
+
+  if (!email) {
+    throw new Error("Anda belum login");
+  }
+
+  const nominal = parseInt(formData.get("nominal") as string, 10);
+  const bankNameId = formData.get("bankNameId") as string;
+
+  console.log(nominal,bankNameId)
+
+  if (!nominal || !bankNameId) {
+    throw new Error("Data nominal atau bankNameId tidak lengkap");
+  }
+
+  const bankName = await prisma.banks.findUnique({
+    where: { id: bankNameId },
+    select: { email: true, nama: true },
+  });
+
+  if (!bankName) {
+    throw new Error("Bank tujuan tidak ditemukan");
+  }
+
+  const keteranganPengeluaran = `Transfer ke bank ${bankName.nama} (${bankName.email}) sebesar ${nominal}`;
+  const keteranganPemasukan = `Transfer dari bank dengan email ${email} sebesar ${nominal}`;
+
+  await Promise.all([
+    prisma.transaksi.create({
+      data: {
+        email: email,
+        jenis: "PENGELUARAN",
+        nominal: nominal,
+        bank: true,
+        bankNameId: bankNameId,
+        keterangan: keteranganPengeluaran,
+      },
+    }),
+    prisma.transaksi.create({
+      data: {
+        email: bankName.email,
+        jenis: "PEMASUKAN",
+        nominal: nominal,
+        bank: true,
+        bankNameId: bankNameId,
+        keterangan: keteranganPemasukan,
+      },
+    }),
+  ]);
+}
+
 export interface ITransaksiFormState {
   email: string;
   tanggal: DateValue;
