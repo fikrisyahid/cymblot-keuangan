@@ -133,7 +133,7 @@ export default async function Page({
           {stringToRupiah(bankBalance.toString())}
         </Badge>
       </MainCard>
-      <TransferForm bankBalance={bankBalance} otherBankLists={otherBankLists} />
+      <TransferForm bankBalance={bankBalance} otherBankLists={otherBankLists} bankId={bank_id} />
     </MainCard>
   );
 }

@@ -6,53 +6,58 @@ import { openConfirmModal } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { IconUpload } from "@tabler/icons-react";
 import { useRouter } from "next-nprogress-bar";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 export default function TransferForm({
   bankBalance,
   otherBankLists,
+  bankId,
 }: {
   bankBalance: number;
   otherBankLists: { id: string; email: string; nama: string }[];
+  bankId: string;
 }) {
   const router = useRouter();
-  const nominalRef = useRef<HTMLInputElement>(null);
-  const bankNameIdRef = useRef<HTMLInputElement>(null);
-  const [nominalError, setNominalError] = useState<string | null>(null);
-  const [bankNameIdError, setBankNameIdError] = useState<string | null>(null);
+  const [stateForm, setStateForm] = useState({
+    nominal: "",
+    bankNameId: "",
+  });
+  const [stateError, setStateError] = useState({
+    nominal: false,
+    bankNameId: false,
+  });
 
-  function validateFields(nominal: string, bankNameId: string): boolean {
-    let error = false;
+  function handleChange(newObj: Partial<typeof stateForm>) {
+    setStateForm((state) => ({
+      ...state,
+      ...newObj,
+    }));
+  }
 
-    if (!nominal) {
-      setNominalError("Nominal tidak boleh kosong");
-      error = true;
-    } else if (+nominal <= 0) {
-      setNominalError("Nominal tidak boleh kurang dari sama dengan 0");
-      error = true;
-    } else {
-      setNominalError(null);
-    }
-
-    if (!bankNameId) {
-      setBankNameIdError("Pilih bank tujuan");
-      error = true;
-    } else {
-      setBankNameIdError(null);
-    }
-
-    return error;
+  function checkError() {
+    const { nominal, bankNameId } = stateForm;
+    const hasError = !nominal || +nominal <= 0 || !bankNameId;
+    setStateError({
+      nominal: !nominal || +nominal <= 0,
+      bankNameId: !bankNameId,
+    });
+    return hasError;
   }
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
 
-    const nominal = nominalRef.current?.value || "";
-    const bankNameId = bankNameIdRef.current?.value || "";
+    const { nominal, bankNameId } = stateForm;
+    const hasError = checkError();
 
-    console.log(nominal,bankNameId)
-
-    const hasError = validateFields(nominal, bankNameId);
+    if (+nominal > bankBalance) {
+      notifications.show({
+        title: "Error",
+        message: `Nominal transfer melebihi saldo`,
+        color: "red",
+      });
+      return;
+    }
 
     if (!hasError) {
       openConfirmModal({
@@ -63,21 +68,20 @@ export default function TransferForm({
           const formData = new FormData();
           formData.set("nominal", nominal);
           formData.set("bankNameId", bankNameId);
+          formData.set("bankId", bankId);
 
           try {
             await transfer(formData);
-            if (nominalRef.current) {
-              nominalRef.current.value = "";
-            }
-            if (bankNameIdRef.current) {
-              bankNameIdRef.current.value = "";
-            }
+            setStateForm({
+              nominal: "",
+              bankNameId: "",
+            });
             notifications.show({
               title: "Sukses",
               message: `Transfer berhasil dilakukan`,
               color: "green",
             });
-            router.push(`/dashboard/${bankNameId}`);
+            router.push(`/dashboard/${bankId}`);
           } catch (error) {
             notifications.show({
               title: "Error",
@@ -100,27 +104,26 @@ export default function TransferForm({
     <form onSubmit={handleSubmit}>
       <Stack>
         <Select
-          ref={bankNameIdRef}
           label="Pilih tujuan transfer"
           placeholder="Bank tujuan transfer"
           data={otherBankLists.map((bank) => ({
             value: bank.id,
             label: `${bank.email} - ${bank.nama}`,
           }))}
-          error={bankNameIdError}
+          error={stateError.bankNameId}
+          onChange={(value) => handleChange({ bankNameId: value as string })}
         />
         <NumberInput
-          ref={nominalRef}
           label="Nominal"
           placeholder="Nominal transfer"
           defaultValue={0}
           allowDecimal={false}
           allowNegative={false}
           min={0}
-          max={bankBalance}
           thousandSeparator=","
           prefix="Rp"
-          error={nominalError}
+          error={stateError.nominal}
+          onChange={(value) => handleChange({ nominal: value as string })}
         />
         <Button leftSection={<IconUpload />} type="submit">
           Transfer

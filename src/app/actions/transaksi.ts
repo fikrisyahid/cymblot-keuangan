@@ -149,47 +149,59 @@ export async function transfer(formData: FormData) {
 
   const nominal = parseInt(formData.get("nominal") as string, 10);
   const bankNameId = formData.get("bankNameId") as string;
+  const bankId = formData.get("bankId") as string;
 
-  console.log(nominal,bankNameId)
+  console.log(nominal, bankNameId);
 
   if (!nominal || !bankNameId) {
     throw new Error("Data nominal atau bankNameId tidak lengkap");
   }
 
-  const bankName = await prisma.banks.findUnique({
+  const bankDestination = await prisma.banks.findUnique({
     where: { id: bankNameId },
-    select: { email: true, nama: true },
+    select: { nama: true, email: true },
   });
 
-  if (!bankName) {
+  const bankSourceName = await prisma.banks.findUnique({
+    where: { id: bankId },
+    select: { nama: true, email: true },
+  });
+
+  if (!bankSourceName) {
+    throw new Error("Bank asal tidak ditemukan");
+  }
+
+  if (!bankDestination) {
     throw new Error("Bank tujuan tidak ditemukan");
   }
 
-  const keteranganPengeluaran = `Transfer ke bank ${bankName.nama} (${bankName.email}) sebesar ${nominal}`;
-  const keteranganPemasukan = `Transfer dari bank dengan email ${email} sebesar ${nominal}`;
+  const keteranganPengeluaran = `Transfer ke bank ${bankDestination.nama} (${bankDestination.email}) sebesar ${nominal}`;
+  const keteranganPemasukan = `Transfer dari bank ${bankSourceName.nama} (${bankSourceName.email}) sebesar ${nominal}`;
 
   await Promise.all([
     prisma.transaksi.create({
       data: {
-        email: email,
+        email: bankSourceName.email,
         jenis: "PENGELUARAN",
-        nominal: nominal,
+        nominal,
         bank: true,
-        bankNameId: bankNameId,
+        bankNameId: bankId,
         keterangan: keteranganPengeluaran,
       },
     }),
     prisma.transaksi.create({
       data: {
-        email: bankName.email,
+        email: bankDestination.email,
         jenis: "PEMASUKAN",
-        nominal: nominal,
+        nominal,
         bank: true,
         bankNameId: bankNameId,
         keterangan: keteranganPemasukan,
       },
     }),
   ]);
+
+  revalidateAllRoute();
 }
 
 export interface ITransaksiFormState {
