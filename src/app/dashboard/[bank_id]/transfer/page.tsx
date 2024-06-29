@@ -1,13 +1,12 @@
 import prisma from "@/app/db/init";
 import MainCard from "@/components/main-card";
-import PrettyJSON from "@/components/pretty-json";
 import { BUTTON_BASE_COLOR, MONITORED_EMAIL, TEXT_COLOR } from "@/config";
 import { getBalanceBank } from "@/utils/get-balance";
 import isAdmin from "@/utils/is-admin";
 import stringToRupiah from "@/utils/string-to-rupiah";
 import { currentUser } from "@clerk/nextjs/server";
-import { Badge, Button, NumberInput, Select, Text, Title } from "@mantine/core";
-import { IconArrowLeft, IconUpload } from "@tabler/icons-react";
+import { Badge, Button, Text, Title } from "@mantine/core";
+import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
 import TransferForm from "./form";
 
