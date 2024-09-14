@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Transaksi" ALTER COLUMN "sumberId" DROP NOT NULL,
-ALTER COLUMN "tujuanId" DROP NOT NULL;
