@@ -15,6 +15,7 @@ import RootShell from './components/shell';
 
 export const metadata: Metadata = {
   title: 'Cymblot Keuangan',
+  description: 'Aplikasi keuangan sederhana',
 };
 
 const poppins = Poppins({
