@@ -33,8 +33,12 @@ export default function RootLayout({
         <head>
           <ColorSchemeScript />
         </head>
-        <body className={`${poppins.className} antialiased`}>
-          <MantineProvider>
+        <body className="antialiased">
+          <MantineProvider
+            theme={{
+              fontFamily: poppins.style.fontFamily,
+            }}
+          >
             <SignedOut>
               <div className="flex justify-center items-center min-h-screen">
                 <SignIn routing="hash" />
