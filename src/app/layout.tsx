@@ -2,6 +2,13 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignIn,
+  UserButton,
+} from '@clerk/nextjs';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -25,19 +32,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
         >
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SignedOut>
+              <div className="flex justify-center items-center min-h-screen">
+                <SignIn routing="hash" />
+              </div>
+            </SignedOut>
+            <SignedIn>
+              <div className="flex flex-col ">
+                <div className="w-full z-1000">
+                  <header className="shadow-md p-4">
+                    <h1>My Fixed Header</h1>
+                    <UserButton />
+                  </header>
+                </div>
+                {children}
+              </div>
+            </SignedIn>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
