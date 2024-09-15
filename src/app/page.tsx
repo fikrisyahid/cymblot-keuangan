@@ -1,3 +1,4 @@
+import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 
 export default function Home() {
@@ -5,6 +6,7 @@ export default function Home() {
     <main>
       <h1>Hello, world!</h1>
       <Button>Hello</Button>
+      <ThemeToggle />
     </main>
   );
 }
