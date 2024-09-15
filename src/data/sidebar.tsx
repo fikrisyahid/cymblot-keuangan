@@ -1,9 +1,9 @@
 import {
-  IconBuildingBank,
+  IconCategory,
   IconChartHistogram,
   IconDashboard,
   IconTable,
-  IconTargetArrow,
+  IconWallet,
 } from '@tabler/icons-react';
 
 const sidebarMenu = [
@@ -15,7 +15,7 @@ const sidebarMenu = [
   {
     title: 'Grafik',
     icon: <IconChartHistogram />,
-    route: '/grafik',
+    route: '/graph',
   },
   {
     title: 'Detail',
@@ -23,14 +23,14 @@ const sidebarMenu = [
     route: '/detail',
   },
   {
-    title: 'Sumber & Tujuan',
-    icon: <IconTargetArrow />,
-    route: '/sumber-tujuan',
+    title: 'Kategori',
+    icon: <IconCategory />,
+    route: '/category',
   },
   {
-    title: 'Bank',
-    icon: <IconBuildingBank />,
-    route: '/bank',
+    title: 'Kantong',
+    icon: <IconWallet />,
+    route: '/pocket',
   },
 ];
 
