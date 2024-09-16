@@ -1,6 +1,5 @@
 'use client';
 
-import { PRIMARY_COLOR, SECONDARY_COLOR } from '@/config/color';
 import sidebarMenu from '@/data/sidebar';
 import { UserButton } from '@clerk/nextjs';
 import { AppShell, Burger, Button, Flex, Title } from '@mantine/core';
@@ -8,6 +7,7 @@ import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+import clsx from 'clsx';
 
 export default function RootShell({ children }: { children: React.ReactNode }) {
   const [opened, { open, close, toggle }] = useDisclosure(true);
@@ -34,11 +34,7 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
         collapsed: { mobile: !opened, desktop: !opened },
       }}
     >
-      <AppShell.Navbar
-        p="sm"
-        style={{ backgroundColor: SECONDARY_COLOR }}
-        withBorder={false}
-      >
+      <AppShell.Navbar p="sm" className="bg-secondary" withBorder={false}>
         <Flex direction="column" gap="xs" align="center">
           <Burger opened onClick={toggle} color="white" hiddenFrom="sm" />
           <Title
@@ -56,19 +52,17 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
               justify="start"
               component={Link}
               onClick={isMobile ? close : () => {}}
-              style={{
-                width: '100%',
-                backgroundColor:
-                  pathName === item.route ? PRIMARY_COLOR : SECONDARY_COLOR,
-                color: 'white',
-              }}
+              className={clsx(
+                'w-full text-white hover:bg-primary',
+                pathName === item.route ? 'bg-primary' : 'bg-secondary',
+              )}
             >
               {item.title}
             </Button>
           ))}
         </Flex>
       </AppShell.Navbar>
-      <AppShell.Main style={{ backgroundColor: '#f4f4f4' }}>
+      <AppShell.Main className="bg-gray-50">
         <Flex direction="column" gap="sm">
           <Burger opened={false} onClick={toggle} />
           <div className="fixed top-4 right-4">
