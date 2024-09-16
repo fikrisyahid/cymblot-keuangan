@@ -2,6 +2,7 @@
 
 import { PRIMARY_COLOR, SECONDARY_COLOR } from '@/config/color';
 import sidebarMenu from '@/data/sidebar';
+import { UserButton } from '@clerk/nextjs';
 import { AppShell, Burger, Button, Flex, Title } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import Link from 'next/link';
@@ -70,6 +71,9 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
       <AppShell.Main style={{ backgroundColor: '#f4f4f4' }}>
         <Flex direction="column" gap="sm">
           <Burger opened={false} onClick={toggle} />
+          <div className="fixed top-4 right-4">
+            <UserButton />
+          </div>
           {children}
         </Flex>
       </AppShell.Main>

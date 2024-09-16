@@ -1,17 +1,12 @@
 import type { Metadata } from 'next';
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { Poppins } from 'next/font/google';
-import {
-  ClerkProvider,
-  SignIn,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from '@clerk/nextjs';
+import { ClerkProvider, SignIn, SignedIn, SignedOut } from '@clerk/nextjs';
+import RootShell from './components/shell';
 
 import './globals.css';
 import '@mantine/core/styles.css';
-import RootShell from './components/shell';
+import 'mantine-datatable/styles.layer.css';
 
 export const metadata: Metadata = {
   title: 'Cymblot Keuangan',
@@ -46,12 +41,7 @@ export default function RootLayout({
               </div>
             </SignedOut>
             <SignedIn>
-              <RootShell>
-                <div className="fixed top-4 right-4">
-                  <UserButton />
-                </div>
-                {children}
-              </RootShell>
+              <RootShell>{children}</RootShell>
             </SignedIn>
           </MantineProvider>
         </body>
