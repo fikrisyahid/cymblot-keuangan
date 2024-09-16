@@ -24,6 +24,7 @@
     "react/prop-types": "off",
     "react/function-component-definition": "off",
     "arrow-body-style": "off",
-    "operator-linebreak": "off"
+    "operator-linebreak": "off",
+    "no-nested-ternary": "off"
   }
 }
