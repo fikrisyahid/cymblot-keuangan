@@ -1,6 +1,6 @@
 import prisma from '@/utils/db';
 
-async function getTotalBalance({ email }: { email: string }) {
+export default async function getTotalBalance({ email }: { email: string }) {
   const [transactionsDeposit, transactionsWithdraw] = await Promise.all([
     prisma.transaction.aggregate({
       where: {
@@ -26,5 +26,3 @@ async function getTotalBalance({ email }: { email: string }) {
     (transactionsWithdraw._sum.value || 0);
   return totalBalance;
 }
-
-export { getTotalBalance };
