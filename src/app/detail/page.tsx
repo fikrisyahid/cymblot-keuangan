@@ -1,16 +1,16 @@
 import { Badge, Stack, Text, Title } from '@mantine/core';
 import { TEXT_COLOR } from '@/config/color';
-import { currentUser } from '@clerk/nextjs/server';
+import getSessionEmail from '@/utils/get-session-email';
 import DetailTable from './detail-table';
 import MainCard from '../components/main-card';
-import { getTotalBalance } from '../actions/transactions';
+import getTotalBalance from '../actions/get-total-balance';
+import AccessBlocked from '../components/access-blocked';
 
 export default async function Page() {
-  const user = await currentUser();
-  const email = user?.emailAddresses[0].emailAddress;
+  const email = await getSessionEmail();
 
   if (!email) {
-    return <div>Anda harus login terlebih dahulu</div>;
+    return <AccessBlocked />;
   }
 
   const userBalance = await getTotalBalance({ email });
