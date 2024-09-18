@@ -1,13 +1,13 @@
-import { Button, Title } from '@mantine/core';
-import { BUTTON_BASE_COLOR, TEXT_COLOR } from '@/config/color';
+import { Title } from '@mantine/core';
+import { TEXT_COLOR } from '@/config/color';
 import getSessionEmail from '@/utils/get-session-email';
 import getEnvironmentMode from '@/utils/get-environment-mode';
-import { IconPlus } from '@tabler/icons-react';
 import MainCard from '../components/main-card';
-import CategoryTable from './category-table';
+import CategoryTable from './table';
 import getCategories from '../actions/get-categories';
 import PrettyJSON from '../components/pretty-json';
 import AccessBlocked from '../components/access-blocked';
+import AddCategoryForm from './add-form';
 
 export default async function Page() {
   const email = await getSessionEmail();
@@ -20,19 +20,19 @@ export default async function Page() {
 
   const isDev = getEnvironmentMode() === 'development';
 
+  const categoriesForTable = categories.map((category, index) => ({
+    id: category.id,
+    no: index + 1,
+    name: category.name,
+  }));
+
   return (
     <MainCard>
       <Title c={TEXT_COLOR} className="text-center sm:text-left">
         Daftar Kategori
       </Title>
-      <Button
-        leftSection={<IconPlus />}
-        color={BUTTON_BASE_COLOR}
-        className="self-center w-full sm:w-auto sm:self-end"
-      >
-        Tambah Kategori
-      </Button>
-      <CategoryTable />
+      <AddCategoryForm categories={categories} email={email} />
+      <CategoryTable categories={categoriesForTable} />
       {isDev && <PrettyJSON content={categories} />}
     </MainCard>
   );
