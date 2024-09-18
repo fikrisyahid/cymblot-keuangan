@@ -2,12 +2,14 @@ import type { Metadata } from 'next';
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { Poppins } from 'next/font/google';
 import { ClerkProvider, SignIn, SignedIn, SignedOut } from '@clerk/nextjs';
+import { Notifications } from '@mantine/notifications';
 import RootShell from './components/shell';
+import ProgressBar from './components/progress-bar';
 
 import './globals.css';
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import 'mantine-datatable/styles.layer.css';
-import ProgressBar from './components/progress-bar';
 
 export const metadata: Metadata = {
   title: 'Cymblot Keuangan',
@@ -36,6 +38,7 @@ export default function RootLayout({
               fontFamily: poppins.style.fontFamily,
             }}
           >
+            <Notifications />
             <SignedOut>
               <div className="flex justify-center items-center min-h-screen">
                 <SignIn routing="hash" />
