@@ -3,6 +3,7 @@ import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { Poppins } from 'next/font/google';
 import { ClerkProvider, SignIn, SignedIn, SignedOut } from '@clerk/nextjs';
 import { Notifications } from '@mantine/notifications';
+import { ModalsProvider } from '@mantine/modals';
 import RootShell from './components/shell';
 import ProgressBar from './components/progress-bar';
 
@@ -38,16 +39,18 @@ export default function RootLayout({
               fontFamily: poppins.style.fontFamily,
             }}
           >
-            <Notifications />
-            <SignedOut>
-              <div className="flex justify-center items-center min-h-screen">
-                <SignIn routing="hash" />
-              </div>
-            </SignedOut>
-            <SignedIn>
-              <ProgressBar />
-              <RootShell>{children}</RootShell>
-            </SignedIn>
+            <ModalsProvider>
+              <Notifications />
+              <SignedOut>
+                <div className="flex justify-center items-center min-h-screen">
+                  <SignIn routing="hash" />
+                </div>
+              </SignedOut>
+              <SignedIn>
+                <ProgressBar />
+                <RootShell>{children}</RootShell>
+              </SignedIn>
+            </ModalsProvider>
           </MantineProvider>
         </body>
       </html>
