@@ -4,18 +4,17 @@ import { BUTTON_BASE_COLOR } from '@/config/color';
 import { Button, Flex } from '@mantine/core';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export default function CategoryTable({ categories }: { categories: any[] }) {
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<any>>({
     columnAccessor: 'no',
     direction: 'asc',
   });
-  const [records, setRecords] = useState(sortBy(categories, 'no'));
 
-  useEffect(() => {
+  const sortedRecords = useMemo(() => {
     const data = sortBy(categories, sortStatus.columnAccessor);
-    setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
+    return sortStatus.direction === 'desc' ? data.reverse() : data;
   }, [sortStatus, categories]);
 
   return (
@@ -45,7 +44,7 @@ export default function CategoryTable({ categories }: { categories: any[] }) {
       ]}
       sortStatus={sortStatus}
       onSortStatusChange={setSortStatus}
-      records={records}
+      records={sortedRecords}
       noRecordsText="Belum ada kategori yang ditambahkan."
     />
   );
