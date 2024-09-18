@@ -7,6 +7,7 @@ import RootShell from './components/shell';
 import './globals.css';
 import '@mantine/core/styles.css';
 import 'mantine-datatable/styles.layer.css';
+import ProgressBar from './components/progress-bar';
 
 export const metadata: Metadata = {
   title: 'Cymblot Keuangan',
@@ -41,6 +42,7 @@ export default function RootLayout({
               </div>
             </SignedOut>
             <SignedIn>
+              <ProgressBar />
               <RootShell>{children}</RootShell>
             </SignedIn>
           </MantineProvider>
