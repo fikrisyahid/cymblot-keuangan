@@ -1,3 +1,5 @@
+'use server';
+
 import prisma from '@/utils/db';
 
 export default async function getCategories({ email }: { email: string }) {

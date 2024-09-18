@@ -1,3 +1,5 @@
+'use server';
+
 import prisma from '@/utils/db';
 
 export default async function getTotalBalance({ email }: { email: string }) {
