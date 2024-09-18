@@ -18,6 +18,7 @@
     "@typescript-eslint/quotes": "off",
     "@typescript-eslint/semi": "off",
     "@typescript-eslint/comma-dangle": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "object-curly-newline": "off",
     "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
