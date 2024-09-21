@@ -10,6 +10,8 @@ import { Badge, NumberFormatter, Stack } from '@mantine/core';
 import { IconArrowNarrowDown } from '@tabler/icons-react';
 import convertTransactionType from '@/utils/convert-transaction-type';
 
+const PAGE_SIZES = [5, 15, 25, 50, 75, 100];
+
 export default function DetailTable({
   transactions,
 }: {
@@ -26,6 +28,16 @@ export default function DetailTable({
     const data = sortBy(transactions, sortStatus.columnAccessor);
     return sortStatus.direction === 'desc' ? data.reverse() : data;
   }, [sortStatus, transactions]);
+
+  const [page, setPage] = useState(1);
+
+  const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
+
+  const paginatedRecords = useMemo(() => {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize;
+    return sortedRecords.slice(from, to);
+  }, [page, pageSize, sortedRecords]);
 
   return (
     <DataTable
@@ -125,9 +137,16 @@ export default function DetailTable({
           ),
         },
       ]}
+      page={page}
+      onPageChange={(p) => setPage(p)}
       sortStatus={sortStatus}
+      recordsPerPage={pageSize}
+      recordsPerPageOptions={PAGE_SIZES}
+      totalRecords={transactions.length}
+      paginationActiveBackgroundColor="grape"
+      onRecordsPerPageChange={setPageSize}
       onSortStatusChange={setSortStatus}
-      records={sortedRecords}
+      records={paginatedRecords}
       noRecordsText="Belum ada kantong yang ditambahkan."
     />
   );
