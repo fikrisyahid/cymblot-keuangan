@@ -1,4 +1,11 @@
-import { Badge, Button, Stack, Text, Title } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  NumberFormatter,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { BUTTON_BASE_COLOR, TEXT_COLOR } from '@/config/color';
 import getSessionEmail from '@/utils/get-session-email';
 import { Transaction } from '@prisma/client';
@@ -51,7 +58,13 @@ export default async function Page() {
       <div className="flex flex-col w-full sm:justify-between sm:flex-row gap-2">
         <div className="flex flex-col items-center sm:items-start">
           <Text>Total Saldo :</Text>
-          <Badge color="teal">Rp. {userBalance}</Badge>
+          <Badge color="teal">
+            <NumberFormatter
+              prefix="Rp"
+              value={userBalance}
+              thousandSeparator
+            />
+          </Badge>
         </div>
         <Button
           color={BUTTON_BASE_COLOR}
