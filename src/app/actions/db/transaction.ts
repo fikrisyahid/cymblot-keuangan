@@ -32,7 +32,7 @@ async function getTransaction({
       email,
     },
     orderBy: {
-      createdAt: 'desc',
+      date: 'desc',
     },
     include: {
       Pocket: options?.pocket,
