@@ -7,6 +7,9 @@ export default async function getCategories({ email }: { email: string }) {
     where: {
       email,
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
   return categories;
 }
