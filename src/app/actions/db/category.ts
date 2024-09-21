@@ -3,7 +3,19 @@
 import prisma from '@/utils/db';
 import revalidateAllRoute from '../revalidate';
 
-async function getCategories({ email }: { email: string }) {
+async function getCategory({ id, email }: { id?: string; email: string }) {
+  // Get category by id
+  if (id) {
+    const category = await prisma.category.findFirst({
+      where: {
+        id,
+        email,
+      },
+    });
+    return category;
+  }
+
+  // Get all categories
   const categories = await prisma.category.findMany({
     where: {
       email,
@@ -46,4 +58,4 @@ async function deleteCategory({ id }: { id: string }) {
   revalidateAllRoute();
 }
 
-export { getCategories, addCategory, editCategory, deleteCategory };
+export { getCategory, addCategory, editCategory, deleteCategory };

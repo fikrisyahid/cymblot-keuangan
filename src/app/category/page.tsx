@@ -2,12 +2,14 @@ import { Stack, Text, Title } from '@mantine/core';
 import { TEXT_COLOR } from '@/config/color';
 import getSessionEmail from '@/utils/get-session-email';
 import getEnvironmentMode from '@/utils/get-environment-mode';
+import { Category } from '@prisma/client';
 import MainCard from '../components/main-card';
 import CategoryTable from './table';
 import PrettyJSON from '../components/pretty-json';
 import AccessBlocked from '../components/access-blocked';
 import AddCategoryForm from './add-form';
-import { getCategories } from '../actions/db/category';
+import { getCategory } from '../actions/db/category';
+import FailedState from '../components/failed-state';
 
 export default async function Page() {
   const email = await getSessionEmail();
@@ -16,7 +18,11 @@ export default async function Page() {
     return <AccessBlocked />;
   }
 
-  const categories = await getCategories({ email });
+  const categories = (await getCategory({ email })) as Category[];
+
+  if (!categories) {
+    return <FailedState />;
+  }
 
   const isDev = getEnvironmentMode() === 'development';
 

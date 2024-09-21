@@ -2,12 +2,14 @@ import { Stack, Text, Title } from '@mantine/core';
 import { TEXT_COLOR } from '@/config/color';
 import getSessionEmail from '@/utils/get-session-email';
 import getEnvironmentMode from '@/utils/get-environment-mode';
+import { Pocket } from '@prisma/client';
 import MainCard from '../components/main-card';
 import PocketTable from './table';
 import PrettyJSON from '../components/pretty-json';
 import AccessBlocked from '../components/access-blocked';
 import AddPocketForm from './add-form';
-import { getPockets } from '../actions/db/pocket';
+import { getPocket } from '../actions/db/pocket';
+import FailedState from '../components/failed-state';
 
 export default async function Page() {
   const email = await getSessionEmail();
@@ -16,7 +18,11 @@ export default async function Page() {
     return <AccessBlocked />;
   }
 
-  const pockets = await getPockets({ email });
+  const pockets = (await getPocket({ email })) as Pocket[];
+
+  if (!pockets) {
+    return <FailedState />;
+  }
 
   const isDev = getEnvironmentMode() === 'development';
 
@@ -31,8 +37,8 @@ export default async function Page() {
       <Stack gap={0} className="text-center sm:text-left">
         <Title c={TEXT_COLOR}>Daftar Kantong</Title>
         <Text>
-          Semua tempat penyimpanan uang Anda seperti akun bank, cash,
-          atau e-wallet untuk memantau saldo secara keseluruhan
+          Semua tempat penyimpanan uang Anda seperti akun bank, cash, atau
+          e-wallet untuk memantau saldo secara keseluruhan
         </Text>
       </Stack>
       <AddPocketForm pockets={pockets} email={email} />

@@ -3,7 +3,19 @@
 import prisma from '@/utils/db';
 import revalidateAllRoute from '../revalidate';
 
-async function getPockets({ email }: { email: string }) {
+async function getPocket({ id, email }: { id?: string; email: string }) {
+  // Get pocket by id
+  if (id) {
+    const pocket = await prisma.pocket.findFirst({
+      where: {
+        id,
+        email,
+      },
+    });
+    return pocket;
+  }
+
+  // Get all pockets
   const pockets = await prisma.pocket.findMany({
     where: {
       email,
@@ -46,4 +58,4 @@ async function deletePocket({ id }: { id: string }) {
   revalidateAllRoute();
 }
 
-export { getPockets, addPocket, editPocket, deletePocket };
+export { getPocket, addPocket, editPocket, deletePocket };
