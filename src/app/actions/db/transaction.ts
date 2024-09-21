@@ -69,13 +69,18 @@ async function addTransaction({
   pocketDestinationId?: string;
   categoryId: string;
 }) {
-  // Check balance if type is transfer
-  if (type === 'TRANSFER') {
-    const pocketSourceBalance = await getPocketBalance({
-      id: pocketSourceId as string,
+  // Check balance from pocket
+  if (type !== "DEPOSIT") {
+    const minimalPocketBalance = await getPocketBalance({
+      id: type === 'TRANSFER' ? (pocketSourceId as string) : (pocketId as string),
     });
-    if (pocketSourceBalance < value) {
-      throw new Error('Saldo kantong asal tidak mencukupi');
+    const checkedPocket = await prisma.pocket.findFirst({
+      where: {
+        id: type === 'TRANSFER' ? pocketSourceId : pocketId,
+      },
+    });
+    if (minimalPocketBalance < value) {
+      throw new Error(`Saldo kantong ${checkedPocket?.name} tidak mencukupi`);
     }
   }
 
