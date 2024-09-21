@@ -27,6 +27,7 @@
     "arrow-body-style": "off",
     "operator-linebreak": "off",
     "no-nested-ternary": "off",
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "implicit-arrow-linebreak": "off"
   }
 }
