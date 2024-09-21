@@ -1,6 +1,8 @@
+import MainCard from "./main-card";
+
 export default function AccessBlocked() {
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <MainCard>
       <div className="text-center">
         <h1 className="text-4xl font-bold text-red-600">
           Tidak dapat mengakses
@@ -9,6 +11,6 @@ export default function AccessBlocked() {
           Silahkan login terlebih dahulu
         </p>
       </div>
-    </div>
+    </MainCard>
   );
 }
