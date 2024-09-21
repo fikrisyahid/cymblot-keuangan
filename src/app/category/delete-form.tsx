@@ -1,21 +1,18 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { ActionIcon, Input, Stack, Text } from '@mantine/core';
-import { IconPencil } from '@tabler/icons-react';
+import { useState } from 'react';
+import { ActionIcon, Stack, Text } from '@mantine/core';
+import { IconTrash } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
 import { deleteCategory } from '../actions/db/categories';
 
-export default function EditCategoryForm({
-  categories,
+export default function DeleteCategoryForm({
   selectedCategory,
 }: {
-  categories: any[];
   selectedCategory: any;
 }) {
   const [loading, setLoading] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = () => {
     const { id, name: selectedCategoryName } = selectedCategory;
@@ -25,46 +22,28 @@ export default function EditCategoryForm({
       children: (
         <Stack>
           <Text>
-            Ubah kategori <strong>{selectedCategoryName}</strong> menjadi:
+            Kategori saat ini: <strong>{selectedCategoryName}</strong>
           </Text>
-          <Input placeholder="Masukkan nama kategori baru" ref={inputRef} />
-          <Text>Apakah Anda yakin ingin merubah kategori ini?</Text>
+          <Text>Apakah Anda yakin ingin menghapus kategori ini?</Text>
         </Stack>
       ),
       centered: true,
-      labels: { confirm: 'Ubah', cancel: 'Batal' },
-      confirmProps: { color: 'yellow' },
+      labels: { confirm: 'Hapus', cancel: 'Batal' },
+      confirmProps: { color: 'red' },
       onConfirm: async () => {
         setLoading(true);
 
-        const newCategoryName = inputRef.current?.value;
-
         try {
-          if (!newCategoryName) {
-            throw new Error('Nama kategori tidak boleh kosong');
-          }
-          if (newCategoryName === selectedCategoryName) {
-            throw new Error('Nama kategori tidak berubah');
-          }
-          if (
-            categories.some(
-              (category) =>
-                category.name === newCategoryName &&
-                newCategoryName !== selectedCategoryName,
-            )
-          ) {
-            throw new Error('Nama kategori sudah ada');
-          }
           await deleteCategory({ id });
           notifications.show({
             title: 'Sukses',
-            message: `Kategori berhasil diubah`,
+            message: `Kategori berhasil dihapus`,
             color: 'green',
           });
         } catch (error: any) {
           notifications.show({
             title: 'Error',
-            message: error.message || 'Gagal menambahkan kategori',
+            message: 'Gagal menghapus kategori',
             color: 'red',
           });
         }
@@ -77,10 +56,10 @@ export default function EditCategoryForm({
     <ActionIcon
       variant="filled"
       loading={loading}
-      color="yellow"
+      color="red"
       onClick={handleSubmit}
     >
-      <IconPencil style={{ width: '70%', height: '70%' }} stroke={1.5} />
+      <IconTrash style={{ width: '70%', height: '70%' }} stroke={1.5} />
     </ActionIcon>
   );
 }
