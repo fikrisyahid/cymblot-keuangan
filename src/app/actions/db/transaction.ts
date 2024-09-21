@@ -3,7 +3,18 @@
 import prisma from '@/utils/db';
 import { Transaction } from '@prisma/client';
 
-async function getTransaction({ id, email }: { id?: string; email: string }) {
+async function getTransaction({
+  id,
+  email,
+  options,
+}: {
+  id?: string;
+  email: string;
+  options?: {
+    pocket: boolean;
+    category: boolean;
+  };
+}) {
   // Get transaction by id
   if (id) {
     const transaction = await prisma.transaction.findFirst({
@@ -22,6 +33,10 @@ async function getTransaction({ id, email }: { id?: string; email: string }) {
     },
     orderBy: {
       createdAt: 'desc',
+    },
+    include: {
+      Pocket: options?.pocket,
+      Category: options?.category,
     },
   });
   return transactions;
