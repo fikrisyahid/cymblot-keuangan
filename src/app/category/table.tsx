@@ -1,10 +1,9 @@
 'use client';
 
-import { BUTTON_BASE_COLOR } from '@/config/color';
-import { Button, Flex } from '@mantine/core';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useMemo, useState } from 'react';
+import EditCategoryForm from './edit-form';
 
 export default function CategoryTable({ categories }: { categories: any[] }) {
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<any>>({
@@ -35,10 +34,13 @@ export default function CategoryTable({ categories }: { categories: any[] }) {
           title: 'Aksi',
           textAlign: 'right',
           width: 100,
-          render: () => (
-            <Flex gap="sm" justify="flex-end">
-              <Button color={BUTTON_BASE_COLOR}>Tes</Button>
-            </Flex>
+          render: (record) => (
+            <div className="flex flex-row justify-end gap-2">
+              <EditCategoryForm
+                categories={categories}
+                selectedCategory={record}
+              />
+            </div>
           ),
         },
       ]}
