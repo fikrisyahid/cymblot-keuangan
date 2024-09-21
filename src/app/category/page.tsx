@@ -4,10 +4,10 @@ import getSessionEmail from '@/utils/get-session-email';
 import getEnvironmentMode from '@/utils/get-environment-mode';
 import MainCard from '../components/main-card';
 import CategoryTable from './table';
-import getCategories from '../actions/get-categories';
 import PrettyJSON from '../components/pretty-json';
 import AccessBlocked from '../components/access-blocked';
 import AddCategoryForm from './add-form';
+import { getCategories } from '../actions/db/categories';
 
 export default async function Page() {
   const email = await getSessionEmail();

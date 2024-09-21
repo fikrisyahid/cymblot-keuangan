@@ -5,7 +5,7 @@ import { ActionIcon, Input, Stack, Text } from '@mantine/core';
 import { IconPencil } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
-import { editCategory } from '../actions/db/categories';
+import { deleteCategory } from '../actions/db/categories';
 
 export default function EditCategoryForm({
   categories,
@@ -55,7 +55,7 @@ export default function EditCategoryForm({
           ) {
             throw new Error('Nama kategori sudah ada');
           }
-          await editCategory({ id, name: newCategoryName });
+          await deleteCategory({ id });
           notifications.show({
             title: 'Sukses',
             message: `Kategori berhasil diubah`,
