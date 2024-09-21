@@ -64,7 +64,7 @@ export default function EditCategoryForm({
         } catch (error: any) {
           notifications.show({
             title: 'Error',
-            message: error.message || 'Gagal menambahkan kategori',
+            message: error.message || 'Gagal merubah kategori',
             color: 'red',
           });
         }
