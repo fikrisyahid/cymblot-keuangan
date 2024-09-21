@@ -6,10 +6,12 @@ import { Notifications } from '@mantine/notifications';
 import { ModalsProvider } from '@mantine/modals';
 import RootShell from './components/shell';
 import ProgressBar from './components/progress-bar';
+import ClientDatesProvider from './components/dates-provider';
 
 import './globals.css';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
 import 'mantine-datatable/styles.layer.css';
 
 export const metadata: Metadata = {
@@ -39,18 +41,20 @@ export default function RootLayout({
               fontFamily: poppins.style.fontFamily,
             }}
           >
-            <ModalsProvider>
-              <Notifications />
-              <SignedOut>
-                <div className="flex justify-center items-center min-h-screen">
-                  <SignIn routing="hash" />
-                </div>
-              </SignedOut>
-              <SignedIn>
-                <ProgressBar />
-                <RootShell>{children}</RootShell>
-              </SignedIn>
-            </ModalsProvider>
+            <ClientDatesProvider>
+              <ModalsProvider>
+                <Notifications />
+                <SignedOut>
+                  <div className="flex justify-center items-center min-h-screen">
+                    <SignIn routing="hash" />
+                  </div>
+                </SignedOut>
+                <SignedIn>
+                  <ProgressBar />
+                  <RootShell>{children}</RootShell>
+                </SignedIn>
+              </ModalsProvider>
+            </ClientDatesProvider>
           </MantineProvider>
         </body>
       </html>
