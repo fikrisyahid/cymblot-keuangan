@@ -24,6 +24,7 @@
     "react/require-default-props": "off",
     "react/prop-types": "off",
     "react/function-component-definition": "off",
+    "react/jsx-curly-newline": "off",
     "arrow-body-style": "off",
     "operator-linebreak": "off",
     "no-nested-ternary": "off",
