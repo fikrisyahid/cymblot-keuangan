@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { ActionIcon, Stack, Text } from '@mantine/core';
-import { IconTrash } from '@tabler/icons-react';
+import { ActionIcon, Alert, Stack, Text } from '@mantine/core';
+import { IconInfoCircle, IconTrash } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
 import { deleteCategory } from '../actions/db/category';
@@ -24,6 +24,16 @@ export default function DeleteCategoryForm({
           <Text>
             Kategori saat ini: <strong>{selectedCategoryName}</strong>
           </Text>
+          <Alert
+            variant="filled"
+            color="red"
+            radius="md"
+            title="Berbahaya"
+            icon={<IconInfoCircle />}
+          >
+            Semua data keuangan yang memiliki kategori{' '}
+            <b>{selectedCategoryName}</b> juga akan ikut terhapus
+          </Alert>
           <Text>Apakah Anda yakin ingin menghapus kategori ini?</Text>
         </Stack>
       ),
