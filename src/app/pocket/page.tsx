@@ -1,4 +1,4 @@
-import { Title } from '@mantine/core';
+import { Stack, Text, Title } from '@mantine/core';
 import { TEXT_COLOR } from '@/config/color';
 import getSessionEmail from '@/utils/get-session-email';
 import getEnvironmentMode from '@/utils/get-environment-mode';
@@ -28,9 +28,13 @@ export default async function Page() {
 
   return (
     <MainCard>
-      <Title c={TEXT_COLOR} className="text-center sm:text-left">
-        Daftar Kantong
-      </Title>
+      <Stack gap={0} className="text-center sm:text-left">
+        <Title c={TEXT_COLOR}>Daftar Kantong</Title>
+        <Text>
+          Semua tempat penyimpanan uang Anda seperti akun bank, cash,
+          atau e-wallet untuk memantau saldo secara keseluruhan
+        </Text>
+      </Stack>
       <AddPocketForm pockets={pockets} email={email} />
       <PocketTable pockets={pocketsForTable} />
       {isDev && <PrettyJSON content={pockets} />}
