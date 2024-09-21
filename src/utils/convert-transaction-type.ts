@@ -5,8 +5,14 @@ export default function convertTransactionType(type: string) {
   if (type === 'PENGELUARAN') {
     return 'WITHDRAW';
   }
+  if (type === 'DEPOSIT') {
+    return 'PEMASUKAN';
+  }
+  if (type === 'WITHDRAW') {
+    return 'PENGELUARAN';
+  }
   if (type === 'TRANSFER') {
-    return 'TRANSFER';
+    return type;
   }
   return null;
 }
