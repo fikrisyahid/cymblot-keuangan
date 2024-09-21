@@ -83,7 +83,6 @@ export default function AddCategoryForm({
         loading={loading}
         leftSection={<IconPlus />}
         color={BUTTON_BASE_COLOR}
-        className="self-center w-full sm:w-auto sm:self-end"
         onClick={handleSubmit}
       >
         Tambah Kategori
