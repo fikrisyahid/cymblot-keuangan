@@ -7,7 +7,7 @@ import CategoryTable from './table';
 import PrettyJSON from '../components/pretty-json';
 import AccessBlocked from '../components/access-blocked';
 import AddCategoryForm from './add-form';
-import { getCategories } from '../actions/db/categories';
+import { getCategories } from '../actions/db/category';
 
 export default async function Page() {
   const email = await getSessionEmail();

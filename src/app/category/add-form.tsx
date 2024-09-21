@@ -7,7 +7,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
 import { Category } from '@prisma/client';
-import { addCategory } from '../actions/db/categories';
+import { addCategory } from '../actions/db/category';
 
 export default function AddCategoryForm({
   categories,

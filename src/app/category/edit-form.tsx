@@ -5,7 +5,7 @@ import { ActionIcon, Input, Stack, Text } from '@mantine/core';
 import { IconPencil } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
-import { editCategory } from '../actions/db/categories';
+import { editCategory } from '../actions/db/category';
 
 export default function EditCategoryForm({
   categories,

@@ -5,7 +5,7 @@ import { ActionIcon, Stack, Text } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
-import { deleteCategory } from '../actions/db/categories';
+import { deleteCategory } from '../actions/db/category';
 
 export default function DeleteCategoryForm({
   selectedCategory,
