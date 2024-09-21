@@ -54,10 +54,10 @@ model Transaction {
   information String           @default("")
   type        TRANSACTION_TYPE
   value       Int              @default(0)
-  Pocket      Pocket?          @relation(fields: [pocketId], references: [id])
-  pocketId    String?
-  Category    Category?        @relation(fields: [categoryId], references: [id])
-  categoryId  String?
+  Pocket      Pocket          @relation(fields: [pocketId], references: [id])
+  pocketId    String
+  Category    Category        @relation(fields: [categoryId], references: [id])
+  categoryId  String
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 }
