@@ -11,8 +11,10 @@ async function getTransaction({
   id?: string;
   email: string;
   options?: {
-    pocket: boolean;
-    category: boolean;
+    pocket?: boolean;
+    category?: boolean;
+    pocketSource?: boolean;
+    pocketDestination?: boolean;
   };
 }) {
   // Get transaction by id
@@ -37,6 +39,8 @@ async function getTransaction({
     include: {
       Pocket: options?.pocket,
       Category: options?.category,
+      PocketSource: options?.pocketSource,
+      PocketDestination: options?.pocketDestination,
     },
   });
   return transactions;
