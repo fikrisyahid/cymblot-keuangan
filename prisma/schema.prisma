@@ -63,8 +63,8 @@ model Transaction {
   PocketDestination   Pocket? @relation(name: "pocketDestination", fields: [pocketDestinationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   pocketDestinationId String?
 
-  Pocket   Pocket @relation(name: "pocket", fields: [pocketId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  pocketId String
+  Pocket   Pocket? @relation(name: "pocket", fields: [pocketId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pocketId String?
 
   Category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   categoryId String
