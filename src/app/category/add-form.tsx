@@ -25,7 +25,7 @@ export default function AddCategoryForm({
     if (!name) {
       notifications.show({
         title: 'Error',
-        message: `Nama bank tidak boleh kosong`,
+        message: `Nama kategori tidak boleh kosong`,
         color: 'red',
       });
       return;
