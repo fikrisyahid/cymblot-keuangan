@@ -32,7 +32,6 @@ export default function DeleteCategoryForm({
       confirmProps: { color: 'red' },
       onConfirm: async () => {
         setLoading(true);
-
         try {
           await deleteCategory({ id });
           notifications.show({

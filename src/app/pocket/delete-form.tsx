@@ -32,7 +32,6 @@ export default function DeletePocketForm({
       confirmProps: { color: 'red' },
       onConfirm: async () => {
         setLoading(true);
-
         try {
           await deletePocket({ id });
           notifications.show({
