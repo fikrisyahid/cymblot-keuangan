@@ -24,8 +24,10 @@ export default async function Page() {
   const transactions = (await getTransaction({
     email,
     options: {
-      pocket: true,
       category: true,
+      pocket: true,
+      pocketSource: true,
+      pocketDestination: true,
     },
   })) as Transaction[];
 

@@ -2,6 +2,8 @@
 
 import prisma from '@/utils/db';
 import { Transaction } from '@prisma/client';
+import getPocketBalance from '../functions/get-pocket-balance';
+import revalidateAllRoute from '../revalidate';
 
 async function getTransaction({
   id,
@@ -53,6 +55,8 @@ async function addTransaction({
   type,
   value,
   pocketId,
+  pocketSourceId,
+  pocketDestinationId,
   categoryId,
 }: {
   date: Date;
@@ -60,21 +64,42 @@ async function addTransaction({
   value: number;
   information: string;
   type: Transaction['type'];
-  pocketId: string;
+  pocketId?: string;
+  pocketSourceId?: string;
+  pocketDestinationId?: string;
   categoryId: string;
 }) {
-  const transaction = await prisma.transaction.create({
+  // Check balance if type is transfer
+  if (type === 'TRANSFER') {
+    const pocketSourceBalance = await getPocketBalance({
+      id: pocketSourceId as string,
+    });
+    if (pocketSourceBalance < value) {
+      throw new Error('Saldo kantong asal tidak mencukupi');
+    }
+  }
+
+  const pocketOptions =
+    type !== 'TRANSFER'
+      ? {
+          pocketId,
+        }
+      : {
+          pocketSourceId,
+          pocketDestinationId,
+        };
+  await prisma.transaction.create({
     data: {
       date,
       email,
       value,
       information,
       type,
-      pocketId,
       categoryId,
+      ...pocketOptions,
     },
   });
-  return transaction;
+  revalidateAllRoute();
 }
 
 async function editTransaction({

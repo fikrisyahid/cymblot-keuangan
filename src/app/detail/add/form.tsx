@@ -40,6 +40,8 @@ export default function AddTransactionForm({
     value: 0,
     categoryId: '',
     pocketId: '',
+    pocketSourceId: '',
+    pocketDestinationId: '',
   });
 
   const handleChange = (newKeyValue: any) => {
@@ -47,7 +49,16 @@ export default function AddTransactionForm({
   };
 
   const handleSubmit = () => {
-    const { date, information, type, value, categoryId, pocketId } = formData;
+    const {
+      date,
+      information,
+      type,
+      value,
+      categoryId,
+      pocketId,
+      pocketSourceId,
+      pocketDestinationId,
+    } = formData;
 
     if (!date || !information || !type || !value || !categoryId || !pocketId) {
       notifications.show({
@@ -57,6 +68,25 @@ export default function AddTransactionForm({
       });
       return;
     }
+
+    if (type === 'TRANSFER' && pocketSourceId === pocketDestinationId) {
+      notifications.show({
+        title: 'Error',
+        message: 'Kantong asal dan kantong tujuan tidak boleh sama',
+        color: 'red',
+      });
+      return;
+    }
+
+    const pocketData =
+      type !== 'TRANSFER'
+        ? {
+            pocketId,
+          }
+        : {
+            pocketSourceId,
+            pocketDestinationId,
+          };
 
     openConfirmModal({
       title: 'Harap Konfirmasi Terlebih Dahulu',
@@ -75,7 +105,7 @@ export default function AddTransactionForm({
             type: convertTransactionType(type) as TRANSACTION_TYPE,
             value,
             categoryId,
-            pocketId,
+            ...pocketData,
           });
           setFormData({
             date: new Date(),
@@ -84,6 +114,8 @@ export default function AddTransactionForm({
             value: 0,
             categoryId: '',
             pocketId: '',
+            pocketSourceId: '',
+            pocketDestinationId: '',
           });
           notifications.show({
             title: 'Sukses',
@@ -91,10 +123,10 @@ export default function AddTransactionForm({
             color: 'green',
           });
           router.push('/detail');
-        } catch (error) {
+        } catch (error: any) {
           notifications.show({
             title: 'Error',
-            message: 'Gagal menambahkan data keuangan',
+            message: error.message || 'Gagal menambahkan data keuangan',
             color: 'red',
           });
         }
@@ -173,19 +205,7 @@ export default function AddTransactionForm({
           </Stack>
         </Alert>
       )}
-      {pockets.length > 0 ? (
-        <Select
-          required
-          label="Kantong"
-          placeholder="Pilih kantong"
-          data={pockets.map((pocket) => ({
-            value: pocket.id,
-            label: pocket.name,
-          }))}
-          value={formData.pocketId}
-          onChange={(pocketId) => handleChange({ pocketId })}
-        />
-      ) : (
+      {pockets.length === 0 ? (
         <Alert
           variant="filled"
           color="indigo"
@@ -203,6 +223,45 @@ export default function AddTransactionForm({
             </Button>
           </Stack>
         </Alert>
+      ) : formData.type !== 'TRANSFER' ? (
+        <Select
+          required
+          label="Kantong"
+          placeholder="Pilih kantong"
+          data={pockets.map((pocket) => ({
+            value: pocket.id,
+            label: pocket.name,
+          }))}
+          value={formData.pocketId}
+          onChange={(pocketId) => handleChange({ pocketId })}
+        />
+      ) : (
+        <>
+          <Select
+            required
+            label="Kantong Asal"
+            placeholder="Pilih kantong asal"
+            data={pockets.map((pocket) => ({
+              value: pocket.id,
+              label: pocket.name,
+            }))}
+            value={formData.pocketSourceId}
+            onChange={(pocketId) => handleChange({ pocketSourceId: pocketId })}
+          />
+          <Select
+            required
+            label="Kantong Tujuan"
+            placeholder="Pilih kantong tujuan"
+            data={pockets.map((pocket) => ({
+              value: pocket.id,
+              label: pocket.name,
+            }))}
+            value={formData.pocketDestinationId}
+            onChange={(pocketId) =>
+              handleChange({ pocketDestinationId: pocketId })
+            }
+          />
+        </>
       )}
       <Button
         loading={loading}
