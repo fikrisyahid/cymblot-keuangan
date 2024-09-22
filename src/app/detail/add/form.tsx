@@ -205,7 +205,7 @@ export default function AddTransactionForm({
           p="xs"
         >
           <Stack align="start">
-            <Text>
+            <Text c="white">
               Anda belum memiliki kategori. Silakan tambahkan kategori terlebih
               dahulu
             </Text>
@@ -224,7 +224,7 @@ export default function AddTransactionForm({
           p="xs"
         >
           <Stack align="start">
-            <Text>
+            <Text c="white">
               Anda belum memiliki kantong. Silakan tambahkan kantong terlebih
               dahulu
             </Text>
