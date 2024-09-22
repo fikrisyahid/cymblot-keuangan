@@ -47,6 +47,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         </Title>
       </div>
       <EditTransactionForm
+        email={email}
         transaction={transaction}
         categories={categories}
         pockets={pockets}

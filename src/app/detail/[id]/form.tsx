@@ -26,10 +26,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 export default function EditTransactionForm({
+  email,
   transaction,
   categories,
   pockets,
 }: {
+  email: string;
   transaction: Transaction;
   categories: Category[];
   pockets: Pocket[];
@@ -114,6 +116,7 @@ export default function EditTransactionForm({
         setLoading(true);
         try {
           await editTransaction({
+            email,
             id: transaction.id,
             date,
             information,

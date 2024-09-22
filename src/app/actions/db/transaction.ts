@@ -71,11 +71,13 @@ async function addTransaction({
   pocketDestinationId?: string;
   categoryId: string;
 }) {
+  const transactions = (await getTransaction({ email })) as Transaction[];
   // Check balance from pocket
   if (type !== 'DEPOSIT') {
     const minimalPocketBalance = await getPocketBalance({
       id:
         type === 'TRANSFER' ? (pocketSourceId as string) : (pocketId as string),
+      transactions,
     });
     const checkedPocket = await prisma.pocket.findFirst({
       where: {
@@ -112,6 +114,7 @@ async function addTransaction({
 
 async function editTransaction({
   id,
+  email,
   date,
   information,
   type,
@@ -122,6 +125,7 @@ async function editTransaction({
   categoryId,
 }: {
   id: string;
+  email: string;
   date: Date;
   value: number;
   information: string;
@@ -131,11 +135,13 @@ async function editTransaction({
   pocketDestinationId?: string;
   categoryId: string;
 }) {
+  const transactions = (await getTransaction({ email })) as Transaction[];
   // Check balance from pocket
   if (type !== 'DEPOSIT') {
-    const minimalPocketBalance = await getPocketBalance({
+    const minimalPocketBalance = getPocketBalance({
       id:
         type === 'TRANSFER' ? (pocketSourceId as string) : (pocketId as string),
+      transactions,
     });
     const checkedPocket = await prisma.pocket.findFirst({
       where: {
