@@ -1,7 +1,7 @@
 'use server';
 
 import prisma from '@/utils/db';
-import { Transaction } from '@prisma/client';
+import { Transaction, TRANSACTION_TYPE } from '@prisma/client';
 import getPocketBalance from '../functions/get-pocket-balance';
 import revalidateAllRoute from '../revalidate';
 
@@ -63,7 +63,7 @@ async function addTransaction({
   email: string;
   value: number;
   information: string;
-  type: Transaction['type'];
+  type: TRANSACTION_TYPE;
   pocketId?: string;
   pocketSourceId?: string;
   pocketDestinationId?: string;
@@ -140,7 +140,13 @@ async function editTransaction({
         id: type === 'TRANSFER' ? pocketSourceId : pocketId,
       },
     });
-    if (minimalPocketBalance < value) {
+    /** Explanation for adjustedCheckedPocketBalance
+     * Adjust the balance by reducing it with currently edited transaction value
+     * We want to ignore currently edited transaction as if it didn't happend
+     * We ignore it because we're currently editing it
+     */
+    const adjustedCheckedPocketBalance = minimalPocketBalance - value;
+    if (adjustedCheckedPocketBalance < value) {
       throw new Error(`Saldo kantong ${checkedPocket?.name} tidak mencukupi`);
     }
   }
