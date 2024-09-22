@@ -25,6 +25,8 @@ import { Category, Pocket } from '@prisma/client';
 import DeleteTransactionForm from './delete-form';
 import { ITableFilter } from './interface';
 
+dayjs.locale('id');
+
 function generateColumn({
   filter,
   handleChange,
@@ -38,8 +40,6 @@ function generateColumn({
   categories: Category[];
   pockets: Pocket[];
 }): DataTableColumn<any>[] {
-  dayjs.locale('id');
-
   return [
     {
       accessor: 'no',

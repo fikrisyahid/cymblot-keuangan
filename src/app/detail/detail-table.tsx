@@ -5,6 +5,8 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useMemo, useState } from 'react';
 import { BUTTON_BASE_COLOR, TEXT_COLOR } from '@/config/color';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import 'dayjs/locale/id';
 import {
   Badge,
@@ -19,6 +21,10 @@ import { ITableFilter } from './interface';
 
 const PAGE_SIZES = [5, 10, 25, 50, 75, 100];
 
+dayjs.locale('id');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 export default function DetailTable({
   transactions,
   categories,
@@ -28,8 +34,6 @@ export default function DetailTable({
   categories: any[];
   pockets: any[];
 }) {
-  dayjs.locale('id');
-
   const oldestTransactionDate = transactions.reduce(
     (acc, curr) => (acc < curr.date ? acc : curr.date),
     new Date(),
@@ -39,7 +43,7 @@ export default function DetailTable({
     generalSearch: '',
     date: {
       start: dayjs(oldestTransactionDate).startOf('day').toDate(),
-      end: dayjs().endOf('day').toDate(),
+      end: dayjs().tz('Asia/Jakarta').endOf('day').toDate(),
     },
     information: '',
     type: [],
@@ -72,7 +76,8 @@ export default function DetailTable({
         filter.date.start.getTime() !==
         dayjs(oldestTransactionDate).startOf('day').toDate().getTime(),
       dateEndActive:
-        filter.date.end.getTime() !== dayjs().endOf('day').toDate().getTime(),
+        filter.date.end.getTime() !==
+        dayjs().tz('Asia/Jakarta').endOf('day').toDate().getTime(),
       informationActive: filter.information !== '',
       typeActive: filter.type.length > 0,
       valueMinActive: filter.value.min !== '',

@@ -7,13 +7,13 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import { DataTable } from 'mantine-datatable';
 
+dayjs.locale('id');
+
 export default function RecentTransactionTable({
   transactions,
 }: {
   transactions: any[];
 }) {
-  dayjs.locale('id');
-
   return (
     <DataTable
       minHeight={150}

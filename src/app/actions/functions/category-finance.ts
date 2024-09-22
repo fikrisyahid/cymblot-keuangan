@@ -1,6 +1,12 @@
 import { Transaction } from '@prisma/client';
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.locale('id');
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 function getCategoryDepositBalance({
   id,
@@ -11,32 +17,31 @@ function getCategoryDepositBalance({
   transactions: Transaction[];
   categoryMode: 'day' | 'week' | 'month' | 'year';
 }) {
-  dayjs.locale('id');
   const startDate =
     categoryMode === 'day'
-      ? dayjs().startOf('day')
+      ? dayjs().tz('Asia/Jakarta').startOf('day')
       : categoryMode === 'week'
-      ? dayjs().startOf('week')
+      ? dayjs().tz('Asia/Jakarta').startOf('week')
       : categoryMode === 'month'
-      ? dayjs().startOf('month')
-      : dayjs().startOf('year');
+      ? dayjs().tz('Asia/Jakarta').startOf('month')
+      : dayjs().tz('Asia/Jakarta').startOf('year');
 
   const endDate =
     categoryMode === 'day'
-      ? dayjs().endOf('day')
+      ? dayjs().tz('Asia/Jakarta').endOf('day')
       : categoryMode === 'week'
-      ? dayjs().endOf('week')
+      ? dayjs().tz('Asia/Jakarta').endOf('week')
       : categoryMode === 'month'
-      ? dayjs().endOf('month')
-      : dayjs().endOf('year');
+      ? dayjs().tz('Asia/Jakarta').endOf('month')
+      : dayjs().tz('Asia/Jakarta').endOf('year');
 
   const depositBalance = transactions
     .filter(
       (transaction) =>
         transaction.categoryId === id &&
         transaction.type === 'DEPOSIT' &&
-        dayjs(transaction.date).isAfter(startDate) &&
-        dayjs(transaction.date).isBefore(endDate),
+        dayjs(transaction.date).tz('Asia/Jakarta').isAfter(startDate) &&
+        dayjs(transaction.date).tz('Asia/Jakarta').isBefore(endDate),
     )
     .reduce((sum, transaction) => sum + transaction.value, 0);
 
@@ -54,29 +59,29 @@ function getCategoryWithdrawBalance({
 }) {
   const startDate =
     categoryMode === 'day'
-      ? dayjs().startOf('day')
+      ? dayjs().tz('Asia/Jakarta').startOf('day')
       : categoryMode === 'week'
-      ? dayjs().startOf('week')
+      ? dayjs().tz('Asia/Jakarta').startOf('week')
       : categoryMode === 'month'
-      ? dayjs().startOf('month')
-      : dayjs().startOf('year');
+      ? dayjs().tz('Asia/Jakarta').startOf('month')
+      : dayjs().tz('Asia/Jakarta').startOf('year');
 
   const endDate =
     categoryMode === 'day'
-      ? dayjs().endOf('day')
+      ? dayjs().tz('Asia/Jakarta').endOf('day')
       : categoryMode === 'week'
-      ? dayjs().endOf('week')
+      ? dayjs().tz('Asia/Jakarta').endOf('week')
       : categoryMode === 'month'
-      ? dayjs().endOf('month')
-      : dayjs().endOf('year');
+      ? dayjs().tz('Asia/Jakarta').endOf('month')
+      : dayjs().tz('Asia/Jakarta').endOf('year');
 
   const withdrawBalance = transactions
     .filter(
       (transaction) =>
         transaction.categoryId === id &&
         transaction.type === 'WITHDRAW' &&
-        dayjs(transaction.date).isAfter(startDate) &&
-        dayjs(transaction.date).isBefore(endDate),
+        dayjs(transaction.date).tz('Asia/Jakarta').isAfter(startDate) &&
+        dayjs(transaction.date).tz('Asia/Jakarta').isBefore(endDate),
     )
     .reduce((sum, transaction) => sum + transaction.value, 0);
 
