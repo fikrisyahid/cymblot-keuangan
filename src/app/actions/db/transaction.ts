@@ -70,9 +70,10 @@ async function addTransaction({
   categoryId: string;
 }) {
   // Check balance from pocket
-  if (type !== "DEPOSIT") {
+  if (type !== 'DEPOSIT') {
     const minimalPocketBalance = await getPocketBalance({
-      id: type === 'TRANSFER' ? (pocketSourceId as string) : (pocketId as string),
+      id:
+        type === 'TRANSFER' ? (pocketSourceId as string) : (pocketId as string),
     });
     const checkedPocket = await prisma.pocket.findFirst({
       where: {
@@ -124,7 +125,7 @@ async function editTransaction({
   pocketId: string;
   categoryId: string;
 }) {
-  const transaction = await prisma.transaction.update({
+  await prisma.transaction.update({
     where: {
       id,
     },
@@ -137,16 +138,16 @@ async function editTransaction({
       categoryId,
     },
   });
-  return transaction;
+  revalidateAllRoute();
 }
 
 async function deleteTransaction({ id }: { id: string }) {
-  const transaction = await prisma.transaction.delete({
+  await prisma.transaction.delete({
     where: {
       id,
     },
   });
-  return transaction;
+  revalidateAllRoute();
 }
 
 export { getTransaction, addTransaction, editTransaction, deleteTransaction };
