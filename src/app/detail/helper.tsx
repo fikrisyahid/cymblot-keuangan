@@ -56,8 +56,8 @@ function generateColumn({
       filter: (
         <Stack gap="sm">
           <DatePickerInput
-            label="Tanggal terkecil"
-            placeholder="Pilih tanggal terkecil"
+            label="Tanggal awal"
+            placeholder="Pilih tanggal awal"
             valueFormatter={({ date }) =>
               dayjs(date as Date).format('dddd, DD MMMM YYYY')
             }
@@ -80,8 +80,8 @@ function generateColumn({
             }
           />
           <DatePickerInput
-            label="Tanggal terbesar"
-            placeholder="Pilih tanggal terbesar"
+            label="Tanggal akhir"
+            placeholder="Pilih tanggal akhir"
             valueFormatter={({ date }) =>
               dayjs(date as Date).format('dddd, DD MMMM YYYY')
             }
