@@ -17,6 +17,7 @@ async function getTransaction({
     category?: boolean;
     pocketSource?: boolean;
     pocketDestination?: boolean;
+    take?: number;
   };
 }) {
   // Get transaction by id
@@ -38,6 +39,7 @@ async function getTransaction({
     orderBy: {
       date: 'desc',
     },
+    take: options?.take,
     include: {
       Pocket: options?.pocket,
       Category: options?.category,
