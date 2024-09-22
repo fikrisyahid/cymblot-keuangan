@@ -35,7 +35,7 @@ export default function DetailTable({
     new Date(),
   );
 
-  const [filter, setFilter] = useState<ITableFilter>({
+  const filterDefaultState = {
     generalSearch: '',
     date: {
       start: dayjs(oldestTransactionDate).startOf('day').toDate(),
@@ -50,10 +50,16 @@ export default function DetailTable({
     },
     category: [],
     pocket: [],
-  });
+  };
+
+  const [filter, setFilter] = useState<ITableFilter>(filterDefaultState);
 
   const handleChange = (newKeyValue: any) => {
     setFilter((prev) => ({ ...prev, ...newKeyValue }));
+  };
+
+  const resetFilter = () => {
+    setFilter(filterDefaultState);
   };
 
   const [page, setPage] = useState(1);
@@ -212,27 +218,7 @@ export default function DetailTable({
               />
             </Badge>
           </div>
-          <Button
-            color={BUTTON_BASE_COLOR}
-            onClick={() =>
-              setFilter({
-                generalSearch: '',
-                date: {
-                  start: dayjs(oldestTransactionDate).startOf('day').toDate(),
-                  end: dayjs().endOf('day').toDate(),
-                },
-                information: '',
-                type: [],
-                value: {
-                  min: '',
-                  max: '',
-                  equal: '',
-                },
-                category: [],
-                pocket: [],
-              })
-            }
-          >
+          <Button color={BUTTON_BASE_COLOR} onClick={resetFilter}>
             Reset filter
           </Button>
         </div>
