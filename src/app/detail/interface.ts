@@ -4,7 +4,7 @@ interface ITableFilter {
     start: Date;
     end: Date;
   };
-  information: '',
+  information: string;
   type: string[];
   value: {
     min: number | string;
