@@ -6,10 +6,15 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
-import { Badge, NumberFormatter, Stack } from '@mantine/core';
-import { IconArrowNarrowDown } from '@tabler/icons-react';
+import { ActionIcon, Badge, NumberFormatter, Stack } from '@mantine/core';
+import {
+  IconArrowNarrowDown,
+  IconPencil,
+} from '@tabler/icons-react';
 import convertTransactionType from '@/utils/convert-transaction-type';
 import { TEXT_COLOR } from '@/config/color';
+import Link from 'next/link';
+import DeleteTransactionForm from './delete-form';
 
 const PAGE_SIZES = [5, 15, 25, 50, 75, 100];
 
@@ -131,9 +136,20 @@ export default function DetailTable({
           title: 'Aksi',
           textAlign: 'right',
           width: 100,
-          render: () => (
+          render: (record) => (
             <div className="flex flex-row justify-end gap-2">
-              <button type="button">Dummy</button>
+              <ActionIcon
+                variant="filled"
+                component={Link}
+                href={`/detail/${record.id}`}
+                color="yellow"
+              >
+                <IconPencil
+                  style={{ width: '70%', height: '70%' }}
+                  stroke={1.5}
+                />
+              </ActionIcon>
+              <DeleteTransactionForm selectedTransaction={record} />
             </div>
           ),
         },
