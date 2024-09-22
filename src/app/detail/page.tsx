@@ -29,7 +29,6 @@ export default async function Page() {
     return <AccessBlocked />;
   }
 
-  const userBalance = await getTotalBalance({ email });
   const transactions = (await getTransaction({
     email,
     options: {
@@ -39,6 +38,7 @@ export default async function Page() {
       pocketDestination: true,
     },
   })) as Transaction[];
+  const userBalance = getTotalBalance({ transactions });
   const categories = (await getCategory({ email })) as Category[];
   const pockets = (await getPocket({ email })) as Pocket[];
 
