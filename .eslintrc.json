@@ -33,6 +33,7 @@
     "no-nested-ternary": "off",
     "no-underscore-dangle": "off",
     "implicit-arrow-linebreak": "off",
-    "function-paren-newline": "off"
+    "function-paren-newline": "off",
+    "newline-per-chained-call": "off"
   }
 }
