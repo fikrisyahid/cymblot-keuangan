@@ -115,6 +115,8 @@ async function editTransaction({
   type,
   value,
   pocketId,
+  pocketSourceId,
+  pocketDestinationId,
   categoryId,
 }: {
   id: string;
@@ -122,9 +124,36 @@ async function editTransaction({
   value: number;
   information: string;
   type: Transaction['type'];
-  pocketId: string;
+  pocketId?: string;
+  pocketSourceId?: string;
+  pocketDestinationId?: string;
   categoryId: string;
 }) {
+  // Check balance from pocket
+  if (type !== 'DEPOSIT') {
+    const minimalPocketBalance = await getPocketBalance({
+      id:
+        type === 'TRANSFER' ? (pocketSourceId as string) : (pocketId as string),
+    });
+    const checkedPocket = await prisma.pocket.findFirst({
+      where: {
+        id: type === 'TRANSFER' ? pocketSourceId : pocketId,
+      },
+    });
+    if (minimalPocketBalance < value) {
+      throw new Error(`Saldo kantong ${checkedPocket?.name} tidak mencukupi`);
+    }
+  }
+
+  const pocketOptions =
+    type !== 'TRANSFER'
+      ? {
+          pocketId,
+        }
+      : {
+          pocketSourceId,
+          pocketDestinationId,
+        };
   await prisma.transaction.update({
     where: {
       id,
@@ -134,8 +163,8 @@ async function editTransaction({
       value,
       information,
       type,
-      pocketId,
       categoryId,
+      ...pocketOptions,
     },
   });
   revalidateAllRoute();
