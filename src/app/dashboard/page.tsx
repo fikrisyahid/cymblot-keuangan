@@ -1,17 +1,30 @@
 import { NumberFormatter, Stack, Text, Title } from '@mantine/core';
 import getSessionUsername from '@/utils/get-session-username';
 import getSessionEmail from '@/utils/get-session-email';
-import { Pocket } from '@prisma/client';
+import { Category, Pocket, Transaction } from '@prisma/client';
 
 import MainCard from '../components/main-card';
 import getTotalBalance from '../actions/functions/get-total-balance';
 import AccessBlocked from '../components/access-blocked';
 import FailedState from '../components/failed-state';
 import { getPocket } from '../actions/db/pocket';
-import getPocketBalance from '../actions/functions/get-pocket-balance';
 import BalancePerPocket from './balance-per-pocket';
+import { getTransaction } from '../actions/db/transaction';
+import CategoryDepositWithdraw from './category-deposit-withdraw';
+import RecentTransactionTable from './recent-transaction-table';
+import { getCategory } from '../actions/db/category';
+import getPocketBalance from '../actions/functions/get-pocket-balance';
+import {
+  getCategoryDepositBalance,
+  getCategoryWithdrawBalance,
+} from '../actions/functions/category-finance';
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: { mode: 'today' | 'this_month' | 'this_year' };
+}) {
+  const { mode = 'this_month' } = searchParams;
   const username = await getSessionUsername();
   const email = await getSessionEmail();
 
@@ -20,21 +33,47 @@ export default async function Page() {
   }
 
   const pockets = (await getPocket({ email })) as Pocket[];
+  const categories = (await getCategory({ email })) as Category[];
+  const transactions = (await getTransaction({
+    email,
+    options: {
+      category: true,
+      pocket: true,
+      pocketDestination: true,
+      pocketSource: true,
+    },
+  })) as Transaction[];
 
-  if (!pockets) {
+  if (!pockets || !transactions || !categories) {
     return <FailedState />;
   }
 
-  const pocketsWithBalance = await Promise.all(
-    pockets.map(async (pocket: Pocket) => ({
-      ...pocket,
-      balance: await getPocketBalance({
-        id: pocket.id,
-      }),
-    })),
-  );
+  const pocketsWithBalance = pockets.map((pocket: Pocket) => ({
+    ...pocket,
+    balance: getPocketBalance({
+      id: pocket.id,
+      transactions,
+    }),
+  }));
 
-  const totalBalance = await getTotalBalance({ email });
+  const categoriesWithDepositAndWithdraw = categories.map((category) => ({
+    ...category,
+    deposit: getCategoryDepositBalance({ id: category.id, transactions, mode }),
+    withdraw: getCategoryWithdrawBalance({
+      id: category.id,
+      transactions,
+      mode,
+    }),
+  }));
+
+  const transactionsForTable = transactions
+    .slice(0, 5)
+    .map((transaction, index) => ({
+      no: index + 1,
+      ...transaction,
+    }));
+
+  const totalBalance = getTotalBalance({ transactions });
 
   return (
     <Stack>
@@ -73,12 +112,20 @@ export default async function Page() {
           <BalancePerPocket pocketsWithBalance={pocketsWithBalance} />
         </MainCard>
         <MainCard width="50%">
-          <Stack gap={0} className="text-center sm:text-start">
-            <Text fw={700} size="xl">
-              Riwayat transaksi terbaru
-            </Text>
-          </Stack>
+          <Text fw={700} size="xl" className="text-center sm:text-start">
+            Pemasukan & Pengeluaran Kategori
+          </Text>
+          <CategoryDepositWithdraw
+            mode={mode}
+            categoriesWithDepositAndWithdraw={categoriesWithDepositAndWithdraw}
+          />
         </MainCard>
+      </MainCard>
+      <MainCard>
+        <Text fw={700} size="xl" className="text-center sm:text-start">
+          Riwayat Transaksi Terbaru
+        </Text>
+        <RecentTransactionTable transactions={transactionsForTable} />
       </MainCard>
     </Stack>
   );
