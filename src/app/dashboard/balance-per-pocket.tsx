@@ -68,13 +68,20 @@ export default function BalancePerPocket({
               radius="md"
               withBorder
               className="flex flex-col justify-between"
+              style={{
+                backgroundColor: '#5177b0',
+              }}
             >
-              <Text>{pocket.name}</Text>
-              <NumberFormatter
-                value={pocket.balance}
-                thousandSeparator
-                prefix="Rp "
-              />
+              <Text fw={700} c="white">
+                {pocket.name}
+              </Text>
+              <Text c="white">
+                <NumberFormatter
+                  value={pocket.balance}
+                  thousandSeparator
+                  prefix="Rp "
+                />
+              </Text>
             </Card>
           </GridCol>
         ))}
