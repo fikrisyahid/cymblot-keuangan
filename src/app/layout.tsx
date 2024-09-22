@@ -4,6 +4,7 @@ import { Poppins } from 'next/font/google';
 import { ClerkProvider, SignIn, SignedIn, SignedOut } from '@clerk/nextjs';
 import { Notifications } from '@mantine/notifications';
 import { ModalsProvider } from '@mantine/modals';
+import { TEXT_COLOR } from '@/config/color';
 import RootShell from './components/shell';
 import ProgressBar from './components/progress-bar';
 import ClientDatesProvider from './components/dates-provider';
@@ -39,6 +40,22 @@ export default function RootLayout({
           <MantineProvider
             theme={{
               fontFamily: poppins.style.fontFamily,
+              components: {
+                Text: {
+                  styles: {
+                    root: {
+                      color: TEXT_COLOR,
+                    },
+                  },
+                },
+                Title: {
+                  styles: {
+                    root: {
+                      color: TEXT_COLOR,
+                    },
+                  },
+                },
+              },
             }}
           >
             <ClientDatesProvider>

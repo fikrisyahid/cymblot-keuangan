@@ -1,5 +1,5 @@
 import MainCard from '@/app/components/main-card';
-import { BUTTON_BASE_COLOR, TEXT_COLOR } from '@/config/color';
+import { BUTTON_BASE_COLOR } from '@/config/color';
 import { Button, Title } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import Link from 'next/link';
@@ -36,7 +36,7 @@ export default async function Page() {
         >
           Kembali
         </Button>
-        <Title c={TEXT_COLOR} className="text-center">
+        <Title className="text-center">
           Tambah Data Keuangan
         </Title>
       </div>

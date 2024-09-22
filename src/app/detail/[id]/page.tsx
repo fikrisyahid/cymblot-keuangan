@@ -3,7 +3,7 @@ import { getPocket } from '@/app/actions/db/pocket';
 import AccessBlocked from '@/app/components/access-blocked';
 import FailedState from '@/app/components/failed-state';
 import MainCard from '@/app/components/main-card';
-import { BUTTON_BASE_COLOR, TEXT_COLOR } from '@/config/color';
+import { BUTTON_BASE_COLOR } from '@/config/color';
 import getSessionEmail from '@/utils/get-session-email';
 import { Button, Title } from '@mantine/core';
 import { Category, Pocket, Transaction } from '@prisma/client';
@@ -42,7 +42,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         >
           Kembali
         </Button>
-        <Title c={TEXT_COLOR} className="text-center">
+        <Title className="text-center">
           Detail Data Keuangan
         </Title>
       </div>

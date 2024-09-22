@@ -1,5 +1,4 @@
 import { Stack, Text, Title } from '@mantine/core';
-import { TEXT_COLOR } from '@/config/color';
 import getSessionEmail from '@/utils/get-session-email';
 import getEnvironmentMode from '@/utils/get-environment-mode';
 import { Pocket } from '@prisma/client';
@@ -35,7 +34,7 @@ export default async function Page() {
   return (
     <MainCard>
       <Stack gap={0} className="text-center sm:text-left">
-        <Title c={TEXT_COLOR}>Daftar Kantong</Title>
+        <Title>Daftar Kantong</Title>
         <Text>
           Semua tempat penyimpanan uang Anda seperti akun bank, cash, atau
           e-wallet untuk memantau saldo secara keseluruhan

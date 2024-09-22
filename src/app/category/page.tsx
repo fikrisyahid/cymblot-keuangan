@@ -1,5 +1,4 @@
 import { Stack, Text, Title } from '@mantine/core';
-import { TEXT_COLOR } from '@/config/color';
 import getSessionEmail from '@/utils/get-session-email';
 import getEnvironmentMode from '@/utils/get-environment-mode';
 import { Category } from '@prisma/client';
@@ -35,7 +34,7 @@ export default async function Page() {
   return (
     <MainCard>
       <Stack gap={0} className="text-center sm:text-left">
-        <Title c={TEXT_COLOR}>Daftar Kategori</Title>
+        <Title>Daftar Kategori</Title>
         <Text>
           Kelompokkan pengeluaran dan pemasukan berdasarkan kategori yang
           memudahkan manajemen keuangan Anda

@@ -6,7 +6,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { BUTTON_BASE_COLOR, TEXT_COLOR } from '@/config/color';
+import { BUTTON_BASE_COLOR } from '@/config/color';
 import getSessionEmail from '@/utils/get-session-email';
 import { Category, Pocket, Transaction } from '@prisma/client';
 import getEnvironmentMode from '@/utils/get-environment-mode';
@@ -56,7 +56,7 @@ export default async function Page() {
   return (
     <MainCard>
       <Stack gap={0} className="text-center sm:text-left">
-        <Title c={TEXT_COLOR}>Daftar Keuangan</Title>
+        <Title>Daftar Keuangan</Title>
         <Text>Pantau detail semua transaksi keuangan Anda di sini</Text>
       </Stack>
       <div className="flex flex-col w-full sm:justify-between sm:flex-row gap-2">
