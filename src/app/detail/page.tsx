@@ -8,7 +8,7 @@ import {
 } from '@mantine/core';
 import { BUTTON_BASE_COLOR, TEXT_COLOR } from '@/config/color';
 import getSessionEmail from '@/utils/get-session-email';
-import { Transaction } from '@prisma/client';
+import { Category, Pocket, Transaction } from '@prisma/client';
 import getEnvironmentMode from '@/utils/get-environment-mode';
 import { IconPlus } from '@tabler/icons-react';
 import Link from 'next/link';
@@ -19,6 +19,8 @@ import AccessBlocked from '../components/access-blocked';
 import { getTransaction } from '../actions/db/transaction';
 import FailedState from '../components/failed-state';
 import PrettyJSON from '../components/pretty-json';
+import { getCategory } from '../actions/db/category';
+import { getPocket } from '../actions/db/pocket';
 
 export default async function Page() {
   const email = await getSessionEmail();
@@ -37,8 +39,10 @@ export default async function Page() {
       pocketDestination: true,
     },
   })) as Transaction[];
+  const categories = (await getCategory({ email })) as Category[];
+  const pockets = (await getPocket({ email })) as Pocket[];
 
-  if (!transactions) {
+  if (!transactions || !categories || !pockets) {
     return <FailedState />;
   }
 
@@ -75,7 +79,11 @@ export default async function Page() {
           Tambah Data Keuangan
         </Button>
       </div>
-      <DetailTable transactions={transactionsForTable} />
+      <DetailTable
+        transactions={transactionsForTable}
+        categories={categories}
+        pockets={pockets}
+      />
       {isDev && <PrettyJSON content={transactions} />}
     </MainCard>
   );
