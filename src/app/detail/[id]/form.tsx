@@ -64,7 +64,17 @@ export default function EditTransactionForm({
       pocketDestinationId,
     } = formData;
 
-    if (!date || !information || !type || !value || !categoryId || !pocketId) {
+    const pocketMustBeFilled =
+      type === 'TRANSFER' ? pocketSourceId && pocketDestinationId : pocketId;
+
+    if (
+      !date ||
+      !information ||
+      !type ||
+      !value ||
+      !categoryId ||
+      !pocketMustBeFilled
+    ) {
       notifications.show({
         title: 'Error',
         message: 'Masih ada data yang belum diisi',
