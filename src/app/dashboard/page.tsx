@@ -22,9 +22,9 @@ import {
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { mode: 'today' | 'this_month' | 'this_year' };
+  searchParams: { category_mode: 'day' | 'week' | 'month' | 'year' };
 }) {
-  const { mode = 'this_month' } = searchParams;
+  const { category_mode: categoryMode = 'month' } = searchParams;
   const username = await getSessionUsername();
   const email = await getSessionEmail();
 
@@ -58,11 +58,15 @@ export default async function Page({
 
   const categoriesWithDepositAndWithdraw = categories.map((category) => ({
     ...category,
-    deposit: getCategoryDepositBalance({ id: category.id, transactions, mode }),
+    deposit: getCategoryDepositBalance({
+      id: category.id,
+      transactions,
+      categoryMode,
+    }),
     withdraw: getCategoryWithdrawBalance({
       id: category.id,
       transactions,
-      mode,
+      categoryMode,
     }),
   }));
 
@@ -116,7 +120,7 @@ export default async function Page({
             Pemasukan & Pengeluaran Kategori
           </Text>
           <CategoryDepositWithdraw
-            mode={mode}
+            categoryMode={categoryMode}
             categoriesWithDepositAndWithdraw={categoriesWithDepositAndWithdraw}
           />
         </MainCard>

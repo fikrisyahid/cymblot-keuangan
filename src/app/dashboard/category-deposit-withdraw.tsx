@@ -7,10 +7,10 @@ import { useRouter } from 'next-nprogress-bar';
 import Link from 'next/link';
 
 export default function CategoryDepositWithdraw({
-  mode,
+  categoryMode,
   categoriesWithDepositAndWithdraw,
 }: {
-  mode: 'today' | 'this_month' | 'this_year';
+  categoryMode: 'day' | 'week' | 'month' | 'year';
   categoriesWithDepositAndWithdraw: any[];
 }) {
   const router = useRouter();
@@ -41,13 +41,14 @@ export default function CategoryDepositWithdraw({
     <Stack className="h-96 sm:h-full">
       <Select
         data={[
-          { value: 'today', label: 'Hari ini' },
-          { value: 'this_month', label: 'Bulan ini' },
-          { value: 'this_year', label: 'Tahun ini' },
+          { value: 'day', label: 'Hari ini' },
+          { value: 'week', label: 'Minggu ini' },
+          { value: 'month', label: 'Bulan ini' },
+          { value: 'year', label: 'Tahun ini' },
         ]}
-        defaultValue={mode}
+        defaultValue={categoryMode}
         onChange={(value) => {
-          router.push(`/dashboard?mode=${value}`);
+          router.push(`/dashboard?category_mode=${value}`);
         }}
       />
       <BarChart

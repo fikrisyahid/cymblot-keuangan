@@ -1,32 +1,34 @@
 import { Transaction } from '@prisma/client';
 import dayjs from 'dayjs';
+import 'dayjs/locale/id';
 
 function getCategoryDepositBalance({
   id,
   transactions,
-  mode,
+  categoryMode,
 }: {
   id: string;
   transactions: Transaction[];
-  mode: 'today' | 'this_month' | 'this_year';
+  categoryMode: 'day' | 'week' | 'month' | 'year';
 }) {
+  dayjs.locale('id');
   const startDate =
-    mode === 'today'
+    categoryMode === 'day'
       ? dayjs().startOf('day')
-      : mode === 'this_month'
+      : categoryMode === 'week'
+      ? dayjs().startOf('week')
+      : categoryMode === 'month'
       ? dayjs().startOf('month')
-      : mode === 'this_year'
-      ? dayjs().startOf('year')
-      : dayjs().startOf('month');
+      : dayjs().startOf('year');
 
   const endDate =
-    mode === 'today'
+    categoryMode === 'day'
       ? dayjs().endOf('day')
-      : mode === 'this_month'
+      : categoryMode === 'week'
+      ? dayjs().endOf('week')
+      : categoryMode === 'month'
       ? dayjs().endOf('month')
-      : mode === 'this_year'
-      ? dayjs().endOf('year')
-      : dayjs().startOf('month');
+      : dayjs().endOf('year');
 
   const depositBalance = transactions
     .filter(
@@ -44,29 +46,29 @@ function getCategoryDepositBalance({
 function getCategoryWithdrawBalance({
   id,
   transactions,
-  mode,
+  categoryMode,
 }: {
   id: string;
   transactions: Transaction[];
-  mode: 'today' | 'this_month' | 'this_year';
+  categoryMode: 'day' | 'week' | 'month' | 'year';
 }) {
   const startDate =
-    mode === 'today'
+    categoryMode === 'day'
       ? dayjs().startOf('day')
-      : mode === 'this_month'
+      : categoryMode === 'week'
+      ? dayjs().startOf('week')
+      : categoryMode === 'month'
       ? dayjs().startOf('month')
-      : mode === 'this_year'
-      ? dayjs().startOf('year')
-      : dayjs().startOf('month');
+      : dayjs().startOf('year');
 
   const endDate =
-    mode === 'today'
+    categoryMode === 'day'
       ? dayjs().endOf('day')
-      : mode === 'this_month'
+      : categoryMode === 'week'
+      ? dayjs().endOf('week')
+      : categoryMode === 'month'
       ? dayjs().endOf('month')
-      : mode === 'this_year'
-      ? dayjs().endOf('year')
-      : dayjs().startOf('month');
+      : dayjs().endOf('year');
 
   const withdrawBalance = transactions
     .filter(
