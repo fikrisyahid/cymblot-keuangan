@@ -9,6 +9,7 @@ import 'dayjs/locale/id';
 import { Badge, NumberFormatter, Stack } from '@mantine/core';
 import { IconArrowNarrowDown } from '@tabler/icons-react';
 import convertTransactionType from '@/utils/convert-transaction-type';
+import { TEXT_COLOR } from '@/config/color';
 
 const PAGE_SIZES = [5, 15, 25, 50, 75, 100];
 
@@ -30,7 +31,6 @@ export default function DetailTable({
   }, [sortStatus, transactions]);
 
   const [page, setPage] = useState(1);
-
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
 
   const paginatedRecords = useMemo(() => {
@@ -41,6 +41,7 @@ export default function DetailTable({
 
   return (
     <DataTable
+      style={{ color: TEXT_COLOR }}
       minHeight={150}
       withTableBorder
       borderRadius="md"
