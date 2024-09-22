@@ -57,7 +57,7 @@ export default async function Page() {
       </Stack>
       <div className="flex flex-col w-full sm:justify-between sm:flex-row gap-2">
         <div className="flex flex-col items-center sm:items-start">
-          <Text>Total Saldo :</Text>
+          <Text>Total saldo :</Text>
           <Badge color="teal">
             <NumberFormatter
               prefix="Rp "
