@@ -1,54 +1,32 @@
-'use server'
+'use server';
 
 import prisma from '@/utils/db';
 
 export default async function getPocketBalance({ id }: { id: string }) {
-  const [
-    balanceDeposit,
-    balanceWithdraw,
-    balanceFromTransfer,
-    balanceTransfered,
-  ] = await Promise.all([
-    prisma.transaction.aggregate({
-      where: {
-        pocketId: id,
-        type: 'DEPOSIT',
-      },
-      _sum: {
-        value: true,
-      },
-    }),
-    prisma.transaction.aggregate({
-      where: {
-        pocketId: id,
-        type: 'WITHDRAW',
-      },
-      _sum: {
-        value: true,
-      },
-    }),
-    prisma.transaction.aggregate({
-      where: {
-        pocketDestinationId: id,
-      },
-      _sum: {
-        value: true,
-      },
-    }),
-    prisma.transaction.aggregate({
-      where: {
-        pocketSourceId: id,
-      },
-      _sum: {
-        value: true,
-      },
-    }),
-  ]);
+  const transactions = await prisma.transaction.findMany({
+    where: {
+      pocketId: id,
+    },
+  });
+
+  const balanceDeposit = transactions
+    .filter((transaction) => transaction.type === 'DEPOSIT')
+    .reduce((sum, transaction) => sum + transaction.value, 0);
+
+  const balanceWithdraw = transactions
+    .filter((transaction) => transaction.type === 'WITHDRAW')
+    .reduce((sum, transaction) => sum + transaction.value, 0);
+
+  const balanceFromTransfer = transactions
+    .filter((transaction) => transaction.pocketDestinationId === id)
+    .reduce((sum, transaction) => sum + transaction.value, 0);
+
+  const balanceTransfered = transactions
+    .filter((transaction) => transaction.pocketSourceId === id)
+    .reduce((sum, transaction) => sum + transaction.value, 0);
+
   const totalBalance =
-    (balanceDeposit._sum.value || 0) -
-    (balanceWithdraw._sum.value || 0) +
-    (balanceFromTransfer._sum.value || 0) -
-    (balanceTransfered._sum.value || 0);
+    balanceDeposit - balanceWithdraw + balanceFromTransfer - balanceTransfered;
 
   return totalBalance;
 }

@@ -1,30 +1,26 @@
 'use server';
 
-import prisma from '@/utils/db';
+import { Transaction } from '@prisma/client';
+import { getTransaction } from '../db/transaction';
 
 export default async function getTotalBalance({ email }: { email: string }) {
-  const [transactionsDeposit, transactionsWithdraw] = await Promise.all([
-    prisma.transaction.aggregate({
-      where: {
-        email,
-        type: 'DEPOSIT',
-      },
-      _sum: {
-        value: true,
-      },
-    }),
-    prisma.transaction.aggregate({
-      where: {
-        email,
-        type: 'WITHDRAW',
-      },
-      _sum: {
-        value: true,
-      },
-    }),
-  ]);
-  const totalBalance =
-    (transactionsDeposit._sum.value || 0) -
-    (transactionsWithdraw._sum.value || 0);
+  const transactions = (await getTransaction({ email })) as Transaction[];
+
+  const depositTransactions = transactions.filter(
+    (transaction) => transaction.type === 'DEPOSIT',
+  );
+  const withdrawTransactions = transactions.filter(
+    (transaction) => transaction.type === 'WITHDRAW',
+  );
+
+  const totalDeposit = depositTransactions.reduce(
+    (sum, transaction) => sum + transaction.value,
+    0,
+  );
+  const totalWithdraw = withdrawTransactions.reduce(
+    (sum, transaction) => sum + transaction.value,
+    0,
+  );
+  const totalBalance = totalDeposit - totalWithdraw;
   return totalBalance;
 }
