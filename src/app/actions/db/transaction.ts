@@ -74,7 +74,7 @@ async function addTransaction({
   const transactions = (await getTransaction({ email })) as Transaction[];
   // Check balance from pocket
   if (type !== 'DEPOSIT') {
-    const minimalPocketBalance = await getPocketBalance({
+    const minimalPocketBalance = getPocketBalance({
       id:
         type === 'TRANSFER' ? (pocketSourceId as string) : (pocketId as string),
       transactions,
