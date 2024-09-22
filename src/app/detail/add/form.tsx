@@ -270,7 +270,7 @@ export default function AddTransactionForm({
         disabled={submitButtonDisabled}
         onClick={handleSubmit}
       >
-        Tambah Data keuangan
+        Tambah data keuangan
       </Button>
     </Stack>
   );
