@@ -159,7 +159,12 @@ export default function DetailTable({
         if (categoryActive && !category.includes(record.Category?.id)) {
           return false;
         }
-        if (pocketActive && !pocket.includes(record.Pocket?.id)) {
+        if (
+          pocketActive &&
+          !pocket.includes(record.Pocket?.id) &&
+          !pocket.includes(record.PocketSource?.id) &&
+          !pocket.includes(record.PocketDestination?.id)
+        ) {
           return false;
         }
         return true;
