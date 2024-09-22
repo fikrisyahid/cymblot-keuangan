@@ -60,7 +60,7 @@ export default async function Page() {
           <Text>Total Saldo :</Text>
           <Badge color="teal">
             <NumberFormatter
-              prefix="Rp"
+              prefix="Rp "
               value={userBalance}
               thousandSeparator
             />
