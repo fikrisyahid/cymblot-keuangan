@@ -6,7 +6,11 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": "eslint --fix"
   },
   "dependencies": {
     "@clerk/nextjs": "^5.5.2",
@@ -35,6 +39,8 @@
     "dayjs": "^1.11.13",
     "embla-carousel-react": "^8.3.0",
     "eslint-config-airbnb-typescript": "^18.0.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
     "lodash": "^4.17.21",
     "mantine-datatable": "^7.12.4",
     "next": "14.2.11",
