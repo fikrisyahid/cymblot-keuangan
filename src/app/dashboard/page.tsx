@@ -56,19 +56,23 @@ export default async function Page({
     }),
   }));
 
-  const categoriesWithDepositAndWithdraw = categories.map((category) => ({
-    ...category,
-    deposit: getCategoryDepositBalance({
-      id: category.id,
-      transactions,
-      categoryMode,
-    }),
-    withdraw: getCategoryWithdrawBalance({
-      id: category.id,
-      transactions,
-      categoryMode,
-    }),
-  }));
+  const categoriesWithDepositAndWithdraw = categories
+    .map((category) => ({
+      ...category,
+      deposit: getCategoryDepositBalance({
+        id: category.id,
+        transactions,
+        categoryMode,
+      }),
+      withdraw: getCategoryWithdrawBalance({
+        id: category.id,
+        transactions,
+        categoryMode,
+      }),
+    }))
+    .sort(
+      (a, b) => (b.deposit + b.withdraw) / 2 - (a.deposit + a.withdraw) / 2,
+    );
 
   const transactionsForTable = transactions
     .slice(0, 5)
