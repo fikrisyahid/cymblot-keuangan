@@ -238,7 +238,7 @@ export default function DetailTable({
       />
       <DataTable
         style={{ color: TEXT_COLOR }}
-        minHeight={150}
+        minHeight={200}
         withTableBorder
         borderRadius="md"
         columns={generateColumn({
@@ -258,7 +258,7 @@ export default function DetailTable({
         onRecordsPerPageChange={setPageSize}
         onSortStatusChange={setSortStatus}
         records={paginatedRecords}
-        noRecordsText="Belum ada kantong yang ditambahkan."
+        noRecordsText="Belum ada transaksi yang ditambahkan."
       />
     </Stack>
   );
