@@ -18,6 +18,9 @@ export default function BalancePerPocket({
 }: {
   pocketsWithBalance: any[];
 }) {
+  const allPocketsDoesNotHaveBalance = pocketsWithBalance.every(
+    (pocket) => pocket.balance === 0,
+  );
   if (pocketsWithBalance.length === 0) {
     return (
       <Alert
@@ -42,23 +45,25 @@ export default function BalancePerPocket({
   }
   return (
     <Stack>
-      <PieChart
-        size={250}
-        className="self-center"
-        withLabelsLine
-        withTooltip
-        labelsPosition="outside"
-        labelsType="percent"
-        withLabels
-        data={pocketsWithBalance.map((pocket, index) => ({
-          name: pocket.name,
-          value: pocket.balance,
-          color: generateSoftColor({
-            index,
-            total: pocketsWithBalance.length,
-          }),
-        }))}
-      />
+      {!allPocketsDoesNotHaveBalance && (
+        <PieChart
+          size={250}
+          className="self-center"
+          withLabelsLine
+          withTooltip
+          labelsPosition="outside"
+          labelsType="percent"
+          withLabels
+          data={pocketsWithBalance.map((pocket, index) => ({
+            name: pocket.name,
+            value: pocket.balance,
+            color: generateSoftColor({
+              index,
+              total: pocketsWithBalance.length,
+            }),
+          }))}
+        />
+      )}
       <Grid justify="center" align="stretch">
         {pocketsWithBalance.map((pocket) => (
           <GridCol key={pocket.id} span={{ base: 12, md: 6, lg: 4 }}>
