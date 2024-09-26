@@ -53,6 +53,7 @@ export default function BalancePerPocket({
           withTooltip
           labelsPosition="outside"
           labelsType="percent"
+          tooltipDataSource="segment"
           withLabels
           data={pocketsWithBalance.map((pocket, index) => ({
             name: pocket.name,
