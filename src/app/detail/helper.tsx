@@ -3,7 +3,7 @@ import {
   ActionIcon,
   Badge,
   Button,
-  MultiSelect,
+  Checkbox,
   NumberFormatter,
   NumberInput,
   rem,
@@ -157,19 +157,50 @@ function generateColumn({
           </div>
         );
       },
-      filter: (
-        <MultiSelect
-          clearable
-          label="Jenis transaksi"
-          placeholder="Pilih jenis transaksi"
-          data={[
-            { value: 'DEPOSIT', label: 'PEMASUKAN' },
-            { value: 'WITHDRAW', label: 'PENGELUARAN' },
-            { value: 'TRANSFER', label: 'TRANSFER' },
-          ]}
-          value={filter.type}
-          onChange={(value) => handleChange({ type: value })}
-        />
+      filter: () => (
+        <Stack>
+          <Checkbox
+            checked={filter.type.includes('DEPOSIT')}
+            label="PEMASUKAN"
+            onChange={(e) =>
+              handleChange({
+                type: e.currentTarget.checked
+                  ? [...filter.type, 'DEPOSIT']
+                  : filter.type.filter((f) => f !== 'DEPOSIT'),
+              })
+            }
+          />
+          <Checkbox
+            checked={filter.type.includes('WITHDRAW')}
+            label="PENGELUARAN"
+            onChange={(e) =>
+              handleChange({
+                type: e.currentTarget.checked
+                  ? [...filter.type, 'WITHDRAW']
+                  : filter.type.filter((f) => f !== 'WITHDRAW'),
+              })
+            }
+          />
+          <Checkbox
+            checked={filter.type.includes('TRANSFER')}
+            label="TRANSFER"
+            onChange={(e) =>
+              handleChange({
+                type: e.currentTarget.checked
+                  ? [...filter.type, 'TRANSFER']
+                  : filter.type.filter((f) => f !== 'TRANSFER'),
+              })
+            }
+          />
+          {filter.type.length > 0 && (
+            <Button
+              color={BUTTON_BASE_COLOR}
+              onClick={() => handleChange({ type: [] })}
+            >
+              Reset
+            </Button>
+          )}
+        </Stack>
       ),
     },
     {
@@ -246,19 +277,38 @@ function generateColumn({
       title: 'Kategori',
       sortable: true,
       render: (record: any) => record.Category?.name,
-      filter: (
-        <MultiSelect
-          clearable
-          label="Jenis kategori"
-          placeholder="Pilih jenis kategori"
-          data={categories.map((category) => ({
-            value: category.id,
-            label: category.name,
-          }))}
-          value={filter.category}
-          onChange={(value) => handleChange({ category: value })}
-        />
-      ),
+      filter: () => {
+        return (
+          <Stack>
+            {categories.map((category) => (
+              <Checkbox
+                key={category.id}
+                checked={filter.category.includes(category.id)}
+                label={category.name}
+                onChange={(e) =>
+                  handleChange({
+                    category: e.currentTarget.checked
+                      ? [...filter.category, category.id]
+                      : filter.category.filter((f) => f !== category.id),
+                  })
+                }
+              />
+            ))}
+            {filter.category.length > 0 && (
+              <Button
+                color={BUTTON_BASE_COLOR}
+                onClick={() =>
+                  handleChange({
+                    category: [],
+                  })
+                }
+              >
+                Reset
+              </Button>
+            )}
+          </Stack>
+        );
+      },
     },
     {
       accessor: 'pocket',
@@ -281,19 +331,38 @@ function generateColumn({
           </div>
         );
       },
-      filter: (
-        <MultiSelect
-          clearable
-          label="Jenis kantong"
-          placeholder="Pilih jenis kantong"
-          data={pockets.map((pocket) => ({
-            value: pocket.id,
-            label: pocket.name,
-          }))}
-          value={filter.pocket}
-          onChange={(value) => handleChange({ pocket: value })}
-        />
-      ),
+      filter: () => {
+        return (
+          <Stack>
+            {pockets.map((pocket) => (
+              <Checkbox
+                key={pocket.id}
+                checked={filter.pocket.includes(pocket.id)}
+                label={pocket.name}
+                onChange={(e) =>
+                  handleChange({
+                    pocket: e.currentTarget.checked
+                      ? [...filter.pocket, pocket.id]
+                      : filter.pocket.filter((f) => f !== pocket.id),
+                  })
+                }
+              />
+            ))}
+            {filter.pocket.length > 0 && (
+              <Button
+                color={BUTTON_BASE_COLOR}
+                onClick={() =>
+                  handleChange({
+                    pocket: [],
+                  })
+                }
+              >
+                Reset
+              </Button>
+            )}
+          </Stack>
+        );
+      },
     },
     {
       accessor: 'actions',
