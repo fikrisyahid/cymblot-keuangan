@@ -5,13 +5,16 @@ import { Alert, Button, Select, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useRouter } from 'next-nprogress-bar';
 import Link from 'next/link';
+import revalidateAllRoute from '../actions/revalidate';
 
 export default function CategoryDepositWithdraw({
-  categoryMode,
+  categoryMode = 'month',
   categoriesWithDepositAndWithdraw,
+  totalBalanceMode = 'month',
 }: {
   categoryMode: 'day' | 'week' | 'month' | 'year';
   categoriesWithDepositAndWithdraw: any[];
+  totalBalanceMode: 'day' | 'week' | 'month' | 'year';
 }) {
   const router = useRouter();
 
@@ -48,7 +51,10 @@ export default function CategoryDepositWithdraw({
         ]}
         defaultValue={categoryMode}
         onChange={(value) => {
-          router.push(`/dashboard?category_mode=${value}`);
+          revalidateAllRoute();
+          router.push(
+            `/dashboard?category_mode=${value}&total_balance_mode=${totalBalanceMode}`,
+          );
         }}
       />
       <BarChart

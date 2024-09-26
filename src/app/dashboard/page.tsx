@@ -1,7 +1,12 @@
-import { NumberFormatter, Stack, Text, Title } from '@mantine/core';
+import { NumberFormatter, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import getSessionUsername from '@/utils/get-session-username';
 import getSessionEmail from '@/utils/get-session-email';
 import { Category, Pocket, Transaction } from '@prisma/client';
+import {
+  IconCoins,
+  IconTrendingDown,
+  IconTrendingUp,
+} from '@tabler/icons-react';
 
 import MainCard from '../components/main-card';
 import getTotalBalance from '../actions/functions/get-total-balance';
@@ -14,17 +19,22 @@ import CategoryDepositWithdraw from './category-deposit-withdraw';
 import RecentTransactionTable from './recent-transaction-table';
 import { getCategory } from '../actions/db/category';
 import getPocketBalance from '../actions/functions/get-pocket-balance';
-import {
-  getCategoryDepositBalance,
-  getCategoryWithdrawBalance,
-} from '../actions/functions/category-finance';
+import TotalBalanceModeSwitch from './total-balance-mode';
+import getCategoryBalance from '../actions/functions/get-category-balance';
+import getGeneralBalance from '../actions/functions/get-general-balance';
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { category_mode: 'day' | 'week' | 'month' | 'year' };
+  searchParams: {
+    category_mode: 'day' | 'week' | 'month' | 'year';
+    total_balance_mode: 'day' | 'week' | 'month' | 'year';
+  };
 }) {
-  const { category_mode: categoryMode = 'month' } = searchParams;
+  const {
+    category_mode: categoryMode = 'month',
+    total_balance_mode: totalBalanceMode = 'month',
+  } = searchParams;
   const username = await getSessionUsername();
   const email = await getSessionEmail();
 
@@ -59,15 +69,17 @@ export default async function Page({
   const categoriesWithDepositAndWithdraw = categories
     .map((category) => ({
       ...category,
-      deposit: getCategoryDepositBalance({
+      deposit: getCategoryBalance({
         id: category.id,
         transactions,
         categoryMode,
+        type: 'DEPOSIT',
       }),
-      withdraw: getCategoryWithdrawBalance({
+      withdraw: getCategoryBalance({
         id: category.id,
         transactions,
         categoryMode,
+        type: 'WITHDRAW',
       }),
     }))
     .sort(
@@ -82,36 +94,102 @@ export default async function Page({
     }));
 
   const totalBalance = getTotalBalance({ transactions });
+  const depositAndWithdrawBalance = {
+    deposit: getGeneralBalance({
+      transactions,
+      mode: totalBalanceMode,
+      type: 'DEPOSIT',
+    }),
+    withdraw: getGeneralBalance({
+      transactions,
+      mode: totalBalanceMode,
+      type: 'WITHDRAW',
+    }),
+  };
 
   return (
     <Stack>
       <MainCard>
-        <Title className="text-center sm:text-start">Halo {username}</Title>
-        <MainCard row transparent noPadding wrap>
-          <MainCard style={{ backgroundColor: '#38598b' }} fullWidth>
-            <Title c="white" className="text-center sm:text-start">
-              Total saldo
-            </Title>
-            <Text
-              c={totalBalance > 0 ? 'green' : 'red'}
-              size="lg"
-              fw={700}
-              className="text-center sm:text-start"
-            >
-              <NumberFormatter
-                value={totalBalance}
-                prefix="Rp "
-                thousandSeparator
-              />
-            </Text>
+        <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
+          <Title className="text-center sm:text-start">Halo {username}</Title>
+          <TotalBalanceModeSwitch
+            categoryMode={categoryMode}
+            totalBalanceMode={totalBalanceMode}
+          />
+        </div>
+        <SimpleGrid cols={{ base: 1, sm: 3 }}>
+          <MainCard
+            style={{
+              backgroundColor: '#38598b',
+              justifyContent: 'space-between',
+            }}
+            forceRow
+          >
+            <Stack justify="space-between">
+              <Title c="white">Total saldo</Title>
+              <Text c="white" size="lg" fw={700}>
+                <NumberFormatter
+                  value={totalBalance}
+                  prefix="Rp "
+                  thousandSeparator
+                />
+              </Text>
+            </Stack>
+            <IconCoins color="white" size={96} className="min-h-full" />
           </MainCard>
-        </MainCard>
+          <MainCard
+            style={{
+              backgroundColor: '#5177b0',
+              justifyContent: 'space-between',
+            }}
+            forceRow
+          >
+            <Stack justify="space-between">
+              <Title c="white" size={28}>
+                Total Pemasukan
+              </Title>
+              <Text c="white" size="lg" fw={700}>
+                <NumberFormatter
+                  value={depositAndWithdrawBalance.deposit}
+                  prefix="Rp "
+                  thousandSeparator
+                />
+              </Text>
+            </Stack>
+            <IconTrendingUp color="#2cd142" size={96} className="min-h-full" />
+          </MainCard>
+          <MainCard
+            style={{
+              backgroundColor: '#72aad4',
+              justifyContent: 'space-between',
+            }}
+            forceRow
+          >
+            <Stack justify="space-between">
+              <Title c="white" size={28}>
+                Total Pengeluaran
+              </Title>
+              <Text c="white" size="lg" fw={700}>
+                <NumberFormatter
+                  value={depositAndWithdrawBalance.withdraw}
+                  prefix="Rp "
+                  thousandSeparator
+                />
+              </Text>
+            </Stack>
+            <IconTrendingDown
+              color="#ff6e73"
+              size={96}
+              className="min-h-full"
+            />
+          </MainCard>
+        </SimpleGrid>
       </MainCard>
       <MainCard row transparent noPadding>
         <MainCard width="50%">
           <Stack gap={0} className="text-center sm:text-start">
             <Text fw={700} size="xl">
-              Saldo tiap kantong
+              Saldo Tiap kantong
             </Text>
             <Text>
               Saldo yang terdapat pada setiap kantong yang Anda miliki
@@ -121,11 +199,12 @@ export default async function Page({
         </MainCard>
         <MainCard width="50%">
           <Text fw={700} size="xl" className="text-center sm:text-start">
-            Pemasukan & Pengeluaran Kategori
+            Pemasukan & Pengeluaran Tiap Kategori
           </Text>
           <CategoryDepositWithdraw
             categoryMode={categoryMode}
             categoriesWithDepositAndWithdraw={categoriesWithDepositAndWithdraw}
+            totalBalanceMode={totalBalanceMode}
           />
         </MainCard>
       </MainCard>
