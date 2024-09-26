@@ -16,34 +16,44 @@ export default function getCategoryBalance({
 }: {
   id: string;
   transactions: Transaction[];
-  categoryMode: 'day' | 'week' | 'month' | 'year';
+  categoryMode: 'day' | 'week' | 'month' | 'year' | 'all';
   type: 'DEPOSIT' | 'WITHDRAW';
 }) {
-  const startDate =
-    categoryMode === 'day'
-      ? dayjs().tz('Asia/Jakarta').startOf('day')
-      : categoryMode === 'week'
-      ? dayjs().tz('Asia/Jakarta').startOf('week')
-      : categoryMode === 'month'
-      ? dayjs().tz('Asia/Jakarta').startOf('month')
-      : dayjs().tz('Asia/Jakarta').startOf('year');
+  if (categoryMode !== 'all') {
+    const startDate =
+      categoryMode === 'day'
+        ? dayjs().tz('Asia/Jakarta').startOf('day')
+        : categoryMode === 'week'
+        ? dayjs().tz('Asia/Jakarta').startOf('week')
+        : categoryMode === 'month'
+        ? dayjs().tz('Asia/Jakarta').startOf('month')
+        : dayjs().tz('Asia/Jakarta').startOf('year');
 
-  const endDate =
-    categoryMode === 'day'
-      ? dayjs().tz('Asia/Jakarta').endOf('day')
-      : categoryMode === 'week'
-      ? dayjs().tz('Asia/Jakarta').endOf('week')
-      : categoryMode === 'month'
-      ? dayjs().tz('Asia/Jakarta').endOf('month')
-      : dayjs().tz('Asia/Jakarta').endOf('year');
+    const endDate =
+      categoryMode === 'day'
+        ? dayjs().tz('Asia/Jakarta').endOf('day')
+        : categoryMode === 'week'
+        ? dayjs().tz('Asia/Jakarta').endOf('week')
+        : categoryMode === 'month'
+        ? dayjs().tz('Asia/Jakarta').endOf('month')
+        : dayjs().tz('Asia/Jakarta').endOf('year');
 
+    const balance = transactions
+      .filter(
+        (transaction) =>
+          transaction.categoryId === id &&
+          transaction.type === type &&
+          dayjs(transaction.date).tz('Asia/Jakarta').isAfter(startDate) &&
+          dayjs(transaction.date).tz('Asia/Jakarta').isBefore(endDate),
+      )
+      .reduce((sum, transaction) => sum + transaction.value, 0);
+
+    return balance;
+  }
   const balance = transactions
     .filter(
       (transaction) =>
-        transaction.categoryId === id &&
-        transaction.type === type &&
-        dayjs(transaction.date).tz('Asia/Jakarta').isAfter(startDate) &&
-        dayjs(transaction.date).tz('Asia/Jakarta').isBefore(endDate),
+        transaction.categoryId === id && transaction.type === type,
     )
     .reduce((sum, transaction) => sum + transaction.value, 0);
 

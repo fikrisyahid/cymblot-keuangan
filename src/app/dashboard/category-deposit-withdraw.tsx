@@ -12,9 +12,9 @@ export default function CategoryDepositWithdraw({
   categoriesWithDepositAndWithdraw,
   totalBalanceMode = 'month',
 }: {
-  categoryMode: 'day' | 'week' | 'month' | 'year';
+  categoryMode: 'day' | 'week' | 'month' | 'year' | 'all';
   categoriesWithDepositAndWithdraw: any[];
-  totalBalanceMode: 'day' | 'week' | 'month' | 'year';
+  totalBalanceMode: 'day' | 'week' | 'month' | 'year' | 'all';
 }) {
   const router = useRouter();
 
@@ -48,6 +48,7 @@ export default function CategoryDepositWithdraw({
           { value: 'week', label: 'Minggu ini' },
           { value: 'month', label: 'Bulan ini' },
           { value: 'year', label: 'Tahun ini' },
+          { value: 'all', label: 'Semua' },
         ]}
         defaultValue={categoryMode}
         onChange={(value) => {

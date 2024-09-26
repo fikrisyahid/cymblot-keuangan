@@ -27,8 +27,8 @@ export default async function Page({
   searchParams,
 }: {
   searchParams: {
-    category_mode: 'day' | 'week' | 'month' | 'year';
-    total_balance_mode: 'day' | 'week' | 'month' | 'year';
+    category_mode: 'day' | 'week' | 'month' | 'year' | 'all';
+    total_balance_mode: 'day' | 'week' | 'month' | 'year' | 'all';
   };
 }) {
   const {
@@ -146,7 +146,16 @@ export default async function Page({
           >
             <Stack justify="space-between">
               <Title c="white" size={28}>
-                Total Pemasukan
+                Total Pemasukan{' '}
+                {totalBalanceMode === 'day'
+                  ? 'Hari ini'
+                  : totalBalanceMode === 'week'
+                  ? 'Minggu ini'
+                  : totalBalanceMode === 'month'
+                  ? 'Bulan ini'
+                  : totalBalanceMode === 'year'
+                  ? 'Tahun ini'
+                  : ''}
               </Title>
               <Text c="white" size="lg" fw={700}>
                 <NumberFormatter
@@ -167,7 +176,16 @@ export default async function Page({
           >
             <Stack justify="space-between">
               <Title c="white" size={28}>
-                Total Pengeluaran
+                Total Pengeluaran{' '}
+                {totalBalanceMode === 'day'
+                  ? 'Hari ini'
+                  : totalBalanceMode === 'week'
+                  ? 'Minggu ini'
+                  : totalBalanceMode === 'month'
+                  ? 'Bulan ini'
+                  : totalBalanceMode === 'year'
+                  ? 'Tahun ini'
+                  : ''}
               </Title>
               <Text c="white" size="lg" fw={700}>
                 <NumberFormatter
@@ -177,11 +195,7 @@ export default async function Page({
                 />
               </Text>
             </Stack>
-            <IconTrendingDown
-              color="white"
-              size={96}
-              className="min-h-full"
-            />
+            <IconTrendingDown color="white" size={96} className="min-h-full" />
           </MainCard>
         </SimpleGrid>
       </MainCard>
@@ -199,7 +213,16 @@ export default async function Page({
         </MainCard>
         <MainCard width="50%">
           <Text fw={700} size="xl" className="text-center sm:text-start">
-            Pemasukan & Pengeluaran Tiap Kategori
+            Pemasukan & Pengeluaran Tiap Kategori{' '}
+            {categoryMode === 'day'
+              ? 'Hari ini'
+              : categoryMode === 'week'
+              ? 'Minggu ini'
+              : categoryMode === 'month'
+              ? 'Bulan ini'
+              : categoryMode === 'year'
+              ? 'Tahun ini'
+              : ''}
           </Text>
           <CategoryDepositWithdraw
             categoryMode={categoryMode}

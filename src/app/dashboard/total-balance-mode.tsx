@@ -8,8 +8,8 @@ export default function TotalBalanceModeSwitch({
   categoryMode = 'month',
   totalBalanceMode = 'month',
 }: {
-  categoryMode: 'day' | 'week' | 'month' | 'year';
-  totalBalanceMode: 'day' | 'week' | 'month' | 'year';
+  categoryMode: 'day' | 'week' | 'month' | 'year' | "all";
+  totalBalanceMode: 'day' | 'week' | 'month' | 'year' | 'all';
 }) {
   const router = useRouter();
 
@@ -28,6 +28,7 @@ export default function TotalBalanceModeSwitch({
         { value: 'week', label: 'Minggu ini' },
         { value: 'month', label: 'Bulan ini' },
         { value: 'year', label: 'Tahun ini' },
+        { value: 'all', label: 'Semua' },
       ]}
     />
   );
