@@ -108,7 +108,7 @@ export default async function Page({
   };
 
   return (
-    <Stack>
+    <MainCard transparent noPadding>
       <MainCard>
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
           <Title className="text-center sm:text-start">Halo {username}</Title>
@@ -237,6 +237,6 @@ export default async function Page({
         </Text>
         <RecentTransactionTable transactions={transactionsForTable} />
       </MainCard>
-    </Stack>
+    </MainCard>
   );
 }
