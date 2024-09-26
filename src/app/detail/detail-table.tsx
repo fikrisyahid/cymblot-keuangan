@@ -2,7 +2,7 @@
 
 import { sortBy } from 'lodash';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BUTTON_BASE_COLOR, TEXT_COLOR } from '@/config/color';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -198,10 +198,13 @@ export default function DetailTable({
   );
 
   const sortedRecords = useMemo(() => {
-    setPage(1);
     const data = sortBy(filteredRecords, sortStatus.columnAccessor);
     return sortStatus.direction === 'desc' ? data.reverse() : data;
   }, [sortStatus, filteredRecords]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [sortStatus, pageSize, filter]);
 
   const paginatedRecords = useMemo(() => {
     const from = (page - 1) * pageSize;
