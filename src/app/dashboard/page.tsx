@@ -139,7 +139,7 @@ export default async function Page({
           </MainCard>
           <MainCard
             style={{
-              backgroundColor: '#5177b0',
+              backgroundColor: '#4b9a41',
               justifyContent: 'space-between',
             }}
             forceRow
@@ -156,11 +156,11 @@ export default async function Page({
                 />
               </Text>
             </Stack>
-            <IconTrendingUp color="#2cd142" size={96} className="min-h-full" />
+            <IconTrendingUp color="white" size={96} className="min-h-full" />
           </MainCard>
           <MainCard
             style={{
-              backgroundColor: '#72aad4',
+              backgroundColor: '#ed7877',
               justifyContent: 'space-between',
             }}
             forceRow
@@ -178,7 +178,7 @@ export default async function Page({
               </Text>
             </Stack>
             <IconTrendingDown
-              color="#ff6e73"
+              color="white"
               size={96}
               className="min-h-full"
             />
