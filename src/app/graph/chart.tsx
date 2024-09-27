@@ -181,6 +181,7 @@ export default function DetailChart({
     <Stack>
       <div className="flex flex-col gap-2 sm:flex-row">
         <SegmentedControl
+          color={BUTTON_BASE_COLOR}
           value={filter.mode}
           onChange={(value) =>
             setFilter((prev) => ({
