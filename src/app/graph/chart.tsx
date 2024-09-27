@@ -153,7 +153,12 @@ export default function DetailChart({
       if (categoryActive && !category.includes(transaction.categoryId)) {
         return false;
       }
-      if (pocketActive && !pocket.includes(transaction.pocketId)) {
+      if (
+        pocketActive &&
+        !pocket.includes(transaction.Pocket?.id) &&
+        !pocket.includes(transaction.PocketSource?.id) &&
+        !pocket.includes(transaction.PocketDestination?.id)
+      ) {
         return false;
       }
 
