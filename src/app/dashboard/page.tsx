@@ -226,8 +226,7 @@ export default async function Page({
                 : ''}
             </Text>
             <Text>
-              Monitor pemasukan dan pengeluaran Anda pada setiap kategori dalam
-              periode waktu tertentu
+              Monitor pemasukan dan pengeluaran Anda pada setiap kategori
             </Text>
           </Stack>
           <CategoryDepositWithdraw
