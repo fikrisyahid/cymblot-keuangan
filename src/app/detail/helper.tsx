@@ -255,20 +255,22 @@ function generateColumn({
               handleChange({ value: { ...filter.value, equal: e } })
             }
           />
-          <Button
-            color={BUTTON_BASE_COLOR}
-            onClick={() =>
-              handleChange({
-                value: {
-                  min: '',
-                  max: '',
-                  equal: '',
-                },
-              })
-            }
-          >
-            Reset
-          </Button>
+          {Object.values(filter.value).some((v) => v !== '') && (
+            <Button
+              color={BUTTON_BASE_COLOR}
+              onClick={() =>
+                handleChange({
+                  value: {
+                    min: '',
+                    max: '',
+                    equal: '',
+                  },
+                })
+              }
+            >
+              Reset
+            </Button>
+          )}
         </Stack>
       ),
     },
