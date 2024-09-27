@@ -212,18 +212,24 @@ export default async function Page({
           <BalancePerPocket pocketsWithBalance={pocketsWithBalance} />
         </MainCard>
         <MainCard width="50%">
-          <Text fw={700} size="xl" className="text-center sm:text-start">
-            Pemasukan & Pengeluaran Tiap Kategori{' '}
-            {categoryMode === 'day'
-              ? 'Hari ini'
-              : categoryMode === 'week'
-              ? 'Minggu ini'
-              : categoryMode === 'month'
-              ? 'Bulan ini'
-              : categoryMode === 'year'
-              ? 'Tahun ini'
-              : ''}
-          </Text>
+          <Stack gap={0} className="text-center sm:text-start">
+            <Text fw={700} size="xl">
+              Pemasukan & Pengeluaran Tiap Kategori{' '}
+              {categoryMode === 'day'
+                ? 'Hari ini'
+                : categoryMode === 'week'
+                ? 'Minggu ini'
+                : categoryMode === 'month'
+                ? 'Bulan ini'
+                : categoryMode === 'year'
+                ? 'Tahun ini'
+                : ''}
+            </Text>
+            <Text>
+              Monitor pemasukan dan pengeluaran Anda pada setiap kategori dalam
+              periode waktu tertentu
+            </Text>
+          </Stack>
           <CategoryDepositWithdraw
             categoryMode={categoryMode}
             categoriesWithDepositAndWithdraw={categoriesWithDepositAndWithdraw}
