@@ -27,7 +27,11 @@ export default function EditPocketForm({
           <Text>
             Ubah kantong <strong>{selectedPocketName}</strong> menjadi:
           </Text>
-          <Input placeholder="Masukkan nama kantong baru" ref={inputRef} />
+          <Input
+            placeholder="Masukkan nama kantong baru"
+            defaultValue={selectedPocketName}
+            ref={inputRef}
+          />
           <Text>Apakah Anda yakin ingin merubah kantong ini?</Text>
         </Stack>
       ),

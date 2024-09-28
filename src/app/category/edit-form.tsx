@@ -27,7 +27,11 @@ export default function EditCategoryForm({
           <Text>
             Ubah kategori <strong>{selectedCategoryName}</strong> menjadi:
           </Text>
-          <Input placeholder="Masukkan nama kategori baru" ref={inputRef} />
+          <Input
+            placeholder="Masukkan nama kategori baru"
+            defaultValue={selectedCategoryName}
+            ref={inputRef}
+          />
           <Text>Apakah Anda yakin ingin merubah kategori ini?</Text>
         </Stack>
       ),
