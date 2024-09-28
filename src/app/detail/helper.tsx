@@ -123,6 +123,9 @@ function generateColumn({
       accessor: 'information',
       title: 'Keterangan',
       sortable: true,
+      render: (record) => (
+        <div style={{ whiteSpace: 'pre-line' }}>{record.information}</div>
+      ),
       filter: (
         <TextInput
           label="Keterangan"

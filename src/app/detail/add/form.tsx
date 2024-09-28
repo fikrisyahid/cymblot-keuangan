@@ -10,7 +10,7 @@ import {
   Select,
   Stack,
   Text,
-  TextInput,
+  Textarea,
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { openConfirmModal } from '@mantine/modals';
@@ -156,8 +156,9 @@ export default function AddTransactionForm({
         value={formData.date}
         onChange={(date) => handleChange({ date })}
       />
-      <TextInput
+      <Textarea
         required
+        autosize
         label="Keterangan"
         placeholder="Isi keterangan data keuangan"
         value={formData.information}
