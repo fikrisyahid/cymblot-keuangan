@@ -123,13 +123,39 @@ function generateChartData({
       };
     });
   }
-  return [
-    {
-      timePoint: dayjs().format('YYYY-MM-DD'),
-      deposit: 0,
-      withdraw: 0,
-    },
-  ];
+  // If the mode is date range
+  const startDate = dayjs(filter.minDate);
+  const endDate = dayjs(filter.maxDate);
+  const dateRange = Array.from(
+    { length: endDate.diff(startDate, 'day') + 1 },
+    (_, i) => startDate.add(i, 'day'),
+  );
+
+  return dateRange.map((date) => {
+    const transactionsAtDate = filteredTransactions.filter((transaction) => {
+      const transactionDate = dayjs(transaction.date);
+      return transactionDate.isSame(date, 'day');
+    });
+
+    const deposit = transactionsAtDate
+      .filter((transaction) => transaction.type === 'DEPOSIT')
+      .reduce((sum, transaction) => sum + transaction.value, 0);
+
+    const withdraw = transactionsAtDate
+      .filter((transaction) => transaction.type === 'WITHDRAW')
+      .reduce((sum, transaction) => sum + transaction.value, 0);
+
+    const transfer = transactionsAtDate
+      .filter((transaction) => transaction.type === 'TRANSFER')
+      .reduce((sum, transaction) => sum + transaction.value, 0);
+
+    return {
+      timePoint: date.format('DD-MM-YYYY'),
+      deposit,
+      withdraw,
+      transfer,
+    };
+  });
 }
 
 export { generateChartData };

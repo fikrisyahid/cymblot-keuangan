@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   NumberInput,
+  rem,
   SegmentedControl,
   Select,
   Stack,
@@ -15,12 +16,13 @@ import {
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import utc from 'dayjs/plugin/utc';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconCalendar, IconInfoCircle } from '@tabler/icons-react';
 import Link from 'next/link';
 import timezone from 'dayjs/plugin/timezone';
 import { useMemo, useState } from 'react';
 import { Category, Pocket } from '@prisma/client';
 import { BUTTON_BASE_COLOR } from '@/config/color';
+import { DatePickerInput } from '@mantine/dates';
 import { generateChartData } from './helper';
 import { IChartFilter } from './interaface';
 
@@ -196,6 +198,66 @@ export default function DetailChart({
             { label: 'Tahun', value: 'year' },
           ]}
         />
+        {filter.mode === 'range' && (
+          <>
+            <DatePickerInput
+              placeholder="Pilih tanggal awal"
+              valueFormatter={({ date }) =>
+                dayjs(date as Date).format('dddd, DD MMMM YYYY')
+              }
+              leftSection={
+                <IconCalendar
+                  style={{ width: rem(18), height: rem(18) }}
+                  stroke={1.5}
+                />
+              }
+              value={filter.minDate}
+              onChange={(date) =>
+                handleChange({
+                  minDate: dayjs(date as Date)
+                    .startOf('day')
+                    .toDate(),
+                })
+              }
+            />
+            <Text className="self-center">-</Text>
+            <DatePickerInput
+              placeholder="Pilih tanggal akhir"
+              valueFormatter={({ date }) =>
+                dayjs(date as Date).format('dddd, DD MMMM YYYY')
+              }
+              leftSection={
+                <IconCalendar
+                  style={{ width: rem(18), height: rem(18) }}
+                  stroke={1.5}
+                />
+              }
+              value={filter.maxDate}
+              onChange={(date) =>
+                handleChange({
+                  maxDate: dayjs(date as Date)
+                    .endOf('day')
+                    .toDate(),
+                })
+              }
+            />
+            {(filterStatus.dateStartActive || filterStatus.dateEndActive) && (
+              <Button
+                color={BUTTON_BASE_COLOR}
+                onClick={() =>
+                  handleChange({
+                    minDate: dayjs(oldestTransactionDate)
+                      .startOf('day')
+                      .toDate(),
+                    maxDate: dayjs().endOf('day').toDate(),
+                  })
+                }
+              >
+                Reset
+              </Button>
+            )}
+          </>
+        )}
         {filter.mode === 'day' && (
           <Select
             value={filter.day.toString()}
@@ -301,7 +363,7 @@ export default function DetailChart({
               })
             }
           />
-          {filter.type.length > 0 && (
+          {filterStatus.typeActive && (
             <Button
               color={BUTTON_BASE_COLOR}
               onClick={() => handleChange({ type: [] })}
@@ -350,7 +412,9 @@ export default function DetailChart({
               handleChange({ value: { ...filter.value, equal: e } })
             }
           />
-          {Object.values(filter.value).some((v) => v !== '') && (
+          {(filterStatus.valueMinActive ||
+            filterStatus.valueMaxActive ||
+            filterStatus.valueEqualActive) && (
             <Button
               color={BUTTON_BASE_COLOR}
               onClick={() =>
@@ -405,7 +469,7 @@ export default function DetailChart({
               }
             />
           ))}
-          {filter.category.length > 0 && (
+          {filterStatus.categoryActive && (
             <Button
               color={BUTTON_BASE_COLOR}
               onClick={() =>
@@ -456,7 +520,7 @@ export default function DetailChart({
               }
             />
           ))}
-          {filter.pocket.length > 0 && (
+          {filterStatus.pocketActive && (
             <Button
               color={BUTTON_BASE_COLOR}
               onClick={() =>
