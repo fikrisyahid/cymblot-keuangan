@@ -2,6 +2,10 @@
 
 Aplikasi Keuangan Cymblot adalah solusi sederhana dan praktis untuk membantu Anda mengelola keuangan sehari-hari. Aplikasi ini dibuat dengan tujuan untuk memudahkan Anda dalam melacak pemasukan, pengeluaran, dan memvisualisasikan data keuangan.
 
+## Akses Aplikasi
+
+Anda dapat mengakses aplikasi ini melalui [https://cymblot-keuangan.vercel.app/](https://cymblot-keuangan.vercel.app/)
+
 ## Fitur Aplikasi
 
 - **Pelacakan Saldo**: Pantau saldo keuangan Anda secara langsung dan terperinci.
