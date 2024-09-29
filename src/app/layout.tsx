@@ -37,7 +37,8 @@ export default function RootLayout({
         <head>
           <ColorSchemeScript />
           <link rel="manifest" href="/manifest.json" />
-          <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+          <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+          <link rel="icon" href="/icons/favicon.ico" sizes="any" />
         </head>
         <body className="antialiased">
           <MantineProvider

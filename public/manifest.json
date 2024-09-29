@@ -3,9 +3,14 @@
   "short_name": "Cymblot Keuangan",
   "icons": [
     {
-      "src": "/icons/180x180.png",
+      "src": "/icons/android-chrome-192x192.png",
       "type": "image/png",
-      "sizes": "180x180"
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icons/android-chrome-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ],
   "start_url": "/",
