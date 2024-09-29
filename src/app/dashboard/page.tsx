@@ -23,6 +23,10 @@ import TotalBalanceModeSwitch from './total-balance-mode';
 import getCategoryBalance from '../actions/functions/get-category-balance';
 import getGeneralBalance from '../actions/functions/get-general-balance';
 
+export const metadata = {
+  title: 'Dashboard',
+}
+
 export default async function Page({
   searchParams,
 }: {

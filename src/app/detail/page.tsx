@@ -22,6 +22,10 @@ import PrettyJSON from '../components/pretty-json';
 import { getCategory } from '../actions/db/category';
 import { getPocket } from '../actions/db/pocket';
 
+export const metadata = {
+  title: 'Detail Keuangan',
+};
+
 export default async function Page() {
   const email = await getSessionEmail();
 

@@ -10,6 +10,10 @@ import { getCategory } from '../actions/db/category';
 import FailedState from '../components/failed-state';
 import AddCategoryPopup from '../components/functions/add-category-popup';
 
+export const metadata = {
+  title: 'Kategori',
+}
+
 export default async function Page() {
   const email = await getSessionEmail();
 

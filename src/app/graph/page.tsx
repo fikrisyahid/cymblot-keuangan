@@ -10,6 +10,10 @@ import { getPocket } from '../actions/db/pocket';
 import { getCategory } from '../actions/db/category';
 import FailedState from '../components/failed-state';
 
+export const metadata = {
+  title: 'Grafik Keuangan',
+}
+
 export default async function Page() {
   const email = await getSessionEmail();
 

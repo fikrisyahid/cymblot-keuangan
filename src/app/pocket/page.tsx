@@ -10,6 +10,10 @@ import { getPocket } from '../actions/db/pocket';
 import FailedState from '../components/failed-state';
 import AddPocketPopup from '../components/functions/add-pocket-popup';
 
+export const metadata = {
+  title: 'Kantong',
+};
+
 export default async function Page() {
   const email = await getSessionEmail();
 
