@@ -181,6 +181,19 @@ export default function DetailChart({
 
   return (
     <Stack>
+      <BarChart
+        h={300}
+        data={chartData}
+        dataKey="timePoint"
+        series={[
+          { name: 'withdraw', color: 'red.6' },
+          { name: 'deposit', color: 'teal.6' },
+          { name: 'transfer', color: 'violet.6' },
+        ]}
+        tickLine="y"
+        withLegend
+        tooltipAnimationDuration={200}
+      />
       <div className="flex flex-col gap-2 sm:flex-row">
         <SegmentedControl
           color={BUTTON_BASE_COLOR}
@@ -534,19 +547,6 @@ export default function DetailChart({
           )}
         </Stack>
       </div>
-      <BarChart
-        h={300}
-        data={chartData}
-        dataKey="timePoint"
-        series={[
-          { name: 'withdraw', color: 'red.6' },
-          { name: 'deposit', color: 'teal.6' },
-          { name: 'transfer', color: 'violet.6' },
-        ]}
-        tickLine="y"
-        withLegend
-        tooltipAnimationDuration={200}
-      />
     </Stack>
   );
 }
