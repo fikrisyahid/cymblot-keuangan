@@ -6,9 +6,9 @@ import MainCard from '../components/main-card';
 import CategoryTable from './table';
 import PrettyJSON from '../components/pretty-json';
 import AccessBlocked from '../components/access-blocked';
-import AddCategoryForm from './add-form';
 import { getCategory } from '../actions/db/category';
 import FailedState from '../components/failed-state';
+import AddCategoryPopup from '../components/functions/add-category-popup';
 
 export default async function Page() {
   const email = await getSessionEmail();
@@ -40,7 +40,11 @@ export default async function Page() {
           memudahkan manajemen keuangan Anda
         </Text>
       </Stack>
-      <AddCategoryForm categories={categories} email={email} />
+      <AddCategoryPopup
+        email={email}
+        categories={categories}
+        className="sm:self-end bg-baseButton"
+      />
       <CategoryTable categories={categoriesForTable} />
       {isDev && <PrettyJSON content={categories} />}
     </MainCard>

@@ -4,7 +4,6 @@ import { addTransaction } from '@/app/actions/db/transaction';
 import { BUTTON_BASE_COLOR } from '@/config/color';
 import convertTransactionType from '@/utils/convert-transaction-type';
 import {
-  Alert,
   Button,
   NumberInput,
   Select,
@@ -16,10 +15,11 @@ import { DateTimePicker } from '@mantine/dates';
 import { openConfirmModal } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { Category, Pocket, TRANSACTION_TYPE } from '@prisma/client';
-import { IconInfoCircle, IconPlus } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 import { useRouter } from 'next-nprogress-bar';
-import Link from 'next/link';
 import { useState } from 'react';
+import AddPocketPopup from '../../components/functions/add-pocket-popup';
+import AddCategoryPopup from '../../components/functions/add-category-popup';
 
 export default function AddTransactionForm({
   email,
@@ -185,10 +185,12 @@ export default function AddTransactionForm({
         thousandSeparator=","
         onChange={(value) => handleChange({ value })}
       />
-      {categories.length > 0 ? (
+      <div className="flex flex-row gap-2 items-end">
         <Select
           required
+          className="flex-grow"
           label="Kategori"
+          disabled={categories.length === 0}
           placeholder="Pilih kategori"
           data={categories.map((category) => ({
             value: category.id,
@@ -197,60 +199,32 @@ export default function AddTransactionForm({
           value={formData.categoryId}
           onChange={(categoryId) => handleChange({ categoryId })}
         />
-      ) : (
-        <Alert
-          variant="filled"
-          color="indigo"
-          title="Info"
-          icon={<IconInfoCircle />}
-          p="xs"
-        >
-          <Stack align="start">
-            <Text c="white">
-              Anda belum memiliki kategori. Silakan tambahkan kategori terlebih
-              dahulu
-            </Text>
-            <Button component={Link} href="/category" color="teal">
-              Tambah Kategori
-            </Button>
-          </Stack>
-        </Alert>
-      )}
-      {pockets.length === 0 ? (
-        <Alert
-          variant="filled"
-          color="indigo"
-          title="Info"
-          icon={<IconInfoCircle />}
-          p="xs"
-        >
-          <Stack align="start">
-            <Text c="white">
-              Anda belum memiliki kantong. Silakan tambahkan kantong terlebih
-              dahulu
-            </Text>
-            <Button component={Link} href="/pocket" color="teal">
-              Tambah Kantong
-            </Button>
-          </Stack>
-        </Alert>
-      ) : formData.type !== 'TRANSFER' ? (
-        <Select
-          required
-          label="Kantong"
-          placeholder="Pilih kantong"
-          data={pockets.map((pocket) => ({
-            value: pocket.id,
-            label: pocket.name,
-          }))}
-          value={formData.pocketId}
-          onChange={(pocketId) => handleChange({ pocketId })}
-        />
+        <AddCategoryPopup email={email} categories={categories} />
+      </div>
+      {formData.type !== 'TRANSFER' ? (
+        <div className="flex flex-row gap-2 items-end">
+          <Select
+            required
+            className="flex-grow"
+            label="Kantong"
+            disabled={pockets.length === 0}
+            placeholder="Pilih kantong"
+            data={pockets.map((pocket) => ({
+              value: pocket.id,
+              label: pocket.name,
+            }))}
+            value={formData.pocketId}
+            onChange={(pocketId) => handleChange({ pocketId })}
+          />
+          <AddPocketPopup email={email} pockets={pockets} />
+        </div>
       ) : (
         <>
+          <AddPocketPopup email={email} pockets={pockets} />
           <Select
             required
             label="Kantong Asal"
+            disabled={pockets.length === 0}
             placeholder="Pilih kantong asal"
             data={pockets.map((pocket) => ({
               value: pocket.id,
@@ -262,6 +236,7 @@ export default function AddTransactionForm({
           <Select
             required
             label="Kantong Tujuan"
+            disabled={pockets.length === 0}
             placeholder="Pilih kantong tujuan"
             data={pockets.map((pocket) => ({
               value: pocket.id,

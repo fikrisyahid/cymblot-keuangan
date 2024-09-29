@@ -6,9 +6,9 @@ import MainCard from '../components/main-card';
 import PocketTable from './table';
 import PrettyJSON from '../components/pretty-json';
 import AccessBlocked from '../components/access-blocked';
-import AddPocketForm from './add-form';
 import { getPocket } from '../actions/db/pocket';
 import FailedState from '../components/failed-state';
+import AddPocketPopup from '../components/functions/add-pocket-popup';
 
 export default async function Page() {
   const email = await getSessionEmail();
@@ -40,7 +40,11 @@ export default async function Page() {
           e-wallet untuk memantau saldo secara keseluruhan
         </Text>
       </Stack>
-      <AddPocketForm pockets={pockets} email={email} />
+      <AddPocketPopup
+        pockets={pockets}
+        email={email}
+        className="sm:self-end"
+      />
       <PocketTable pockets={pocketsForTable} />
       {isDev && <PrettyJSON content={pockets} />}
     </MainCard>
