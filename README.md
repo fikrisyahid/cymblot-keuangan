@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./public/icons/android-chrome-192x192.png" alt="Aplikasi Keuangan Cymblot" />
+</p>
+
 # Aplikasi Keuangan Cymblot
 
 Aplikasi Keuangan Cymblot adalah solusi sederhana dan praktis untuk membantu Anda mengelola keuangan sehari-hari. Aplikasi ini dibuat dengan tujuan untuk memudahkan Anda dalam melacak pemasukan, pengeluaran, dan memvisualisasikan data keuangan.
