@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aplikasi Keuangan Cymblot
 
-## Getting Started
+Aplikasi Keuangan Cymblot adalah solusi sederhana dan praktis untuk membantu Anda mengelola keuangan sehari-hari. Aplikasi ini dibuat dengan tujuan untuk memudahkan Anda dalam melacak pemasukan, pengeluaran, dan memvisualisasikan data keuangan.
 
-First, run the development server:
+## Fitur Aplikasi
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Pelacakan Saldo**: Pantau saldo keuangan Anda secara langsung dan terperinci.
+- **Pengelompokan Transaksi**: Kategorikan pemasukan dan pengeluaran berdasarkan periode waktu tertentu.
+- **Visualisasi Grafik**: Lihat tren keuangan Anda melalui grafik yang mudah dibaca.
+- **Filter Data**: Saring data mentah keuangan sesuai dengan kriteria yang diinginkan.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Teknologi yang Digunakan
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend**: Next.js dan Mantine UI sebagai UI Framework
+- **Backend**: Prisma ORM
+- **Database**: Supabase (PostgreSQL)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Cara Install
 
-## Learn More
+1. Clone repository ini:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   git clone https://github.com/fs3120/cymblot-keuangan.git
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Masuk ke direktori projek:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   cd cymblot-keuangan
+   ```
 
-## Deploy on Vercel
+3. Install dependencies:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   Apabila anda menggunakan `bun` (default package manager projek ini):
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+    bun install
+   ```
+
+   atau apabila anda menggunakan `yarn`:
+
+   ```bash
+    yarn
+   ```
+
+   atau apabila anda menggunakan `npm`:
+
+   ```bash
+     npm install
+   ```
+
+4. Buat file `.env` dan isi dengan konfigurasi development (silahkan kontak saya untuk mendapatkan konfigurasi tersebut)
+5. Generate prisma client:
+
+   ```bash
+   bunx prisma generate
+   ```
+
+   atau
+
+   ```bash
+   npx prisma generate
+   ```
+
+6. Jalankan aplikasi:
+
+   ```bash
+   bun run dev
+   ```
+
+   atau
+
+   ```bash
+   npm run dev
+   ```
+
+## Kontribusi
+
+Jika Anda tertarik untuk berkontribusi dalam pengembangan aplikasi ini, ikuti langkah-langkah berikut:
+
+1. Fork repository ini.
+2. Buat branch baru dengan nama yang deskriptif: `git checkout -b fitur-baru`.
+3. Setelah selesai, buat pull request agar perubahan Anda bisa direview dan di-merge ke dalam repository utama.
+
+## Lisensi
+
+Aplikasi ini dilisensikan di bawah [MIT License](https://github.com/fs3120/cymblot-keuangan/blob/1.3/LICENSE.md)
