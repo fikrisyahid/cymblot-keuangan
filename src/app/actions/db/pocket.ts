@@ -2,8 +2,17 @@
 
 import prisma from '@/utils/db';
 import revalidateAllRoute from '../revalidate';
+import getPocketBalance from '../functions/get-pocket-balance';
 
-async function getPocket({ id, email }: { id?: string; email: string }) {
+async function getPocket({
+  id,
+  email,
+  withBalance,
+}: {
+  id?: string;
+  email: string;
+  withBalance?: boolean;
+}) {
   // Get pocket by id
   if (id) {
     const pocket = await prisma.pocket.findFirst({
@@ -24,7 +33,26 @@ async function getPocket({ id, email }: { id?: string; email: string }) {
       createdAt: 'desc',
     },
   });
-  return pockets;
+
+  if (!withBalance) {
+    return pockets;
+  }
+
+  const transactions = await prisma.transaction.findMany({
+    where: {
+      email,
+    },
+  });
+
+  const pocketsWithBalance = pockets.map((pocket) => ({
+    ...pocket,
+    balance: getPocketBalance({
+      id: pocket.id,
+      transactions,
+    }),
+  }));
+
+  return pocketsWithBalance;
 }
 
 async function addPocket({ email, name }: { email: string; name: string }) {
