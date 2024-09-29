@@ -186,9 +186,9 @@ export default function DetailChart({
         data={chartData}
         dataKey="timePoint"
         series={[
-          { name: 'withdraw', color: 'red.6' },
-          { name: 'deposit', color: 'teal.6' },
-          { name: 'transfer', color: 'violet.6' },
+          { name: 'Pemasukan', color: 'teal.6' },
+          { name: 'Pengeluaran', color: 'red.6' },
+          { name: 'Transfer', color: 'violet.6' },
         ]}
         tickLine="y"
         withLegend

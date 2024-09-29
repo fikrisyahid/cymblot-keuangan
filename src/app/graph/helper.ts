@@ -55,9 +55,9 @@ function generateChartData({
 
       return {
         timePoint: i.toString(),
-        deposit,
-        withdraw,
-        transfer,
+        Pemasukan: deposit,
+        Pengeluaran: withdraw,
+        Transfer: transfer,
       };
     });
   }
@@ -87,9 +87,9 @@ function generateChartData({
 
       return {
         timePoint: (i + 1).toString(),
-        deposit,
-        withdraw,
-        transfer,
+        Pemasukan: deposit,
+        Pengeluaran: withdraw,
+        Transfer: transfer,
       };
     });
   }
@@ -117,9 +117,9 @@ function generateChartData({
 
       return {
         timePoint: month,
-        deposit,
-        withdraw,
-        transfer,
+        Pemasukan: deposit,
+        Pengeluaran: withdraw,
+        Transfer: transfer,
       };
     });
   }
