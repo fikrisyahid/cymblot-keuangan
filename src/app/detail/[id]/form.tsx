@@ -193,7 +193,7 @@ export default function EditTransactionForm({
         thousandSeparator=","
         onChange={(value) => handleChange({ value })}
       />
-      <div className="flex flex-row gap-2 items-end">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
         <Select
           required
           className="flex-grow"
@@ -210,7 +210,7 @@ export default function EditTransactionForm({
         <AddCategoryPopup email={email} categories={categories} />
       </div>
       {formData.type !== 'TRANSFER' ? (
-        <div className="flex flex-row gap-2 items-end">
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
           <Select
             required
             className="flex-grow"
