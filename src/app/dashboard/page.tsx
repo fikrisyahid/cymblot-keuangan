@@ -82,9 +82,8 @@ export default async function Page({
         type: 'WITHDRAW',
       }),
     }))
-    .sort(
-      (a, b) => (b.deposit + b.withdraw) / 2 - (a.deposit + a.withdraw) / 2,
-    );
+    .sort((a, b) => (b.deposit + b.withdraw) / 2 - (a.deposit + a.withdraw) / 2)
+    .slice(0, 5);
 
   const transactionsForTable = transactions
     .slice(0, 5)
