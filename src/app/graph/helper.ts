@@ -152,8 +152,8 @@ function generateChartData({
     return {
       timePoint: date.format('DD-MM-YYYY'),
       Pemasukan: deposit,
-        Pengeluaran: withdraw,
-        Transfer: transfer,
+      Pengeluaran: withdraw,
+      Transfer: transfer,
     };
   });
 }
