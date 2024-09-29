@@ -2,6 +2,7 @@ import {
   IconCategory,
   IconChartHistogram,
   IconDashboard,
+  IconInfoCircle,
   IconTable,
   IconWallet,
 } from '@tabler/icons-react';
@@ -31,6 +32,11 @@ const sidebarMenu = [
     title: 'Kantong',
     icon: <IconWallet />,
     route: '/pocket',
+  },
+  {
+    title: 'Tentang',
+    icon: <IconInfoCircle />,
+    route: '/about',
   },
 ];
 
