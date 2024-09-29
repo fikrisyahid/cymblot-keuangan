@@ -26,9 +26,8 @@ export default async function Page() {
   const isDev = getEnvironmentMode() === 'development';
 
   const categoriesForTable = categories.map((category, index) => ({
-    id: category.id,
     no: index + 1,
-    name: category.name,
+    ...category,
   }));
 
   return (
