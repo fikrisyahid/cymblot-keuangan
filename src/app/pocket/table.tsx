@@ -3,6 +3,7 @@
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useMemo, useState } from 'react';
+import { NumberFormatter } from '@mantine/core';
 import EditPocketForm from './edit-form';
 import DeletePocketForm from './delete-form';
 
@@ -30,6 +31,21 @@ export default function PocketTable({ pockets }: { pockets: any[] }) {
           width: 70,
         },
         { accessor: 'name', title: 'Nama', sortable: true },
+        {
+          accessor: 'balance',
+          title: 'Saldo',
+          sortable: true,
+          textAlign: 'right',
+          render: (record: any) => (
+            <div className="flex justify-end">
+              <NumberFormatter
+                prefix="Rp"
+                value={record?.balance}
+                thousandSeparator
+              />
+            </div>
+          ),
+        },
         {
           accessor: 'actions',
           title: 'Aksi',

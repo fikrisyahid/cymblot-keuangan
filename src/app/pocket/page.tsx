@@ -17,7 +17,7 @@ export default async function Page() {
     return <AccessBlocked />;
   }
 
-  const pockets = (await getPocket({ email })) as Pocket[];
+  const pockets = (await getPocket({ email, withBalance: true })) as Pocket[];
 
   if (!pockets) {
     return <FailedState />;
@@ -26,9 +26,8 @@ export default async function Page() {
   const isDev = getEnvironmentMode() === 'development';
 
   const pocketsForTable = pockets.map((pocket, index) => ({
-    id: pocket.id,
     no: index + 1,
-    name: pocket.name,
+    ...pocket,
   }));
 
   return (
@@ -40,11 +39,7 @@ export default async function Page() {
           e-wallet untuk memantau saldo secara keseluruhan
         </Text>
       </Stack>
-      <AddPocketPopup
-        pockets={pockets}
-        email={email}
-        className="sm:self-end"
-      />
+      <AddPocketPopup pockets={pockets} email={email} className="sm:self-end" />
       <PocketTable pockets={pocketsForTable} />
       {isDev && <PrettyJSON content={pockets} />}
     </MainCard>
