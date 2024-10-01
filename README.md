@@ -57,8 +57,7 @@ Anda dapat mengakses aplikasi ini melalui [https://keuangan.fikrisyahid.com/](ht
      npm install
    ```
 
-4. Buat file `.env` dan isi dengan konfigurasi development (silahkan kontak saya untuk mendapatkan konfigurasi tersebut)
-5. Generate prisma client:
+4. Generate prisma client:
 
    ```bash
    bunx prisma generate
@@ -70,7 +69,7 @@ Anda dapat mengakses aplikasi ini melalui [https://keuangan.fikrisyahid.com/](ht
    npx prisma generate
    ```
 
-6. Jalankan aplikasi:
+5. Jalankan aplikasi:
 
    ```bash
    bun run dev
