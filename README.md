@@ -8,7 +8,7 @@ Aplikasi Keuangan Cymblot adalah solusi sederhana dan praktis untuk membantu And
 
 ## Akses Aplikasi
 
-Anda dapat mengakses aplikasi ini melalui [https://cymblot-keuangan.vercel.app/](https://cymblot-keuangan.vercel.app/)
+Anda dapat mengakses aplikasi ini melalui [https://keuangan.fikrisyahid.com/](https://keuangan.fikrisyahid.com/)
 
 ## Fitur Aplikasi
 
