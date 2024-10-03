@@ -117,22 +117,22 @@ export default function AddTransactionForm({
             categoryId,
             ...pocketData,
           });
-          setFormData({
-            date: new Date(),
-            information: '',
-            type: 'PEMASUKAN',
-            value: '',
-            categoryId: '',
-            pocketId: '',
-            pocketSourceId: '',
-            pocketDestinationId: '',
-          });
           notifications.show({
             title: result.success ? 'Sukses' : 'Error',
             message: result.message,
             color: result.success ? 'green' : 'red',
           });
           if (result.success) {
+            setFormData({
+              date: new Date(),
+              information: '',
+              type: 'PEMASUKAN',
+              value: '',
+              categoryId: '',
+              pocketId: '',
+              pocketSourceId: '',
+              pocketDestinationId: '',
+            });
             router.push('/detail');
           }
         } catch (error: any) {
