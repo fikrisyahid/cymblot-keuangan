@@ -108,7 +108,7 @@ export default function AddTransactionForm({
       onConfirm: async () => {
         setLoading(true);
         try {
-          await addTransaction({
+          const result = await addTransaction({
             email,
             date,
             information,
@@ -128,11 +128,13 @@ export default function AddTransactionForm({
             pocketDestinationId: '',
           });
           notifications.show({
-            title: 'Sukses',
-            message: `Data keuangan berhasil ditambahkan`,
-            color: 'green',
+            title: result.success ? 'Sukses' : 'Error',
+            message: result.message,
+            color: result.success ? 'green' : 'red',
           });
-          router.push('/detail');
+          if (result.success) {
+            router.push('/detail');
+          }
         } catch (error: any) {
           notifications.show({
             title: 'Error',

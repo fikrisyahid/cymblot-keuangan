@@ -85,7 +85,10 @@ async function addTransaction({
       },
     });
     if (minimalPocketBalance < value) {
-      throw new Error(`Saldo kantong ${checkedPocket?.name} tidak mencukupi`);
+      return {
+        success: false,
+        message: `Saldo kantong ${checkedPocket?.name} tidak mencukupi`,
+      };
     }
   }
 
@@ -110,6 +113,10 @@ async function addTransaction({
     },
   });
   revalidateAllRoute();
+  return {
+    success: true,
+    message: `Data keuangan berhasil ditambahkan`,
+  };
 }
 
 async function editTransaction({
@@ -160,7 +167,10 @@ async function editTransaction({
     const adjustedCheckedPocketBalance =
       minimalPocketBalance + currentTransaction.value;
     if (adjustedCheckedPocketBalance < value) {
-      throw new Error(`Saldo kantong ${checkedPocket?.name} tidak mencukupi`);
+      return {
+        success: false,
+        message: `Saldo kantong ${checkedPocket?.name} tidak mencukupi`,
+      };
     }
   }
 
@@ -187,6 +197,10 @@ async function editTransaction({
     },
   });
   revalidateAllRoute();
+  return {
+    success: true,
+    message: `Data keuangan berhasil diubah`,
+  };
 }
 
 async function deleteTransaction({ id }: { id: string }) {
