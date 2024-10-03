@@ -22,6 +22,26 @@ const months = [
   'Desember',
 ];
 
+function calculateChartSeries({
+  transactionsPeriode,
+}: {
+  transactionsPeriode: any[];
+}) {
+  const deposit = transactionsPeriode
+    .filter((transaction) => transaction.type === 'DEPOSIT')
+    .reduce((sum, transaction) => sum + transaction.value, 0);
+
+  const withdraw = transactionsPeriode
+    .filter((transaction) => transaction.type === 'WITHDRAW')
+    .reduce((sum, transaction) => sum + transaction.value, 0);
+
+  const transfer = transactionsPeriode
+    .filter((transaction) => transaction.type === 'TRANSFER')
+    .reduce((sum, transaction) => sum + transaction.value, 0);
+
+  return { deposit, withdraw, transfer };
+}
+
 function generateChartData({
   filteredTransactions,
   filter,
@@ -31,7 +51,7 @@ function generateChartData({
 }) {
   if (filter.mode === 'day') {
     return Array.from({ length: 24 }, (_, i) => {
-      const transactionsAtHour = filteredTransactions.filter((transaction) => {
+      const transactionsDaily = filteredTransactions.filter((transaction) => {
         const transactionDate = dayjs(transaction.date);
         return (
           transactionDate.hour() === i &&
@@ -41,17 +61,9 @@ function generateChartData({
         );
       });
 
-      const deposit = transactionsAtHour
-        .filter((transaction) => transaction.type === 'DEPOSIT')
-        .reduce((sum, transaction) => sum + transaction.value, 0);
-
-      const withdraw = transactionsAtHour
-        .filter((transaction) => transaction.type === 'WITHDRAW')
-        .reduce((sum, transaction) => sum + transaction.value, 0);
-
-      const transfer = transactionsAtHour
-        .filter((transaction) => transaction.type === 'TRANSFER')
-        .reduce((sum, transaction) => sum + transaction.value, 0);
+      const { deposit, withdraw, transfer } = calculateChartSeries({
+        transactionsPeriode: transactionsDaily,
+      });
 
       return {
         timePoint: i.toString(),
@@ -64,7 +76,7 @@ function generateChartData({
   if (filter.mode === 'month') {
     const daysInMonth = dayjs().month(filter.month).daysInMonth();
     return Array.from({ length: daysInMonth }, (_, i) => {
-      const transactionsAtDay = filteredTransactions.filter((transaction) => {
+      const transactionsMonthly = filteredTransactions.filter((transaction) => {
         const transactionDate = dayjs(transaction.date);
         return (
           transactionDate.date() === i + 1 &&
@@ -73,17 +85,9 @@ function generateChartData({
         );
       });
 
-      const deposit = transactionsAtDay
-        .filter((transaction) => transaction.type === 'DEPOSIT')
-        .reduce((sum, transaction) => sum + transaction.value, 0);
-
-      const withdraw = transactionsAtDay
-        .filter((transaction) => transaction.type === 'WITHDRAW')
-        .reduce((sum, transaction) => sum + transaction.value, 0);
-
-      const transfer = transactionsAtDay
-        .filter((transaction) => transaction.type === 'TRANSFER')
-        .reduce((sum, transaction) => sum + transaction.value, 0);
+      const { deposit, withdraw, transfer } = calculateChartSeries({
+        transactionsPeriode: transactionsMonthly,
+      });
 
       return {
         timePoint: (i + 1).toString(),
@@ -95,7 +99,7 @@ function generateChartData({
   }
   if (filter.mode === 'year') {
     return months.map((month, index) => {
-      const transactionsAtMonth = filteredTransactions.filter((transaction) => {
+      const transactionsYearly = filteredTransactions.filter((transaction) => {
         const transactionDate = dayjs(transaction.date);
         return (
           transactionDate.month() === index &&
@@ -103,17 +107,9 @@ function generateChartData({
         );
       });
 
-      const deposit = transactionsAtMonth
-        .filter((transaction) => transaction.type === 'DEPOSIT')
-        .reduce((sum, transaction) => sum + transaction.value, 0);
-
-      const withdraw = transactionsAtMonth
-        .filter((transaction) => transaction.type === 'WITHDRAW')
-        .reduce((sum, transaction) => sum + transaction.value, 0);
-
-      const transfer = transactionsAtMonth
-        .filter((transaction) => transaction.type === 'TRANSFER')
-        .reduce((sum, transaction) => sum + transaction.value, 0);
+      const { deposit, withdraw, transfer } = calculateChartSeries({
+        transactionsPeriode: transactionsYearly,
+      });
 
       return {
         timePoint: month,
@@ -132,22 +128,14 @@ function generateChartData({
   );
 
   return dateRange.map((date) => {
-    const transactionsAtDate = filteredTransactions.filter((transaction) => {
+    const transactionsRange = filteredTransactions.filter((transaction) => {
       const transactionDate = dayjs(transaction.date);
       return transactionDate.isSame(date, 'day');
     });
 
-    const deposit = transactionsAtDate
-      .filter((transaction) => transaction.type === 'DEPOSIT')
-      .reduce((sum, transaction) => sum + transaction.value, 0);
-
-    const withdraw = transactionsAtDate
-      .filter((transaction) => transaction.type === 'WITHDRAW')
-      .reduce((sum, transaction) => sum + transaction.value, 0);
-
-    const transfer = transactionsAtDate
-      .filter((transaction) => transaction.type === 'TRANSFER')
-      .reduce((sum, transaction) => sum + transaction.value, 0);
+    const { deposit, withdraw, transfer } = calculateChartSeries({
+      transactionsPeriode: transactionsRange,
+    });
 
     return {
       timePoint: date.format('DD-MM-YYYY'),
