@@ -138,6 +138,10 @@ async function editTransaction({
   const transactions = (await getTransaction({ email })) as Transaction[];
   // Check balance from pocket
   if (type !== 'DEPOSIT') {
+    const currentTransaction = (await getTransaction({
+      id,
+      email,
+    })) as Transaction;
     const minimalPocketBalance = getPocketBalance({
       id:
         type === 'TRANSFER' ? (pocketSourceId as string) : (pocketId as string),
@@ -149,11 +153,12 @@ async function editTransaction({
       },
     });
     /** Explanation for adjustedCheckedPocketBalance
-     * Adjust the balance by reducing it with currently edited transaction value
+     * Adjust the balance by increasing it with currently edited transaction value
      * We want to ignore currently edited transaction as if it didn't happend
      * We ignore it because we're currently editing it
      */
-    const adjustedCheckedPocketBalance = minimalPocketBalance - value;
+    const adjustedCheckedPocketBalance =
+      minimalPocketBalance + currentTransaction.value;
     if (adjustedCheckedPocketBalance < value) {
       throw new Error(`Saldo kantong ${checkedPocket?.name} tidak mencukupi`);
     }
