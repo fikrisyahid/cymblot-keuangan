@@ -20,24 +20,8 @@ export default function getCategoryBalance({
   type: 'DEPOSIT' | 'WITHDRAW';
 }) {
   if (categoryMode !== 'all') {
-    const startDate =
-      categoryMode === 'day'
-        ? dayjs().tz('Asia/Jakarta').startOf('day')
-        : categoryMode === 'week'
-        ? dayjs().tz('Asia/Jakarta').startOf('week')
-        : categoryMode === 'month'
-        ? dayjs().tz('Asia/Jakarta').startOf('month')
-        : dayjs().tz('Asia/Jakarta').startOf('year');
-
-    const endDate =
-      categoryMode === 'day'
-        ? dayjs().tz('Asia/Jakarta').endOf('day')
-        : categoryMode === 'week'
-        ? dayjs().tz('Asia/Jakarta').endOf('week')
-        : categoryMode === 'month'
-        ? dayjs().tz('Asia/Jakarta').endOf('month')
-        : dayjs().tz('Asia/Jakarta').endOf('year');
-
+    const startDate = dayjs().tz('Asia/Jakarta').startOf(categoryMode);
+    const endDate = dayjs().tz('Asia/Jakarta').endOf(categoryMode);
     const balance = transactions
       .filter(
         (transaction) =>
@@ -47,9 +31,9 @@ export default function getCategoryBalance({
           dayjs(transaction.date).tz('Asia/Jakarta').isBefore(endDate),
       )
       .reduce((sum, transaction) => sum + transaction.value, 0);
-
     return balance;
   }
+
   const balance = transactions
     .filter(
       (transaction) =>

@@ -18,24 +18,8 @@ export default function getGeneralBalance({
   type: 'DEPOSIT' | 'WITHDRAW';
 }) {
   if (mode !== 'all') {
-    const startDate =
-      mode === 'day'
-        ? dayjs().tz('Asia/Jakarta').startOf('day')
-        : mode === 'week'
-        ? dayjs().tz('Asia/Jakarta').startOf('week')
-        : mode === 'month'
-        ? dayjs().tz('Asia/Jakarta').startOf('month')
-        : dayjs().tz('Asia/Jakarta').startOf('year');
-
-    const endDate =
-      mode === 'day'
-        ? dayjs().tz('Asia/Jakarta').endOf('day')
-        : mode === 'week'
-        ? dayjs().tz('Asia/Jakarta').endOf('week')
-        : mode === 'month'
-        ? dayjs().tz('Asia/Jakarta').endOf('month')
-        : dayjs().tz('Asia/Jakarta').endOf('year');
-
+    const startDate = dayjs().tz('Asia/Jakarta').startOf(mode);
+    const endDate = dayjs().tz('Asia/Jakarta').endOf(mode)
     const balance = transactions
       .filter(
         (transaction) =>
