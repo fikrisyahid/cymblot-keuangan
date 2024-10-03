@@ -1,14 +1,12 @@
 'use client';
 
+import updateSearchParams from '@/utils/update-search-params';
 import { Select } from '@mantine/core';
 import { useRouter } from 'next-nprogress-bar';
-import revalidateAllRoute from '../actions/revalidate';
 
 export default function TotalBalanceModeSwitch({
-  categoryMode = 'month',
   totalBalanceMode = 'month',
 }: {
-  categoryMode: 'day' | 'week' | 'month' | 'year' | "all";
   totalBalanceMode: 'day' | 'week' | 'month' | 'year' | 'all';
 }) {
   const router = useRouter();
@@ -17,12 +15,12 @@ export default function TotalBalanceModeSwitch({
     <Select
       label="Periode Total Pemasukan dan Pengeluaran"
       defaultValue={totalBalanceMode}
-      onChange={(value) => {
-        revalidateAllRoute();
-        router.push(
-          `/dashboard?category_mode=${categoryMode}&total_balance_mode=${value}`,
-        );
-      }}
+      onChange={(value) =>
+        updateSearchParams({
+          newSearchParams: { total_balance_mode: value },
+          router,
+        })
+      }
       data={[
         { value: 'day', label: 'Hari ini' },
         { value: 'week', label: 'Minggu ini' },
