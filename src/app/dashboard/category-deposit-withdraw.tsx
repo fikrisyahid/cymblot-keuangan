@@ -1,20 +1,20 @@
 'use client';
 
+import updateSearchParams from '@/utils/update-search-params';
 import { BarChart } from '@mantine/charts';
 import { Alert, Button, Select, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useRouter } from 'next-nprogress-bar';
 import Link from 'next/link';
-import revalidateAllRoute from '../actions/revalidate';
 
 export default function CategoryDepositWithdraw({
   categoryMode = 'month',
+  categorySort = 'all',
   categoriesWithDepositAndWithdraw,
-  totalBalanceMode = 'month',
 }: {
   categoryMode: 'day' | 'week' | 'month' | 'year' | 'all';
+  categorySort: 'deposit' | 'withdraw' | 'all';
   categoriesWithDepositAndWithdraw: any[];
-  totalBalanceMode: 'day' | 'week' | 'month' | 'year' | 'all';
 }) {
   const router = useRouter();
 
@@ -43,6 +43,22 @@ export default function CategoryDepositWithdraw({
   return (
     <Stack className="h-96 sm:h-full">
       <Select
+        label="Urutkan berdasarkan"
+        data={[
+          { value: 'all', label: 'SEMUA' },
+          { value: 'deposit', label: 'PEMASUKAN' },
+          { value: 'withdraw', label: 'PENGELUARAN' },
+        ]}
+        defaultValue={categorySort}
+        onChange={(value) =>
+          updateSearchParams({
+            newSearchParams: { category_sort: value },
+            router,
+          })
+        }
+      />
+      <Select
+        label="Periode"
         data={[
           { value: 'day', label: 'Hari ini' },
           { value: 'week', label: 'Minggu ini' },
@@ -51,12 +67,12 @@ export default function CategoryDepositWithdraw({
           { value: 'all', label: 'Semua' },
         ]}
         defaultValue={categoryMode}
-        onChange={(value) => {
-          revalidateAllRoute();
-          router.push(
-            `/dashboard?category_mode=${value}&total_balance_mode=${totalBalanceMode}`,
-          );
-        }}
+        onChange={(value) =>
+          updateSearchParams({
+            newSearchParams: { category_mode: value },
+            router,
+          })
+        }
       />
       <BarChart
         className="h-full p-4 sm:p-2"

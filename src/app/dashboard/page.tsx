@@ -25,20 +25,23 @@ import getGeneralBalance from '../actions/functions/get-general-balance';
 
 export const metadata = {
   title: 'Dashboard',
-}
+};
 
 export default async function Page({
   searchParams,
 }: {
   searchParams: {
+    category_sort: 'deposit' | 'withdraw' | 'all';
     category_mode: 'day' | 'week' | 'month' | 'year' | 'all';
     total_balance_mode: 'day' | 'week' | 'month' | 'year' | 'all';
   };
 }) {
   const {
+    category_sort: categorySort = 'all',
     category_mode: categoryMode = 'month',
     total_balance_mode: totalBalanceMode = 'month',
   } = searchParams;
+
   const username = await getSessionUsername();
   const email = await getSessionEmail();
 
@@ -86,7 +89,15 @@ export default async function Page({
         type: 'WITHDRAW',
       }),
     }))
-    .sort((a, b) => (b.deposit + b.withdraw) / 2 - (a.deposit + a.withdraw) / 2)
+    .sort((a, b) => {
+      if (categorySort === 'deposit') {
+        return b.deposit - a.deposit;
+      }
+      if (categorySort === 'withdraw') {
+        return b.withdraw - a.withdraw;
+      }
+      return (b.deposit + b.withdraw) / 2 - (a.deposit + a.withdraw) / 2;
+    })
     .slice(0, 5);
 
   const transactionsForTable = transactions
@@ -115,10 +126,7 @@ export default async function Page({
       <MainCard>
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
           <Title className="text-center sm:text-start">Halo {username}</Title>
-          <TotalBalanceModeSwitch
-            categoryMode={categoryMode}
-            totalBalanceMode={totalBalanceMode}
-          />
+          <TotalBalanceModeSwitch totalBalanceMode={totalBalanceMode} />
         </div>
         <SimpleGrid cols={{ base: 1, sm: 3 }}>
           <MainCard
@@ -234,8 +242,8 @@ export default async function Page({
           </Stack>
           <CategoryDepositWithdraw
             categoryMode={categoryMode}
+            categorySort={categorySort}
             categoriesWithDepositAndWithdraw={categoriesWithDepositAndWithdraw}
-            totalBalanceMode={totalBalanceMode}
           />
         </MainCard>
       </MainCard>
