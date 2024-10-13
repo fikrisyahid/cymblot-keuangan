@@ -7,6 +7,7 @@ import {
   NumberFormatter,
   NumberInput,
   rem,
+  ScrollAreaAutosize,
   Stack,
   TextInput,
 } from '@mantine/core';
@@ -284,34 +285,36 @@ function generateColumn({
       render: (record: any) => record.Category?.name,
       filter: () => {
         return (
-          <Stack>
-            {categories.map((category) => (
-              <Checkbox
-                key={category.id}
-                checked={filter.category.includes(category.id)}
-                label={category.name}
-                onChange={(e) =>
-                  handleChange({
-                    category: e.currentTarget.checked
-                      ? [...filter.category, category.id]
-                      : filter.category.filter((f) => f !== category.id),
-                  })
-                }
-              />
-            ))}
-            {filter.category.length > 0 && (
-              <Button
-                color={BUTTON_BASE_COLOR}
-                onClick={() =>
-                  handleChange({
-                    category: [],
-                  })
-                }
-              >
-                Reset
-              </Button>
-            )}
-          </Stack>
+          <ScrollAreaAutosize mah={350}>
+            <Stack>
+              {categories.map((category) => (
+                <Checkbox
+                  key={category.id}
+                  checked={filter.category.includes(category.id)}
+                  label={category.name}
+                  onChange={(e) =>
+                    handleChange({
+                      category: e.currentTarget.checked
+                        ? [...filter.category, category.id]
+                        : filter.category.filter((f) => f !== category.id),
+                    })
+                  }
+                />
+              ))}
+              {filter.category.length > 0 && (
+                <Button
+                  color={BUTTON_BASE_COLOR}
+                  onClick={() =>
+                    handleChange({
+                      category: [],
+                    })
+                  }
+                >
+                  Reset
+                </Button>
+              )}
+            </Stack>
+          </ScrollAreaAutosize>
         );
       },
     },
@@ -338,34 +341,36 @@ function generateColumn({
       },
       filter: () => {
         return (
-          <Stack>
-            {pockets.map((pocket) => (
-              <Checkbox
-                key={pocket.id}
-                checked={filter.pocket.includes(pocket.id)}
-                label={pocket.name}
-                onChange={(e) =>
-                  handleChange({
-                    pocket: e.currentTarget.checked
-                      ? [...filter.pocket, pocket.id]
-                      : filter.pocket.filter((f) => f !== pocket.id),
-                  })
-                }
-              />
-            ))}
-            {filter.pocket.length > 0 && (
-              <Button
-                color={BUTTON_BASE_COLOR}
-                onClick={() =>
-                  handleChange({
-                    pocket: [],
-                  })
-                }
-              >
-                Reset
-              </Button>
-            )}
-          </Stack>
+          <ScrollAreaAutosize mah={350}>
+            <Stack>
+              {pockets.map((pocket) => (
+                <Checkbox
+                  key={pocket.id}
+                  checked={filter.pocket.includes(pocket.id)}
+                  label={pocket.name}
+                  onChange={(e) =>
+                    handleChange({
+                      pocket: e.currentTarget.checked
+                        ? [...filter.pocket, pocket.id]
+                        : filter.pocket.filter((f) => f !== pocket.id),
+                    })
+                  }
+                />
+              ))}
+              {filter.pocket.length > 0 && (
+                <Button
+                  color={BUTTON_BASE_COLOR}
+                  onClick={() =>
+                    handleChange({
+                      pocket: [],
+                    })
+                  }
+                >
+                  Reset
+                </Button>
+              )}
+            </Stack>
+          </ScrollAreaAutosize>
         );
       },
     },
