@@ -21,7 +21,7 @@ async function getCategory({ id, email }: { id?: string; email: string }) {
       email,
     },
     orderBy: {
-      createdAt: 'desc',
+      name: 'asc',
     },
   });
   return categories;

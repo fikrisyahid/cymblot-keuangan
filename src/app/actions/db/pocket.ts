@@ -30,7 +30,7 @@ async function getPocket({
       email,
     },
     orderBy: {
-      createdAt: 'desc',
+      name: 'asc',
     },
   });
 
