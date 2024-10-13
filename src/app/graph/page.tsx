@@ -47,7 +47,7 @@ export default async function Page() {
           <Text>Monitor trend data keuangan anda</Text>
         </Stack>
         <div className="flex flex-col items-center sm:items-start">
-          <Text>Total saldo :</Text>
+          <Text>Total seluruh saldo yang Anda miliki :</Text>
           <Badge color="teal">
             <NumberFormatter
               prefix="Rp "

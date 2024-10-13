@@ -3,8 +3,10 @@
 import { BarChart } from '@mantine/charts';
 import {
   Alert,
+  Badge,
   Button,
   Checkbox,
+  NumberFormatter,
   NumberInput,
   rem,
   SegmentedControl,
@@ -179,8 +181,32 @@ export default function DetailChart({
     [filteredTransactions, filter],
   );
 
+  const filteredTransactionsBalance = useMemo(
+    () =>
+      filteredTransactions.reduce((acc, transaction) => {
+        if (transaction.type === 'DEPOSIT') {
+          return acc + transaction.value;
+        }
+        if (transaction.type === 'WITHDRAW') {
+          return acc - transaction.value;
+        }
+        return acc;
+      }, 0),
+    [filteredTransactions],
+  );
+
   return (
     <Stack>
+      <div className="flex flex-col items-center sm:items-start">
+        <Text>Total saldo pada grafik :</Text>
+        <Badge color="violet">
+          <NumberFormatter
+            prefix="Rp "
+            value={filteredTransactionsBalance}
+            thousandSeparator
+          />
+        </Badge>
+      </div>
       <BarChart
         h={300}
         data={chartData}
