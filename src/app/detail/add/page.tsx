@@ -5,10 +5,11 @@ import { IconArrowLeft } from '@tabler/icons-react';
 import Link from 'next/link';
 import getSessionEmail from '@/utils/get-session-email';
 import AccessBlocked from '@/app/components/access-blocked';
+import { getTransaction } from '@/app/actions/db/transaction';
 import { getCategory } from '@/app/actions/db/category';
 import { getPocket } from '@/app/actions/db/pocket';
 import FailedState from '@/app/components/failed-state';
-import { Category, Pocket } from '@prisma/client';
+import { Category, Pocket, Transaction } from '@prisma/client';
 import AddTransactionForm from './form';
 
 export default async function Page() {
@@ -18,8 +19,51 @@ export default async function Page() {
     return <AccessBlocked />;
   }
 
-  const categories = (await getCategory({ email })) as Category[];
-  const pockets = (await getPocket({ email })) as Pocket[];
+  const transactions = (await getTransaction({
+    email,
+    options: {
+      category: true,
+      pocket: true,
+    },
+  })) as (Transaction & { Category: Category; Pocket: Pocket })[];
+  const categories = (await getCategory({
+    email,
+    options: {
+      orderBy: {
+        createdAt: 'desc',
+      },
+    },
+  })) as Category[];
+  const pockets = (await getPocket({
+    email,
+    options: {
+      orderBy: {
+        createdAt: 'desc',
+      },
+    },
+  })) as Pocket[];
+
+  const recentCategories = transactions
+    .map((transaction) => transaction?.Category)
+    .filter(
+      (item, index, self) => index === self.findIndex((t) => t.id === item.id),
+    );
+  const sortedCategories = recentCategories.concat(
+    categories.filter(
+      (category) => !recentCategories.some((t) => t.id === category.id),
+    ),
+  );
+
+  const recentPockets = transactions
+    .filter((transaction) => transaction.type !== 'TRANSFER')
+    .map((transaction) => transaction.Pocket)
+    .filter(
+      (transaction, index, self) =>
+        index === self.findIndex((t) => t.id === transaction.id),
+    );
+  const sortedPockets = recentPockets.concat(
+    pockets.filter((pocket) => !recentPockets.some((t) => t.id === pocket.id)),
+  );
 
   if (!categories || !pockets) {
     return <FailedState />;
@@ -36,14 +80,12 @@ export default async function Page() {
         >
           Kembali
         </Button>
-        <Title className="text-center">
-          Tambah Data Keuangan
-        </Title>
+        <Title className="text-center">Tambah Data Keuangan</Title>
       </div>
       <AddTransactionForm
         email={email}
-        categories={categories}
-        pockets={pockets}
+        categories={sortedCategories}
+        pockets={sortedPockets}
       />
     </MainCard>
   );

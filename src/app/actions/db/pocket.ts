@@ -8,10 +8,21 @@ async function getPocket({
   id,
   email,
   withBalance,
+  options = {
+    orderBy: {
+      name: 'asc',
+    },
+  },
 }: {
   id?: string;
   email: string;
   withBalance?: boolean;
+  options?: {
+    orderBy?: {
+      name?: 'asc' | 'desc';
+      createdAt?: 'asc' | 'desc';
+    };
+  };
 }) {
   // Get pocket by id
   if (id) {
@@ -30,7 +41,8 @@ async function getPocket({
       email,
     },
     orderBy: {
-      name: 'asc',
+      name: options?.orderBy?.name,
+      createdAt: options?.orderBy?.createdAt,
     },
   });
 

@@ -3,7 +3,24 @@
 import prisma from '@/utils/db';
 import revalidateAllRoute from '../revalidate';
 
-async function getCategory({ id, email }: { id?: string; email: string }) {
+async function getCategory({
+  id,
+  email,
+  options = {
+    orderBy: {
+      name: 'asc',
+    },
+  },
+}: {
+  id?: string;
+  email: string;
+  options?: {
+    orderBy?: {
+      name?: 'asc' | 'desc';
+      createdAt?: 'asc' | 'desc';
+    };
+  };
+}) {
   // Get category by id
   if (id) {
     const category = await prisma.category.findFirst({
@@ -21,7 +38,8 @@ async function getCategory({ id, email }: { id?: string; email: string }) {
       email,
     },
     orderBy: {
-      name: 'asc',
+      name: options?.orderBy?.name,
+      createdAt: options?.orderBy?.createdAt,
     },
   });
   return categories;

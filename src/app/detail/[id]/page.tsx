@@ -20,12 +20,54 @@ export default async function Page({ params }: { params: { id: string } }) {
     return <AccessBlocked />;
   }
 
-  const categories = (await getCategory({ email })) as Category[];
-  const pockets = (await getPocket({ email })) as Pocket[];
-  const transaction = (await getTransaction({
+  const transactions = (await getTransaction({
     email,
-    id: id as string,
-  })) as Transaction;
+    options: {
+      category: true,
+      pocket: true,
+    },
+  })) as (Transaction & { Category: Category; Pocket: Pocket })[];
+  const selectedTransaction = transactions.find(
+    (t) => t.id === id,
+  ) as Transaction;
+  const categories = (await getCategory({
+    email,
+    options: {
+      orderBy: {
+        createdAt: 'desc',
+      },
+    },
+  })) as Category[];
+  const pockets = (await getPocket({
+    email,
+    options: {
+      orderBy: {
+        createdAt: 'desc',
+      },
+    },
+  })) as Pocket[];
+
+  const recentCategories = transactions
+    .map((transaction) => transaction?.Category)
+    .filter(
+      (item, index, self) => index === self.findIndex((t) => t.id === item.id),
+    );
+  const sortedCategories = recentCategories.concat(
+    categories.filter(
+      (category) => !recentCategories.some((t) => t.id === category.id),
+    ),
+  );
+
+  const recentPockets = transactions
+    .filter((transaction) => transaction.type !== 'TRANSFER')
+    .map((transaction) => transaction.Pocket)
+    .filter(
+      (transaction, index, self) =>
+        index === self.findIndex((t) => t.id === transaction.id),
+    );
+  const sortedPockets = recentPockets.concat(
+    pockets.filter((pocket) => !recentPockets.some((t) => t.id === pocket.id)),
+  );
 
   if (!categories || !pockets) {
     return <FailedState />;
@@ -42,15 +84,13 @@ export default async function Page({ params }: { params: { id: string } }) {
         >
           Kembali
         </Button>
-        <Title className="text-center">
-          Detail Data Keuangan
-        </Title>
+        <Title className="text-center">Detail Data Keuangan</Title>
       </div>
       <EditTransactionForm
         email={email}
-        transaction={transaction}
-        categories={categories}
-        pockets={pockets}
+        transaction={selectedTransaction}
+        categories={sortedCategories}
+        pockets={sortedPockets}
       />
     </MainCard>
   );
