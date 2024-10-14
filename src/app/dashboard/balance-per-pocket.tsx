@@ -10,13 +10,14 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
+import { Pocket } from '@prisma/client';
 import { IconInfoCircle } from '@tabler/icons-react';
 import Link from 'next/link';
 
 export default function BalancePerPocket({
   pocketsWithBalance,
 }: {
-  pocketsWithBalance: any[];
+  pocketsWithBalance: (Pocket & { balance: number })[];
 }) {
   const allPocketsDoesNotHaveBalance = pocketsWithBalance.every(
     (pocket) => pocket.balance === 0,

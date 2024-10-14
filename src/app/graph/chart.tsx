@@ -22,7 +22,7 @@ import { IconCalendar, IconInfoCircle } from '@tabler/icons-react';
 import Link from 'next/link';
 import timezone from 'dayjs/plugin/timezone';
 import { useMemo, useState } from 'react';
-import { Category, Pocket } from '@prisma/client';
+import { Category, Pocket, Transaction } from '@prisma/client';
 import { BUTTON_BASE_COLOR } from '@/config/color';
 import { DatePickerInput } from '@mantine/dates';
 import { generateChartData } from './helper';
@@ -37,7 +37,12 @@ export default function DetailChart({
   pockets,
   categories,
 }: {
-  transactions: any[];
+  transactions: (Transaction & {
+    Category: Category;
+    Pocket: Pocket;
+    PocketSource: Pocket;
+    PocketDestination: Pocket;
+  })[];
   pockets: Pocket[];
   categories: Category[];
 }) {

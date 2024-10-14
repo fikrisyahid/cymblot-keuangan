@@ -6,6 +6,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
 import { addCategory } from '@/app/actions/db/category';
+import { Category } from '@prisma/client';
 
 export default function AddCategoryPopup({
   email,
@@ -13,7 +14,7 @@ export default function AddCategoryPopup({
   className,
 }: {
   email: string;
-  categories: any[];
+  categories: Category[];
   className?: string;
 }) {
   const [loading, setLoading] = useState(false);

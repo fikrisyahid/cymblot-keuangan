@@ -16,6 +16,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
+import { Category, Pocket, Transaction } from '@prisma/client';
 import { generateColumn } from './helper';
 import { ITableFilter } from './interface';
 
@@ -30,9 +31,14 @@ export default function DetailTable({
   categories,
   pockets,
 }: {
-  transactions: any[];
-  categories: any[];
-  pockets: any[];
+  transactions: (Transaction & {
+    Category: Category;
+    Pocket: Pocket;
+    PocketSource: Pocket;
+    PocketDestination: Pocket;
+  })[];
+  categories: Category[];
+  pockets: Pocket[];
 }) {
   const oldestTransactionDate = transactions.reduce(
     (acc, curr) => (acc < curr.date ? acc : curr.date),

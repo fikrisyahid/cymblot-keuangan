@@ -6,6 +6,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
 import { addPocket } from '@/app/actions/db/pocket';
+import { Pocket } from '@prisma/client';
 
 export default function AddPocketPopup({
   email,
@@ -13,7 +14,7 @@ export default function AddPocketPopup({
   className,
 }: {
   email: string;
-  pockets: any[];
+  pockets: Pocket[];
   className?: string;
 }) {
   const [loading, setLoading] = useState(false);

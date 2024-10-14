@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { Category, Pocket, Transaction } from '@prisma/client';
 
 dayjs.locale('id');
 dayjs.extend(utc);
@@ -46,7 +47,12 @@ function generateChartData({
   filteredTransactions,
   filter,
 }: {
-  filteredTransactions: any[];
+  filteredTransactions: (Transaction & {
+    Category: Category;
+    Pocket: Pocket;
+    PocketSource: Pocket;
+    PocketDestination: Pocket;
+  })[];
   filter: any;
 }) {
   if (filter.mode === 'day') {

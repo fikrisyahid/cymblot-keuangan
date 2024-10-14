@@ -41,7 +41,12 @@ export default async function Page() {
       pocketSource: true,
       pocketDestination: true,
     },
-  })) as Transaction[];
+  })) as (Transaction & {
+    Category: Category;
+    Pocket: Pocket;
+    PocketSource: Pocket;
+    PocketDestination: Pocket;
+  })[];
   const userBalance = getTotalBalance({ transactions });
   const categories = (await getCategory({ email })) as Category[];
   const pockets = (await getPocket({ email })) as Pocket[];

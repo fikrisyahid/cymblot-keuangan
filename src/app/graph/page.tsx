@@ -12,7 +12,7 @@ import FailedState from '../components/failed-state';
 
 export const metadata = {
   title: 'Grafik Keuangan',
-}
+};
 
 export default async function Page() {
   const email = await getSessionEmail();
@@ -29,7 +29,12 @@ export default async function Page() {
       pocketSource: true,
       pocketDestination: true,
     },
-  })) as Transaction[];
+  })) as (Transaction & {
+    Category: Category;
+    Pocket: Pocket;
+    PocketSource: Pocket;
+    PocketDestination: Pocket;
+  })[];
   const pockets = (await getPocket({ email })) as Pocket[];
   const categories = (await getCategory({ email })) as Category[];
 

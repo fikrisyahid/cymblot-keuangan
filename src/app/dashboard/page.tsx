@@ -59,7 +59,12 @@ export default async function Page({
       pocketDestination: true,
       pocketSource: true,
     },
-  })) as Transaction[];
+  })) as (Transaction & {
+    Category: Category;
+    Pocket: Pocket;
+    PocketSource: Pocket;
+    PocketDestination: Pocket;
+  })[];
 
   if (!pockets || !transactions || !categories) {
     return <FailedState />;
