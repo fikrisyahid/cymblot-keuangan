@@ -170,6 +170,7 @@ export default function AddTransactionForm({
       />
       <Select
         required
+        allowDeselect={false}
         label="Jenis"
         placeholder="Pilih jenis data keuangan"
         data={['PEMASUKAN', 'PENGELUARAN', 'TRANSFER']}
@@ -190,6 +191,7 @@ export default function AddTransactionForm({
       <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
         <Select
           required
+          allowDeselect={false}
           className="flex-grow"
           label="Kategori"
           disabled={categories.length === 0}
@@ -207,6 +209,7 @@ export default function AddTransactionForm({
         <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
           <Select
             required
+            allowDeselect={false}
             className="flex-grow"
             label="Kantong"
             disabled={pockets.length === 0}
@@ -225,6 +228,7 @@ export default function AddTransactionForm({
           <AddPocketPopup email={email} pockets={pockets} />
           <Select
             required
+            allowDeselect={false}
             label="Kantong Asal"
             disabled={pockets.length === 0}
             placeholder="Pilih kantong asal"
@@ -237,6 +241,7 @@ export default function AddTransactionForm({
           />
           <Select
             required
+            allowDeselect={false}
             label="Kantong Tujuan"
             disabled={pockets.length === 0}
             placeholder="Pilih kantong tujuan"

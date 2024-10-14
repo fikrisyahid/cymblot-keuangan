@@ -299,6 +299,7 @@ export default function DetailChart({
         )}
         {filter.mode === 'day' && (
           <Select
+            allowDeselect={false}
             value={filter.day.toString()}
             data={Array.from(
               { length: dayjs().month(filter.month).daysInMonth() },
@@ -317,6 +318,7 @@ export default function DetailChart({
         )}
         {(filter.mode === 'day' || filter.mode === 'month') && (
           <Select
+            allowDeselect={false}
             value={filter.month.toString()}
             data={Array.from({ length: 12 }, (_, i) => ({
               value: i.toString(),
@@ -334,6 +336,7 @@ export default function DetailChart({
           filter.mode === 'month' ||
           filter.mode === 'year') && (
           <Select
+            allowDeselect={false}
             value={filter.year.toString()}
             data={Array.from(
               { length: dayjs().year() - oldestTransactionDate.year() + 1 },

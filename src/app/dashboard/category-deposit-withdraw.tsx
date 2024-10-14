@@ -43,6 +43,7 @@ export default function CategoryDepositWithdraw({
   return (
     <Stack className="h-96 sm:h-full">
       <Select
+        allowDeselect={false}
         label="Urutkan berdasarkan"
         data={[
           { value: 'all', label: 'SEMUA' },
@@ -58,6 +59,7 @@ export default function CategoryDepositWithdraw({
         }
       />
       <Select
+        allowDeselect={false}
         label="Periode"
         data={[
           { value: 'day', label: 'Hari ini' },

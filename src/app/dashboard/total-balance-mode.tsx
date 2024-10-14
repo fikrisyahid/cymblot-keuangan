@@ -13,6 +13,7 @@ export default function TotalBalanceModeSwitch({
 
   return (
     <Select
+      allowDeselect={false}
       label="Periode Total Pemasukan dan Pengeluaran"
       defaultValue={totalBalanceMode}
       onChange={(value) =>
