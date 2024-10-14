@@ -46,7 +46,7 @@ export default async function Page() {
       <AddCategoryPopup
         email={email}
         categories={categories}
-        className="sm:self-end bg-baseButton"
+        className="sm:self-end"
       />
       <CategoryTable categories={categoriesForTable} />
       {isDev && <PrettyJSON content={categories} />}
