@@ -6,7 +6,6 @@ import { IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
 import { addCategory } from '@/app/actions/db/category';
-import { BUTTON_BASE_COLOR } from '@/config/color';
 
 export default function AddCategoryPopup({
   email,
@@ -69,7 +68,7 @@ export default function AddCategoryPopup({
       onClick={handleSubmit}
       loading={loading}
       className={className}
-      color={BUTTON_BASE_COLOR}
+      color="teal"
     >
       Tambah Kategori
     </Button>

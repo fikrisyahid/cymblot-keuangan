@@ -6,7 +6,6 @@ import { IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
 import { addPocket } from '@/app/actions/db/pocket';
-import { BUTTON_BASE_COLOR } from '@/config/color';
 
 export default function AddPocketPopup({
   email,
@@ -67,7 +66,7 @@ export default function AddPocketPopup({
       onClick={handleSubmit}
       loading={loading}
       className={className}
-      color={BUTTON_BASE_COLOR}
+      color="teal"
     >
       Tambah Kantong
     </Button>
