@@ -215,6 +215,7 @@ export default function DetailChart({
       <BarChart
         h={300}
         data={chartData}
+        type="stacked"
         dataKey="timePoint"
         series={[
           { name: 'Pemasukan', color: 'teal.6' },
