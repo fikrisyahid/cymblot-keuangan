@@ -2,7 +2,7 @@
 
 import sidebarMenu from '@/data/sidebar';
 import { UserButton } from '@clerk/nextjs';
-import { AppShell, Burger, Button, Flex, Group, Title } from '@mantine/core';
+import { AppShell, Burger, Button, Flex, Title } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -64,10 +64,12 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
       </AppShell.Navbar>
       <AppShell.Main className="bg-gray-50">
         <Flex direction="column" gap="sm">
-          <Group justify="space-between">
-            <Burger opened={false} onClick={toggle} />
+          <div className="rounded-lg fixed z-50 bg-white self-start p-1 top-2">
+            <Burger opened={false} onClick={toggle} size="sm" />
+          </div>
+          <div className="self-end">
             <UserButton />
-          </Group>
+          </div>
           {children}
         </Flex>
       </AppShell.Main>
