@@ -61,7 +61,7 @@ export default function Page() {
         </Text>
         <Group className="self-center">
           <a
-            href="https://github.com/fs3120/"
+            href="https://github.com/fikrisyahid/"
             target="_blank"
             rel="noopener noreferrer"
           >
