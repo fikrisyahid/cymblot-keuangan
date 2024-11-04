@@ -64,7 +64,7 @@ export default function RootShell({ children }: { children: React.ReactNode }) {
       </AppShell.Navbar>
       <AppShell.Main className="bg-gray-50">
         <Flex direction="column" gap="sm">
-          <div className="rounded-lg fixed z-50 bg-white self-start p-1 top-2">
+          <div className="rounded-lg fixed z-50 bg-white self-start p-1 top-2 shadow-md">
             <Burger opened={false} onClick={toggle} size="sm" />
           </div>
           <div className="self-end">
