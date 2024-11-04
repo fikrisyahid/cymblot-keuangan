@@ -34,6 +34,9 @@ export default function RecentTransactionTable({
         {
           accessor: 'information',
           title: 'Keterangan',
+          render: (record) => (
+            <div style={{ whiteSpace: 'pre-line' }}>{record.information}</div>
+          ),
         },
         {
           accessor: 'type',
