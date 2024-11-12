@@ -70,13 +70,15 @@ export default async function Page({
     return <FailedState />;
   }
 
-  const pocketsWithBalance = pockets.map((pocket: Pocket) => ({
-    ...pocket,
-    balance: getPocketBalance({
-      id: pocket.id,
-      transactions,
-    }),
-  }));
+  const pocketsWithBalance = pockets
+    .map((pocket: Pocket) => ({
+      ...pocket,
+      balance: getPocketBalance({
+        id: pocket.id,
+        transactions,
+      }),
+    }))
+    .sort((a, b) => b.balance - a.balance);
 
   const categoriesWithDepositAndWithdraw = categories
     .map((category) => ({
