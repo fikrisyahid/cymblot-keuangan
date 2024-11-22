@@ -8,17 +8,15 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import 'dayjs/locale/id';
-import {
-  Badge,
-  Button,
-  NumberFormatter,
-  Stack,
-  Text,
-  TextInput,
-} from '@mantine/core';
+import { Button, NumberFormatter, Stack, Text, TextInput } from '@mantine/core';
 import { Category, Pocket, Transaction } from '@prisma/client';
+import { IconPlus } from '@tabler/icons-react';
+import Link from 'next/link';
 import { generateColumn } from './helper';
 import { ITableFilter } from './interface';
+import getTotalDeposit from '../actions/functions/get-total-deposit';
+import getTotalWithdraw from '../actions/functions/get-total-withdraw';
+import getTotalTransfer from '../actions/functions/get-total-transfer';
 
 const PAGE_SIZES = [5, 10, 25, 50, 75, 100];
 
@@ -68,10 +66,6 @@ export default function DetailTable({
     setFilter((prev) => ({ ...prev, ...newKeyValue }));
   };
 
-  const resetFilter = () => {
-    setFilter(filterDefaultState);
-  };
-
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
 
@@ -94,7 +88,6 @@ export default function DetailTable({
     }),
     [filter, oldestTransactionDate],
   );
-  const filterActive = Object.values(filterStatus).some((status) => status);
 
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<any>>({
     columnAccessor: 'no',
@@ -203,6 +196,16 @@ export default function DetailTable({
     [filteredRecords],
   );
 
+  const userTotalDeposit = getTotalDeposit({
+    transactions: filteredRecords,
+  });
+  const userTotalWithdraw = getTotalWithdraw({
+    transactions: filteredRecords,
+  });
+  const userTotalTransaction = getTotalTransfer({
+    transactions: filteredRecords,
+  });
+
   const sortedRecords = useMemo(() => {
     const data = sortBy(filteredRecords, sortStatus.columnAccessor);
     return sortStatus.direction === 'desc' ? data.reverse() : data;
@@ -220,23 +223,62 @@ export default function DetailTable({
 
   return (
     <Stack gap="sm">
-      {filterActive && (
-        <div className="flex flex-col w-full sm:items-start gap-2">
-          <div className="flex flex-col items-center sm:items-start">
-            <Text>Total saldo setelah filter:</Text>
-            <Badge color="violet">
-              <NumberFormatter
-                prefix="Rp "
-                value={totalBalanceFiltered}
-                thousandSeparator
-              />
-            </Badge>
+      <div className="flex flex-col w-full sm:justify-between sm:flex-row gap-2 mt-4">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-primary p-2 rounded-lg shadow-md">
+            <Text c="white" size="sm">
+              Saldo:{' '}
+            </Text>
+            <NumberFormatter
+              prefix="Rp "
+              value={totalBalanceFiltered}
+              thousandSeparator
+              className="text-white text-sm font-bold"
+            />
           </div>
-          <Button color={BUTTON_BASE_COLOR} onClick={resetFilter}>
-            Reset filter
-          </Button>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-[#4b9a41] p-2 rounded-lg shadow-md">
+            <Text c="white" size="sm">
+              Pemasukan:{' '}
+            </Text>
+            <NumberFormatter
+              prefix="Rp "
+              value={userTotalDeposit}
+              thousandSeparator
+              className="text-white text-sm font-bold"
+            />
+          </div>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-red-500 p-2 rounded-lg shadow-md">
+            <Text c="white" size="sm">
+              Pengeluaran:{' '}
+            </Text>
+            <NumberFormatter
+              prefix="Rp "
+              value={userTotalWithdraw}
+              thousandSeparator
+              className="text-white text-sm font-bold"
+            />
+          </div>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-violet-600 p-2 rounded-lg shadow-md">
+            <Text c="white" size="sm">
+              Transfer:{' '}
+            </Text>
+            <NumberFormatter
+              prefix="Rp "
+              value={userTotalTransaction}
+              thousandSeparator
+              className="text-white text-sm font-bold"
+            />
+          </div>
         </div>
-      )}
+        <Button
+          color={BUTTON_BASE_COLOR}
+          leftSection={<IconPlus />}
+          component={Link}
+          href="/detail/add"
+        >
+          Tambah Data Keuangan
+        </Button>
+      </div>
       <TextInput
         placeholder="Cari data keseluruhan"
         value={filter.generalSearch}

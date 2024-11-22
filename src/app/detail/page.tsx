@@ -1,20 +1,9 @@
-import {
-  Badge,
-  Button,
-  NumberFormatter,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
-import { BUTTON_BASE_COLOR } from '@/config/color';
+import { Stack, Text, Title } from '@mantine/core';
 import getSessionEmail from '@/utils/get-session-email';
 import { Category, Pocket, Transaction } from '@prisma/client';
 import getEnvironmentMode from '@/utils/get-environment-mode';
-import { IconPlus } from '@tabler/icons-react';
-import Link from 'next/link';
 import DetailTable from './detail-table';
 import MainCard from '../components/main-card';
-import getTotalBalance from '../actions/functions/get-total-balance';
 import AccessBlocked from '../components/access-blocked';
 import { getTransaction } from '../actions/db/transaction';
 import FailedState from '../components/failed-state';
@@ -47,7 +36,7 @@ export default async function Page() {
     PocketSource: Pocket;
     PocketDestination: Pocket;
   })[];
-  const userBalance = getTotalBalance({ transactions });
+
   const categories = (await getCategory({ email })) as Category[];
   const pockets = (await getPocket({ email })) as Pocket[];
 
@@ -68,26 +57,6 @@ export default async function Page() {
         <Title>Daftar Keuangan</Title>
         <Text>Pantau detail semua transaksi keuangan Anda di sini</Text>
       </Stack>
-      <div className="flex flex-col w-full sm:justify-between sm:flex-row gap-2">
-        <div className="flex flex-col items-center sm:items-start">
-          <Text>Total saldo :</Text>
-          <Badge color="teal">
-            <NumberFormatter
-              prefix="Rp "
-              value={userBalance}
-              thousandSeparator
-            />
-          </Badge>
-        </div>
-        <Button
-          color={BUTTON_BASE_COLOR}
-          leftSection={<IconPlus />}
-          component={Link}
-          href="/detail/add"
-        >
-          Tambah Data Keuangan
-        </Button>
-      </div>
       <DetailTable
         transactions={transactionsForTable}
         categories={categories}
