@@ -3,7 +3,6 @@
 import { BarChart } from '@mantine/charts';
 import {
   Alert,
-  Badge,
   Button,
   Checkbox,
   NumberFormatter,
@@ -27,6 +26,9 @@ import { BUTTON_BASE_COLOR } from '@/config/color';
 import { DatePickerInput } from '@mantine/dates';
 import { generateChartData } from './helper';
 import { IChartFilter } from './interaface';
+import getTotalDeposit from '../actions/functions/get-total-deposit';
+import getTotalWithdraw from '../actions/functions/get-total-withdraw';
+import getTotalTransfer from '../actions/functions/get-total-transfer';
 
 dayjs.locale('id');
 dayjs.extend(utc);
@@ -186,7 +188,7 @@ export default function DetailChart({
     [filteredTransactions, filter],
   );
 
-  const filteredTransactionsBalance = useMemo(
+  const totalBalanceFiltered = useMemo(
     () =>
       filteredTransactions.reduce((acc, transaction) => {
         if (transaction.type === 'DEPOSIT') {
@@ -200,17 +202,63 @@ export default function DetailChart({
     [filteredTransactions],
   );
 
+  const userTotalDeposit = getTotalDeposit({
+    transactions: filteredTransactions,
+  });
+  const userTotalWithdraw = getTotalWithdraw({
+    transactions: filteredTransactions,
+  });
+  const userTotalTransaction = getTotalTransfer({
+    transactions: filteredTransactions,
+  });
+
   return (
     <Stack>
-      <div className="flex flex-col items-center sm:items-start">
-        <Text>Total saldo pada grafik :</Text>
-        <Badge color="violet">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-primary p-2 rounded-md shadow-md">
+          <Text c="white" size="sm">
+            Saldo:{' '}
+          </Text>
           <NumberFormatter
             prefix="Rp "
-            value={filteredTransactionsBalance}
+            value={totalBalanceFiltered}
             thousandSeparator
+            className="text-white text-sm font-bold"
           />
-        </Badge>
+        </div>
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-[#4b9a41] p-2 rounded-md shadow-md">
+          <Text c="white" size="sm">
+            Pemasukan:{' '}
+          </Text>
+          <NumberFormatter
+            prefix="Rp "
+            value={userTotalDeposit}
+            thousandSeparator
+            className="text-white text-sm font-bold"
+          />
+        </div>
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-red-500 p-2 rounded-md shadow-md">
+          <Text c="white" size="sm">
+            Pengeluaran:{' '}
+          </Text>
+          <NumberFormatter
+            prefix="Rp "
+            value={userTotalWithdraw}
+            thousandSeparator
+            className="text-white text-sm font-bold"
+          />
+        </div>
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-violet-600 p-2 rounded-md shadow-md">
+          <Text c="white" size="sm">
+            Transfer:{' '}
+          </Text>
+          <NumberFormatter
+            prefix="Rp "
+            value={userTotalTransaction}
+            thousandSeparator
+            className="text-white text-sm font-bold"
+          />
+        </div>
       </div>
       <BarChart
         h={300}
