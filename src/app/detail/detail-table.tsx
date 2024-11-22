@@ -227,7 +227,7 @@ export default function DetailTable({
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-primary p-2 rounded-md shadow-md">
             <Text c="white" size="sm">
-              Saldo:{' '}
+              Selisih:{' '}
             </Text>
             <NumberFormatter
               prefix="Rp "
