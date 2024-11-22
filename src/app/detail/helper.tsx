@@ -4,23 +4,20 @@ import {
   Badge,
   Button,
   Checkbox,
+  Divider,
   NumberFormatter,
   NumberInput,
-  rem,
   ScrollAreaAutosize,
   Stack,
+  Text,
   TextInput,
 } from '@mantine/core';
-import {
-  IconArrowNarrowDown,
-  IconCalendar,
-  IconPencil,
-} from '@tabler/icons-react';
+import { IconArrowNarrowDown, IconPencil } from '@tabler/icons-react';
 import Link from 'next/link';
 import { DataTableColumn } from 'mantine-datatable';
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
-import { DatePickerInput } from '@mantine/dates';
+import { DatePicker } from '@mantine/dates';
 import { BUTTON_BASE_COLOR } from '@/config/color';
 import { Category, Pocket } from '@prisma/client';
 import DeleteTransactionForm from './delete-form';
@@ -31,13 +28,11 @@ dayjs.locale('id');
 function generateColumn({
   filter,
   handleChange,
-  oldestTransactionDate,
   categories,
   pockets,
 }: {
   filter: ITableFilter;
   handleChange: (newKeyValue: any) => void;
-  oldestTransactionDate: Date;
   categories: Category[];
   pockets: Pocket[];
 }): DataTableColumn<any>[] {
@@ -55,69 +50,46 @@ function generateColumn({
       render: (record: any) =>
         dayjs(record.date).format('dddd, DD MMMM YYYY @HH:mm'),
       filter: (
-        <Stack gap="sm">
-          <DatePickerInput
-            label="Tanggal awal"
-            placeholder="Pilih tanggal awal"
-            valueFormatter={({ date }) =>
-              dayjs(date as Date).format('dddd, DD MMMM YYYY')
-            }
-            leftSection={
-              <IconCalendar
-                style={{ width: rem(18), height: rem(18) }}
-                stroke={1.5}
-              />
-            }
-            value={filter.date.start}
-            onChange={(date) =>
-              handleChange({
-                date: {
-                  ...filter.date,
-                  start: dayjs(date as Date)
-                    .startOf('day')
-                    .toDate(),
-                },
-              })
-            }
-          />
-          <DatePickerInput
-            label="Tanggal akhir"
-            placeholder="Pilih tanggal akhir"
-            valueFormatter={({ date }) =>
-              dayjs(date as Date).format('dddd, DD MMMM YYYY')
-            }
-            leftSection={
-              <IconCalendar
-                style={{ width: rem(18), height: rem(18) }}
-                stroke={1.5}
-              />
-            }
-            value={filter.date.end}
-            onChange={(date) =>
-              handleChange({
-                date: {
-                  ...filter.date,
-                  end: dayjs(date as Date)
-                    .endOf('day')
-                    .toDate(),
-                },
-              })
-            }
-          />
-          <Button
-            color={BUTTON_BASE_COLOR}
-            onClick={() =>
-              handleChange({
-                date: {
-                  start: dayjs(oldestTransactionDate).startOf('day').toDate(),
-                  end: dayjs().endOf('day').toDate(),
-                },
-              })
-            }
-          >
-            Reset
-          </Button>
-        </Stack>
+        <div className="flex flex-col">
+          <div className="flex flex-col gap-1">
+            <Text fw="bold" size="sm" className="self-center">
+              Tanggal awal
+            </Text>
+            <DatePicker
+              defaultDate={filter.date.start}
+              value={filter.date.start}
+              onChange={(date) =>
+                handleChange({
+                  date: {
+                    ...filter.date,
+                    start: dayjs(date as Date)
+                      .startOf('day')
+                      .toDate(),
+                  },
+                })
+              }
+            />
+          </div>
+          <Divider my="md" />
+          <div className="flex flex-col gap-1">
+            <Text fw="bold" size="sm" className="self-center">
+              Tanggal akhir
+            </Text>
+            <DatePicker
+              value={filter.date.end}
+              onChange={(date) =>
+                handleChange({
+                  date: {
+                    ...filter.date,
+                    end: dayjs(date as Date)
+                      .endOf('day')
+                      .toDate(),
+                  },
+                })
+              }
+            />
+          </div>
+        </div>
       ),
     },
     {

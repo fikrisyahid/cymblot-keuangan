@@ -292,7 +292,6 @@ export default function DetailTable({
         columns={generateColumn({
           filter,
           handleChange,
-          oldestTransactionDate,
           categories,
           pockets,
         })}
