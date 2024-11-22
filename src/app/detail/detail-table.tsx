@@ -225,7 +225,7 @@ export default function DetailTable({
     <Stack gap="sm">
       <div className="flex flex-col w-full sm:justify-between sm:flex-row gap-2 mt-4">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-primary p-2 rounded-lg shadow-md">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-primary p-2 rounded-md shadow-md">
             <Text c="white" size="sm">
               Saldo:{' '}
             </Text>
@@ -236,7 +236,7 @@ export default function DetailTable({
               className="text-white text-sm font-bold"
             />
           </div>
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-[#4b9a41] p-2 rounded-lg shadow-md">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-[#4b9a41] p-2 rounded-md shadow-md">
             <Text c="white" size="sm">
               Pemasukan:{' '}
             </Text>
@@ -247,7 +247,7 @@ export default function DetailTable({
               className="text-white text-sm font-bold"
             />
           </div>
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-red-500 p-2 rounded-lg shadow-md">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-red-500 p-2 rounded-md shadow-md">
             <Text c="white" size="sm">
               Pengeluaran:{' '}
             </Text>
@@ -258,7 +258,7 @@ export default function DetailTable({
               className="text-white text-sm font-bold"
             />
           </div>
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-violet-600 p-2 rounded-lg shadow-md">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-0 sm:gap-1 w-full sm:w-auto bg-violet-600 p-2 rounded-md shadow-md">
             <Text c="white" size="sm">
               Transfer:{' '}
             </Text>
