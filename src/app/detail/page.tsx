@@ -22,23 +22,26 @@ export default async function Page() {
     return <AccessBlocked />;
   }
 
-  const transactions = (await getTransaction({
-    email,
-    options: {
-      category: true,
-      pocket: true,
-      pocketSource: true,
-      pocketDestination: true,
-    },
-  })) as (Transaction & {
-    Category: Category;
-    Pocket: Pocket;
-    PocketSource: Pocket;
-    PocketDestination: Pocket;
-  })[];
-
-  const categories = (await getCategory({ email })) as Category[];
-  const pockets = (await getPocket({ email })) as Pocket[];
+  const [transactions, categories, pockets] = await Promise.all([
+    getTransaction({
+      email,
+      options: {
+        category: true,
+        pocket: true,
+        pocketSource: true,
+        pocketDestination: true,
+      },
+    }) as Promise<
+      (Transaction & {
+        Category: Category;
+        Pocket: Pocket;
+        PocketSource: Pocket;
+        PocketDestination: Pocket;
+      })[]
+    >,
+    getCategory({ email }) as Promise<Category[]>,
+    getPocket({ email }) as Promise<Pocket[]>,
+  ]);
 
   if (!transactions || !categories || !pockets) {
     return <FailedState />;

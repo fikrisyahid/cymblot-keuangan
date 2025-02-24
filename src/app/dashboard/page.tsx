@@ -49,22 +49,26 @@ export default async function Page({
     return <AccessBlocked />;
   }
 
-  const pockets = (await getPocket({ email })) as Pocket[];
-  const categories = (await getCategory({ email })) as Category[];
-  const transactions = (await getTransaction({
-    email,
-    options: {
-      category: true,
-      pocket: true,
-      pocketDestination: true,
-      pocketSource: true,
-    },
-  })) as (Transaction & {
-    Category: Category;
-    Pocket: Pocket;
-    PocketSource: Pocket;
-    PocketDestination: Pocket;
-  })[];
+  const [pockets, categories, transactions] = await Promise.all([
+    getPocket({ email }) as Promise<Pocket[]>,
+    getCategory({ email }) as Promise<Category[]>,
+    getTransaction({
+      email,
+      options: {
+        category: true,
+        pocket: true,
+        pocketDestination: true,
+        pocketSource: true,
+      },
+    }) as Promise<
+      (Transaction & {
+        Category: Category;
+        Pocket: Pocket;
+        PocketSource: Pocket;
+        PocketDestination: Pocket;
+      })[]
+    >,
+  ]);
 
   if (!pockets || !transactions || !categories) {
     return <FailedState />;
