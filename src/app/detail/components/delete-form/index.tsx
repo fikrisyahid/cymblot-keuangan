@@ -5,7 +5,7 @@ import { ActionIcon, Stack, Text } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
-import { deleteTransaction } from '../actions/db/transaction';
+import { deleteTransaction } from '../../../actions/db/transaction';
 
 export default function DeleteTransactionForm({
   selectedTransaction,

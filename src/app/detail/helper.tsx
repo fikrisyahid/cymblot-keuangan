@@ -20,7 +20,7 @@ import 'dayjs/locale/id';
 import { DatePicker } from '@mantine/dates';
 import { BUTTON_BASE_COLOR } from '@/config/color';
 import { Category, Pocket } from '@prisma/client';
-import DeleteTransactionForm from './delete-form';
+import DeleteTransactionForm from './components/delete-form';
 import { ITableFilter } from './interface';
 
 dayjs.locale('id');

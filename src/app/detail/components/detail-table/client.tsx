@@ -12,11 +12,11 @@ import { Button, NumberFormatter, Stack, Text, TextInput } from '@mantine/core';
 import { Category, Pocket, Transaction } from '@prisma/client';
 import { IconPlus } from '@tabler/icons-react';
 import Link from 'next/link';
-import { generateColumn } from './helper';
-import { ITableFilter } from './interface';
-import getTotalDeposit from '../actions/functions/get-total-deposit';
-import getTotalWithdraw from '../actions/functions/get-total-withdraw';
-import getTotalTransfer from '../actions/functions/get-total-transfer';
+import { generateColumn } from '../../helper';
+import { ITableFilter } from '../../interface';
+import getTotalDeposit from '../../../actions/functions/get-total-deposit';
+import getTotalWithdraw from '../../../actions/functions/get-total-withdraw';
+import getTotalTransfer from '../../../actions/functions/get-total-transfer';
 
 const PAGE_SIZES = [5, 10, 25, 50, 75, 100];
 
@@ -24,7 +24,7 @@ dayjs.locale('id');
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export default function DetailTable({
+export default function DetailTableClient({
   transactions,
   categories,
   pockets,
