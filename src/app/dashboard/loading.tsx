@@ -1,5 +1,5 @@
-import LoadingSkeleton from '../components/loading';
+import LoadingSkeletonCentered from '../components/loading-skeleton/center';
 
 export default function loading() {
-  return <LoadingSkeleton />;
+  return <LoadingSkeletonCentered />;
 }
