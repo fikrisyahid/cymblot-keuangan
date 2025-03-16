@@ -24,17 +24,17 @@ import { useMemo, useState } from 'react';
 import { Category, Pocket, Transaction } from '@prisma/client';
 import { BUTTON_BASE_COLOR } from '@/config/color';
 import { DatePickerInput } from '@mantine/dates';
-import { generateChartData } from './helper';
-import { IChartFilter } from './interaface';
-import getTotalDeposit from '../actions/functions/get-total-deposit';
-import getTotalWithdraw from '../actions/functions/get-total-withdraw';
-import getTotalTransfer from '../actions/functions/get-total-transfer';
+import { generateChartData } from '../../helper';
+import { IChartFilter } from '../../interaface';
+import getTotalDeposit from '../../../actions/functions/get-total-deposit';
+import getTotalWithdraw from '../../../actions/functions/get-total-withdraw';
+import getTotalTransfer from '../../../actions/functions/get-total-transfer';
 
 dayjs.locale('id');
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export default function DetailChart({
+export default function DetailChartClient({
   transactions,
   pockets,
   categories,
