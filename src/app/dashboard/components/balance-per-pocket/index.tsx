@@ -1,3 +1,6 @@
+import { getPocket } from '@/app/actions/db/pocket';
+import { getTransaction } from '@/app/actions/db/transaction';
+import getPocketBalance from '@/app/actions/functions/get-pocket-balance';
 import generateSoftColor from '@/utils/generate-soft-color';
 import { PieChart } from '@mantine/charts';
 import {
@@ -10,18 +13,40 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { Pocket } from '@prisma/client';
+import { Category, Pocket, Transaction } from '@prisma/client';
 import { IconInfoCircle } from '@tabler/icons-react';
 import Link from 'next/link';
 
-export default function BalancePerPocket({
-  pocketsWithBalance,
-}: {
-  pocketsWithBalance: (Pocket & { balance: number })[];
-}) {
+export default async function BalancePerPocket({ email }: { email: string }) {
+  const pockets = (await getPocket({ email })) as Pocket[];
+  const transactions = (await getTransaction({
+    email,
+    options: {
+      category: true,
+      pocket: true,
+      pocketDestination: true,
+      pocketSource: true,
+    },
+  })) as (Transaction & {
+    Category: Category;
+    Pocket: Pocket;
+    PocketSource: Pocket;
+    PocketDestination: Pocket;
+  })[];
+
+  const pocketsWithBalance = pockets
+    .map((pocket: Pocket) => ({
+      ...pocket,
+      balance: getPocketBalance({
+        id: pocket.id,
+        transactions,
+      }),
+    }))
+    .sort((a, b) => b.balance - a.balance);
   const allPocketsDoesNotHaveBalance = pocketsWithBalance.every(
     (pocket) => pocket.balance === 0,
   );
+
   if (pocketsWithBalance.length === 0) {
     return (
       <Alert
@@ -44,6 +69,7 @@ export default function BalancePerPocket({
       </Alert>
     );
   }
+
   return (
     <Stack>
       {!allPocketsDoesNotHaveBalance && (

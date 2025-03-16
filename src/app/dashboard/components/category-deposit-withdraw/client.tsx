@@ -7,7 +7,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { useRouter } from 'next-nprogress-bar';
 import Link from 'next/link';
 
-export default function CategoryDepositWithdraw({
+export default function CategoryDepositWithdrawClient({
   categoryMode = 'month',
   categorySort = 'all',
   categoriesWithDepositAndWithdraw,

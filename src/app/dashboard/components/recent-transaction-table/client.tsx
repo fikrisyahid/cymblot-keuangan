@@ -9,7 +9,7 @@ import { DataTable } from 'mantine-datatable';
 
 dayjs.locale('id');
 
-export default function RecentTransactionTable({
+export default function RecentTransactionTableClient({
   transactions,
 }: {
   transactions: any[];
@@ -95,7 +95,7 @@ export default function RecentTransactionTable({
             }
             return (
               <div className="flex justify-center">
-                <Badge fullWidth>{record.Pocket?.name}</Badge>
+                <Badge fullWidth>{record.Pocket?.name || "Center"}</Badge>
               </div>
             );
           },
