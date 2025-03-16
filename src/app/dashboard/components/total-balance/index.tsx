@@ -49,7 +49,7 @@ export default async function TotalBalanceCard({
   };
 
   return (
-    <MainCard>
+    <>
       <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
         <Title className="text-center sm:text-start">Halo {username}</Title>
         <TotalBalanceModeSwitch totalBalanceMode={totalBalanceMode} />
@@ -135,6 +135,6 @@ export default async function TotalBalanceCard({
           <IconTrendingDown color="white" size={96} className="min-h-full" />
         </MainCard>
       </SimpleGrid>
-    </MainCard>
+    </>
   );
 }

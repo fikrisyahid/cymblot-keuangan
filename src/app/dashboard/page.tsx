@@ -42,13 +42,15 @@ export default async function Page({
 
   return (
     <MainCard transparent noPadding>
-      <Suspense fallback={<TotalBalanceCardSkeleton />}>
-        <TotalBalanceCard
-          email={email}
-          totalBalanceMode={totalBalanceMode}
-          username={username}
-        />
-      </Suspense>
+      <MainCard>
+        <Suspense fallback={<TotalBalanceCardSkeleton />}>
+          <TotalBalanceCard
+            email={email}
+            totalBalanceMode={totalBalanceMode}
+            username={username}
+          />
+        </Suspense>
+      </MainCard>
       <MainCard row transparent noPadding>
         <MainCard width="50%">
           <Stack gap={0} className="text-center sm:text-start">
