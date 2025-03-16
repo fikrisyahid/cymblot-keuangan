@@ -1,83 +1,88 @@
 'use server';
 
 import prisma from '@/utils/db';
+import { cache } from 'react';
 import revalidateAllRoute from '../revalidate';
 import getPocketBalance from '../functions/get-pocket-balance';
 
-async function getPocket({
-  id,
-  email,
-  withBalance,
-  options = {
-    orderBy: {
-      name: 'asc',
+const getPocket = cache(
+  async ({
+    id,
+    email,
+    withBalance,
+    options = {
+      orderBy: {
+        name: 'asc',
+      },
     },
-  },
-}: {
-  id?: string;
-  email: string;
-  withBalance?: boolean;
-  options?: {
-    orderBy?: {
-      name?: 'asc' | 'desc';
-      createdAt?: 'asc' | 'desc';
+  }: {
+    id?: string;
+    email: string;
+    withBalance?: boolean;
+    options?: {
+      orderBy?: {
+        name?: 'asc' | 'desc';
+        createdAt?: 'asc' | 'desc';
+      };
     };
-  };
-}) {
-  // Get pocket by id
-  if (id) {
-    const pocket = await prisma.pocket.findFirst({
+  }) => {
+    // Get pocket by id
+    if (id) {
+      const pocket = await prisma.pocket.findFirst({
+        where: {
+          id,
+          email,
+        },
+      });
+      return pocket;
+    }
+
+    // Get all pockets
+    const pockets = await prisma.pocket.findMany({
       where: {
-        id,
+        email,
+      },
+      orderBy: {
+        name: options?.orderBy?.name,
+        createdAt: options?.orderBy?.createdAt,
+      },
+    });
+
+    if (!withBalance) {
+      return pockets;
+    }
+
+    const transactions = await prisma.transaction.findMany({
+      where: {
         email,
       },
     });
-    return pocket;
-  }
 
-  // Get all pockets
-  const pockets = await prisma.pocket.findMany({
-    where: {
-      email,
-    },
-    orderBy: {
-      name: options?.orderBy?.name,
-      createdAt: options?.orderBy?.createdAt,
-    },
-  });
+    const pocketsWithBalance = pockets.map((pocket) => ({
+      ...pocket,
+      balance: getPocketBalance({
+        id: pocket.id,
+        transactions,
+      }),
+    }));
 
-  if (!withBalance) {
-    return pockets;
-  }
+    return pocketsWithBalance;
+  },
+);
 
-  const transactions = await prisma.transaction.findMany({
-    where: {
-      email,
-    },
-  });
+const addPocket = cache(
+  async ({ email, name }: { email: string; name: string }) => {
+    await prisma.pocket.create({
+      data: {
+        name,
+        email,
+      },
+    });
+    revalidateAllRoute();
+  },
+);
 
-  const pocketsWithBalance = pockets.map((pocket) => ({
-    ...pocket,
-    balance: getPocketBalance({
-      id: pocket.id,
-      transactions,
-    }),
-  }));
-
-  return pocketsWithBalance;
-}
-
-async function addPocket({ email, name }: { email: string; name: string }) {
-  await prisma.pocket.create({
-    data: {
-      name,
-      email,
-    },
-  });
-  revalidateAllRoute();
-}
-
-async function editPocket({ id, name }: { id: string; name: string }) {
+const editPocket = cache(async ({ id, name }: { id: string; name: string }) => {
   await prisma.pocket.update({
     data: {
       name,
@@ -87,15 +92,15 @@ async function editPocket({ id, name }: { id: string; name: string }) {
     },
   });
   revalidateAllRoute();
-}
+});
 
-async function deletePocket({ id }: { id: string }) {
+const deletePocket = cache(async ({ id }: { id: string }) => {
   await prisma.pocket.delete({
     where: {
       id,
     },
   });
   revalidateAllRoute();
-}
+});
 
 export { getPocket, addPocket, editPocket, deletePocket };
