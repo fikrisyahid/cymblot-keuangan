@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function LoadingSkeleton() {
   return (
-    <div className="bg-white rounded-lg shadow-lg p-8 flex flex-col items-center">
+    <div className="p-8 flex flex-col items-center">
       <div className="animate-spin">
         <svg
           xmlns="http://www.w3.org/2000/svg"
