@@ -19,29 +19,31 @@ export default async function Page() {
     return <AccessBlocked />;
   }
 
-  const transactions = (await getTransaction({
-    email,
-    options: {
-      category: true,
-      pocket: true,
-    },
-  })) as (Transaction & { Category: Category; Pocket: Pocket })[];
-  const categories = (await getCategory({
-    email,
-    options: {
-      orderBy: {
-        createdAt: 'desc',
+  const [transactions, categories, pockets] = await Promise.all([
+    getTransaction({
+      email,
+      options: {
+        category: true,
+        pocket: true,
       },
-    },
-  })) as Category[];
-  const pockets = (await getPocket({
-    email,
-    options: {
-      orderBy: {
-        createdAt: 'desc',
+    }) as Promise<(Transaction & { Category: Category; Pocket: Pocket })[]>,
+    getCategory({
+      email,
+      options: {
+        orderBy: {
+          createdAt: 'desc',
+        },
       },
-    },
-  })) as Pocket[];
+    }) as Promise<Category[]>,
+    getPocket({
+      email,
+      options: {
+        orderBy: {
+          createdAt: 'desc',
+        },
+      },
+    }) as Promise<Pocket[]>,
+  ]);
 
   const recentCategories = transactions
     .map((transaction) => transaction?.Category)
