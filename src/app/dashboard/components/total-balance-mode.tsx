@@ -2,7 +2,7 @@
 
 import updateSearchParams from '@/utils/update-search-params';
 import { Select } from '@mantine/core';
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from '@bprogress/next';
 
 export default function TotalBalanceModeSwitch({
   totalBalanceMode = 'month',

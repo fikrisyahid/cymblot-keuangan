@@ -16,7 +16,7 @@ import { openConfirmModal } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { Category, Pocket, TRANSACTION_TYPE } from '@prisma/client';
 import { IconPlus } from '@tabler/icons-react';
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from '@bprogress/next';
 import { useState } from 'react';
 import AddPocketPopup from '../../components/functions/add-pocket-popup';
 import AddCategoryPopup from '../../components/functions/add-category-popup';

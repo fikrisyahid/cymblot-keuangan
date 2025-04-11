@@ -4,7 +4,7 @@ import updateSearchParams from '@/utils/update-search-params';
 import { BarChart } from '@mantine/charts';
 import { Alert, Button, Select, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from '@bprogress/next';
 import Link from 'next/link';
 
 export default function CategoryDepositWithdrawClient({

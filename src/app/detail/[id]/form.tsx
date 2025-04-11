@@ -20,7 +20,7 @@ import {
   TRANSACTION_TYPE,
 } from '@prisma/client';
 import { IconPencil } from '@tabler/icons-react';
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from '@bprogress/next';
 import { useState } from 'react';
 import AddPocketPopup from '../../components/functions/add-pocket-popup';
 import AddCategoryPopup from '../../components/functions/add-category-popup';

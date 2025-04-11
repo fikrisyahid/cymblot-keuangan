@@ -71,8 +71,9 @@ export default function RootLayout({
                   </div>
                 </SignedOut>
                 <SignedIn>
-                  <ProgressBar />
-                  <RootShell>{children}</RootShell>
+                  <ProgressBar>
+                    <RootShell>{children}</RootShell>
+                  </ProgressBar>
                 </SignedIn>
               </ModalsProvider>
             </ClientDatesProvider>
