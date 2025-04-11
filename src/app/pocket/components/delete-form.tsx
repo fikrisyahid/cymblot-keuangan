@@ -5,7 +5,7 @@ import { ActionIcon, Alert, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconTrash } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
-import { deletePocket } from '../actions/db/pocket';
+import { deletePocket } from '../../actions/db/pocket';
 
 export default function DeletePocketForm({
   selectedPocket,

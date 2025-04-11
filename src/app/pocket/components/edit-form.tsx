@@ -5,7 +5,7 @@ import { ActionIcon, Input, Stack, Text } from '@mantine/core';
 import { IconPencil } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { openConfirmModal } from '@mantine/modals';
-import { editPocket } from '../actions/db/pocket';
+import { editPocket } from '../../actions/db/pocket';
 
 export default function EditPocketForm({
   pockets,

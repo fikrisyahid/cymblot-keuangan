@@ -4,10 +4,10 @@ import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useMemo, useState } from 'react';
 import { NumberFormatter } from '@mantine/core';
-import EditPocketForm from './edit-form';
-import DeletePocketForm from './delete-form';
+import EditPocketForm from '../edit-form';
+import DeletePocketForm from '../delete-form';
 
-export default function PocketTable({ pockets }: { pockets: any[] }) {
+export default function PocketTableClient({ pockets }: { pockets: any[] }) {
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<any>>({
     columnAccessor: 'no',
     direction: 'asc',
