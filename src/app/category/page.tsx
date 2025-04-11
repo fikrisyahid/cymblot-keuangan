@@ -1,18 +1,14 @@
 import { Stack, Text, Title } from '@mantine/core';
 import getSessionEmail from '@/utils/get-session-email';
-import getEnvironmentMode from '@/utils/get-environment-mode';
-import { Category } from '@prisma/client';
+import { Suspense } from 'react';
 import MainCard from '../components/main-card';
-import CategoryTable from './table';
-import PrettyJSON from '../components/pretty-json';
 import AccessBlocked from '../components/access-blocked';
-import { getCategory } from '../actions/db/category';
-import FailedState from '../components/failed-state';
-import AddCategoryPopup from '../components/functions/add-category-popup';
+import CategoryTableSkeleton from './components/category-table/skeleton';
+import CategoryTable from './components/category-table';
 
 export const metadata = {
   title: 'Kategori',
-}
+};
 
 export default async function Page() {
   const email = await getSessionEmail();
@@ -20,19 +16,6 @@ export default async function Page() {
   if (!email) {
     return <AccessBlocked />;
   }
-
-  const categories = (await getCategory({ email })) as Category[];
-
-  if (!categories) {
-    return <FailedState />;
-  }
-
-  const isDev = getEnvironmentMode() === 'development';
-
-  const categoriesForTable = categories.map((category, index) => ({
-    no: index + 1,
-    ...category,
-  }));
 
   return (
     <MainCard>
@@ -43,13 +26,9 @@ export default async function Page() {
           memudahkan manajemen keuangan Anda
         </Text>
       </Stack>
-      <AddCategoryPopup
-        email={email}
-        categories={categories}
-        className="sm:self-end"
-      />
-      <CategoryTable categories={categoriesForTable} />
-      {isDev && <PrettyJSON content={categories} />}
+      <Suspense fallback={<CategoryTableSkeleton />}>
+        <CategoryTable email={email} />
+      </Suspense>
     </MainCard>
   );
 }

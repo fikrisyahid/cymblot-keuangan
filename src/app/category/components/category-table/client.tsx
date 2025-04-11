@@ -3,10 +3,10 @@
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useMemo, useState } from 'react';
-import EditCategoryForm from './edit-form';
-import DeleteCategoryForm from './delete-form';
+import EditCategoryForm from '../edit-form';
+import DeleteCategoryForm from '../delete-form';
 
-export default function CategoryTable({ categories }: { categories: any[] }) {
+export default function CategoryTableClient({ categories }: { categories: any[] }) {
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<any>>({
     columnAccessor: 'no',
     direction: 'asc',
