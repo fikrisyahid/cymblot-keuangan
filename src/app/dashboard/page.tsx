@@ -43,7 +43,11 @@ export default async function Page({
   return (
     <MainCard transparent noPadding>
       <MainCard>
-        <Suspense fallback={<TotalBalanceCardSkeleton />}>
+        <Suspense
+          fallback={
+            <TotalBalanceCardSkeleton totalBalanceMode={totalBalanceMode} />
+          }
+        >
           <TotalBalanceCard
             email={email}
             totalBalanceMode={totalBalanceMode}

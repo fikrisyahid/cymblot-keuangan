@@ -1,5 +1,5 @@
-import LoadingSkeleton from "@/app/components/loading-skeleton";
+import { Skeleton } from '@mantine/core';
 
-export default function RecentTransactionTableSkeleton() {
-  return <LoadingSkeleton />;
+export default async function RecentTransactionTableSkeleton() {
+  return <Skeleton height={200} />;
 }
