@@ -51,7 +51,10 @@ export default async function TotalBalanceCard({
   return (
     <>
       <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
-        <Title className="text-center sm:text-start">Halo {username}</Title>
+        <div className="flex flex-col gap-2 sm:flex-row w-full">
+          <Title className="text-center sm:text-start">Halo</Title>
+          <Title className="text-center sm:text-start">{username}</Title>
+        </div>
         <TotalBalanceModeSwitch totalBalanceMode={totalBalanceMode} />
       </div>
       <SimpleGrid cols={{ base: 1, sm: 3 }}>

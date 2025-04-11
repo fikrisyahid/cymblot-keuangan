@@ -1,5 +1,5 @@
 import MainCard from '@/app/components/main-card';
-import { Flex, SimpleGrid, Skeleton, Stack, Title } from '@mantine/core';
+import { SimpleGrid, Skeleton, Stack, Title } from '@mantine/core';
 import {
   IconCoins,
   IconTrendingDown,
@@ -15,10 +15,10 @@ export default async function TotalBalanceCardSkeleton({
   return (
     <>
       <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
-        <Flex direction="row" gap={4} className="w-full" align="center">
+        <div className="flex flex-col gap-2 sm:flex-row w-full">
           <Title className="text-center sm:text-start">Halo</Title>
-          <Skeleton height={40} width="30%" />
-        </Flex>
+          <Skeleton height={40} className="w-full sm:w-96" />
+        </div>
         <TotalBalanceModeSwitch totalBalanceMode={totalBalanceMode} />
       </div>
       <SimpleGrid cols={{ base: 1, sm: 3 }}>
