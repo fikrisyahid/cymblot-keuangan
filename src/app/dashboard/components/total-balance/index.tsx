@@ -1,4 +1,4 @@
-import MainCard from '@/app/components/main-card';
+import MainCard from '@/components/main-card';
 import { NumberFormatter, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
   IconCoins,

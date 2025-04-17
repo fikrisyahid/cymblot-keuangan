@@ -18,8 +18,8 @@ import { Category, Pocket, TRANSACTION_TYPE } from '@prisma/client';
 import { IconPlus } from '@tabler/icons-react';
 import { useRouter } from '@bprogress/next';
 import { useState } from 'react';
-import AddPocketPopup from '../../components/functions/add-pocket-popup';
-import AddCategoryPopup from '../../components/functions/add-category-popup';
+import AddPocketPopup from '../../../components/functions/add-pocket-popup';
+import AddCategoryPopup from '../../../components/functions/add-category-popup';
 
 export default function AddTransactionForm({
   email,

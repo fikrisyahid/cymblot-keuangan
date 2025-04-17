@@ -2,8 +2,8 @@ import { Stack, Text, Title } from '@mantine/core';
 import getSessionEmail from '@/utils/get-session-email';
 import { Suspense } from 'react';
 import DetailTable from './components/detail-table';
-import MainCard from '../components/main-card';
-import AccessBlocked from '../components/access-blocked';
+import MainCard from '../../components/main-card';
+import AccessBlocked from '../../components/access-blocked';
 import DetailTableSkeleton from './components/detail-table/skeleton';
 
 export const metadata = {

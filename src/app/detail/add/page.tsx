@@ -1,14 +1,14 @@
-import MainCard from '@/app/components/main-card';
+import MainCard from '@/components/main-card';
 import { BUTTON_BASE_COLOR } from '@/config/color';
 import { Button, Title } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import Link from 'next/link';
 import getSessionEmail from '@/utils/get-session-email';
-import AccessBlocked from '@/app/components/access-blocked';
+import AccessBlocked from '@/components/access-blocked';
 import { getTransaction } from '@/app/actions/db/transaction';
 import { getCategory } from '@/app/actions/db/category';
 import { getPocket } from '@/app/actions/db/pocket';
-import FailedState from '@/app/components/failed-state';
+import FailedState from '@/components/failed-state';
 import { Category, Pocket, Transaction } from '@prisma/client';
 import AddTransactionForm from './form';
 

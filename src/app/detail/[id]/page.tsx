@@ -1,8 +1,8 @@
 import { getCategory } from '@/app/actions/db/category';
 import { getPocket } from '@/app/actions/db/pocket';
-import AccessBlocked from '@/app/components/access-blocked';
-import FailedState from '@/app/components/failed-state';
-import MainCard from '@/app/components/main-card';
+import AccessBlocked from '@/components/access-blocked';
+import FailedState from '@/components/failed-state';
+import MainCard from '@/components/main-card';
 import { BUTTON_BASE_COLOR } from '@/config/color';
 import getSessionEmail from '@/utils/get-session-email';
 import { Button, Title } from '@mantine/core';

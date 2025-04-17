@@ -1,6 +1,6 @@
 import { getCategory } from '@/app/actions/db/category';
 import { Category } from '@prisma/client';
-import AddCategoryPopup from '@/app/components/functions/add-category-popup';
+import AddCategoryPopup from '@/components/functions/add-category-popup';
 import CategoryTableClient from './client';
 
 export default async function CategoryTable({ email }: { email: string }) {

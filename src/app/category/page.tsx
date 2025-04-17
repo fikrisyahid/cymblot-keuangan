@@ -1,8 +1,8 @@
 import { Stack, Text, Title } from '@mantine/core';
 import getSessionEmail from '@/utils/get-session-email';
 import { Suspense } from 'react';
-import MainCard from '../components/main-card';
-import AccessBlocked from '../components/access-blocked';
+import MainCard from '../../components/main-card';
+import AccessBlocked from '../../components/access-blocked';
 import CategoryTableSkeleton from './components/category-table/skeleton';
 import CategoryTable from './components/category-table';
 

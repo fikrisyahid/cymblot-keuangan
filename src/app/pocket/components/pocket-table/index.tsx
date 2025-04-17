@@ -1,6 +1,6 @@
 import { getPocket } from '@/app/actions/db/pocket';
 import { Pocket } from '@prisma/client';
-import AddPocketPopup from '@/app/components/functions/add-pocket-popup';
+import AddPocketPopup from '@/components/functions/add-pocket-popup';
 import PocketTableClient from './client';
 
 export default async function PocketTable({ email }: { email: string }) {

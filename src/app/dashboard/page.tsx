@@ -3,8 +3,8 @@ import getSessionUsername from '@/utils/get-session-username';
 import getSessionEmail from '@/utils/get-session-email';
 import { Suspense } from 'react';
 
-import MainCard from '../components/main-card';
-import AccessBlocked from '../components/access-blocked';
+import MainCard from '../../components/main-card';
+import AccessBlocked from '../../components/access-blocked';
 import BalancePerPocket from './components/balance-per-pocket';
 import BalancePerPocketSkeleton from './components/balance-per-pocket/skeleton';
 import CategoryDepositWithdraw from './components/category-deposit-withdraw';

@@ -14,7 +14,7 @@ import {
   IconBrandTelegram,
   IconCheck,
 } from '@tabler/icons-react';
-import MainCard from '../components/main-card';
+import MainCard from '../../components/main-card';
 
 export const metadata = {
   title: 'Tentang',
