@@ -198,6 +198,7 @@ export default function EditTransactionForm({
       />
       <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
         <Select
+          searchable
           required
           allowDeselect={false}
           className="flex-grow"
@@ -216,6 +217,7 @@ export default function EditTransactionForm({
       {formData.type !== 'TRANSFER' ? (
         <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
           <Select
+            searchable
             required
             allowDeselect={false}
             className="flex-grow"
@@ -235,6 +237,7 @@ export default function EditTransactionForm({
         <>
           <AddPocketPopup email={email} pockets={pockets} />
           <Select
+            searchable
             required
             allowDeselect={false}
             label="Kantong Asal"
@@ -248,6 +251,7 @@ export default function EditTransactionForm({
             onChange={(pocketId) => handleChange({ pocketSourceId: pocketId })}
           />
           <Select
+            searchable
             required
             allowDeselect={false}
             label="Kantong Tujuan"
