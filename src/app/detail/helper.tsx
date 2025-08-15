@@ -27,12 +27,12 @@ dayjs.locale('id');
 
 function generateColumn({
   filter,
-  handleChange,
+  handleFilter,
   categories,
   pockets,
 }: {
   filter: ITableFilter;
-  handleChange: (newKeyValue: any) => void;
+  handleFilter: (newKeyValue: any) => void;
   categories: Category[];
   pockets: Pocket[];
 }): DataTableColumn<any>[] {
@@ -59,7 +59,7 @@ function generateColumn({
               defaultDate={filter.date.start}
               value={filter.date.start}
               onChange={(date) =>
-                handleChange({
+                handleFilter({
                   date: {
                     ...filter.date,
                     start: dayjs(date as Date)
@@ -78,7 +78,7 @@ function generateColumn({
             <DatePicker
               value={filter.date.end}
               onChange={(date) =>
-                handleChange({
+                handleFilter({
                   date: {
                     ...filter.date,
                     end: dayjs(date as Date)
@@ -104,7 +104,7 @@ function generateColumn({
           label="Keterangan"
           placeholder="Masukkan keterangan yang ingin dicari"
           value={filter.information}
-          onChange={(e) => handleChange({ information: e.currentTarget.value })}
+          onChange={(e) => handleFilter({ information: e.currentTarget.value })}
           style={{
             width: '400px',
           }}
@@ -139,7 +139,7 @@ function generateColumn({
             checked={filter.type.includes('DEPOSIT')}
             label="PEMASUKAN"
             onChange={(e) =>
-              handleChange({
+              handleFilter({
                 type: e.currentTarget.checked
                   ? [...filter.type, 'DEPOSIT']
                   : filter.type.filter((f) => f !== 'DEPOSIT'),
@@ -150,7 +150,7 @@ function generateColumn({
             checked={filter.type.includes('WITHDRAW')}
             label="PENGELUARAN"
             onChange={(e) =>
-              handleChange({
+              handleFilter({
                 type: e.currentTarget.checked
                   ? [...filter.type, 'WITHDRAW']
                   : filter.type.filter((f) => f !== 'WITHDRAW'),
@@ -161,7 +161,7 @@ function generateColumn({
             checked={filter.type.includes('TRANSFER')}
             label="TRANSFER"
             onChange={(e) =>
-              handleChange({
+              handleFilter({
                 type: e.currentTarget.checked
                   ? [...filter.type, 'TRANSFER']
                   : filter.type.filter((f) => f !== 'TRANSFER'),
@@ -171,7 +171,7 @@ function generateColumn({
           {filter.type.length > 0 && (
             <Button
               color={BUTTON_BASE_COLOR}
-              onClick={() => handleChange({ type: [] })}
+              onClick={() => handleFilter({ type: [] })}
             >
               Reset
             </Button>
@@ -204,7 +204,7 @@ function generateColumn({
             prefix="Rp"
             allowNegative={false}
             onChange={(e) =>
-              handleChange({ value: { ...filter.value, min: e } })
+              handleFilter({ value: { ...filter.value, min: e } })
             }
           />
           <NumberInput
@@ -216,7 +216,7 @@ function generateColumn({
             prefix="Rp"
             allowNegative={false}
             onChange={(e) =>
-              handleChange({ value: { ...filter.value, max: e } })
+              handleFilter({ value: { ...filter.value, max: e } })
             }
           />
           <NumberInput
@@ -228,14 +228,14 @@ function generateColumn({
             prefix="Rp"
             allowNegative={false}
             onChange={(e) =>
-              handleChange({ value: { ...filter.value, equal: e } })
+              handleFilter({ value: { ...filter.value, equal: e } })
             }
           />
           {Object.values(filter.value).some((v) => v !== '') && (
             <Button
               color={BUTTON_BASE_COLOR}
               onClick={() =>
-                handleChange({
+                handleFilter({
                   value: {
                     min: '',
                     max: '',
@@ -265,7 +265,7 @@ function generateColumn({
                   checked={filter.category.includes(category.id)}
                   label={category.name}
                   onChange={(e) =>
-                    handleChange({
+                    handleFilter({
                       category: e.currentTarget.checked
                         ? [...filter.category, category.id]
                         : filter.category.filter((f) => f !== category.id),
@@ -277,7 +277,7 @@ function generateColumn({
                 <Button
                   color={BUTTON_BASE_COLOR}
                   onClick={() =>
-                    handleChange({
+                    handleFilter({
                       category: [],
                     })
                   }
@@ -321,7 +321,7 @@ function generateColumn({
                   checked={filter.pocket.includes(pocket.id)}
                   label={pocket.name}
                   onChange={(e) =>
-                    handleChange({
+                    handleFilter({
                       pocket: e.currentTarget.checked
                         ? [...filter.pocket, pocket.id]
                         : filter.pocket.filter((f) => f !== pocket.id),
@@ -333,7 +333,7 @@ function generateColumn({
                 <Button
                   color={BUTTON_BASE_COLOR}
                   onClick={() =>
-                    handleChange({
+                    handleFilter({
                       pocket: [],
                     })
                   }

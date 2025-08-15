@@ -10,7 +10,7 @@ import timezone from 'dayjs/plugin/timezone';
 import 'dayjs/locale/id';
 import { Button, NumberFormatter, Stack, Text, TextInput } from '@mantine/core';
 import { Category, Pocket, Transaction } from '@prisma/client';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus, IconRestore } from '@tabler/icons-react';
 import Link from 'next/link';
 import { generateColumn } from '../../helper';
 import { ITableFilter } from '../../interface';
@@ -62,7 +62,7 @@ export default function DetailTableClient({
 
   const [filter, setFilter] = useState<ITableFilter>(filterDefaultState);
 
-  const handleChange = (newKeyValue: any) => {
+  const handleFilter = (newKeyValue: any) => {
     setFilter((prev) => ({ ...prev, ...newKeyValue }));
   };
 
@@ -88,6 +88,22 @@ export default function DetailTableClient({
     }),
     [filter, oldestTransactionDate],
   );
+
+  const atLeastOneFilterIsActive =
+    filterStatus.generalSearchActive ||
+    filterStatus.dateStartActive ||
+    filterStatus.dateEndActive ||
+    filterStatus.informationActive ||
+    filterStatus.typeActive ||
+    filterStatus.valueMinActive ||
+    filterStatus.valueMaxActive ||
+    filterStatus.valueEqualActive ||
+    filterStatus.categoryActive ||
+    filterStatus.pocketActive;
+
+  const handleResetFilter = () => {
+    setFilter(filterDefaultState);
+  };
 
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<any>>({
     columnAccessor: 'no',
@@ -282,8 +298,18 @@ export default function DetailTableClient({
       <TextInput
         placeholder="Cari data keseluruhan"
         value={filter.generalSearch}
-        onChange={(e) => handleChange({ generalSearch: e.currentTarget.value })}
+        onChange={(e) => handleFilter({ generalSearch: e.currentTarget.value })}
       />
+      {atLeastOneFilterIsActive && (
+        <Button
+          color={BUTTON_BASE_COLOR}
+          leftSection={<IconRestore />}
+          onClick={handleResetFilter}
+          className=""
+        >
+          Reset Filter
+        </Button>
+      )}
       <DataTable
         style={{ color: TEXT_COLOR }}
         minHeight={200}
@@ -291,7 +317,7 @@ export default function DetailTableClient({
         borderRadius="md"
         columns={generateColumn({
           filter,
-          handleChange,
+          handleFilter,
           categories,
           pockets,
         })}
