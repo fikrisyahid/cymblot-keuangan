@@ -14,8 +14,17 @@ import {
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconCheck, IconX, IconArrowUp, IconArrowDown } from "@tabler/icons-react";
-import { createRecurring, type RecurringFormData, type FrequencyType } from "@/app/actions/recurring";
+import {
+  IconCheck,
+  IconX,
+  IconArrowUp,
+  IconArrowDown,
+} from "@tabler/icons-react";
+import {
+  createRecurring,
+  RecurringFrequency,
+  type RecurringFormData,
+} from "@/app/actions/recurring";
 import type { Account, Category } from "@/db/schema";
 
 const FREQUENCIES = [
@@ -47,13 +56,15 @@ export function RecurringModal({
       categoryId: "",
       amount: 0,
       description: "",
-      frequency: "MONTHLY" as FrequencyType,
+      frequency: "MONTHLY" as RecurringFrequency,
+      startDate: new Date(),
       nextDueDate: new Date(),
     },
     validate: {
       accountId: (value) => (!value ? "Pilih akun" : null),
       amount: (value) => (value <= 0 ? "Masukkan nominal" : null),
       description: (value) => (!value ? "Deskripsi harus diisi" : null),
+      startDate: (value) => (!value ? "Pilih tanggal mulai" : null),
     },
   });
 
@@ -189,8 +200,15 @@ export function RecurringModal({
           />
 
           <DatePickerInput
-            label="Tanggal Mulai / Berikutnya"
-            placeholder="Pilih tanggal"
+            label="Tanggal Mulai"
+            placeholder="Pilih tanggal mulai"
+            required
+            {...form.getInputProps("startDate")}
+          />
+
+          <DatePickerInput
+            label="Tanggal Berikutnya"
+            placeholder="Pilih tanggal berikutnya"
             required
             {...form.getInputProps("nextDueDate")}
           />
