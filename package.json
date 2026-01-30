@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "eslint"
   },
+  "prisma": {
+    "seed": "bunx tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@mantine/carousel": "^8.3.13",
     "@mantine/charts": "^8.3.13",
@@ -22,6 +25,7 @@
     "@mantine/nprogress": "^8.3.13",
     "@mantine/spotlight": "^8.3.13",
     "@mantine/tiptap": "^8.3.13",
+    "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "@tiptap/extension-link": "^3.18.0",
     "@tiptap/pm": "^3.18.0",
@@ -48,6 +52,7 @@
     "postcss-simple-vars": "^7.0.1",
     "prisma": "^7.3.0",
     "tailwindcss": "^4",
+    "tsx": "^4.19.0",
     "typescript": "^5"
   },
   "ignoreScripts": [
