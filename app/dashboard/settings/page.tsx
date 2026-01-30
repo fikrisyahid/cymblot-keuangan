@@ -1,5 +1,4 @@
 import { Title, Text, Paper, Stack, Switch, Group } from "@mantine/core";
-import { IconSettings } from "@tabler/icons-react";
 
 export default function SettingsPage() {
   return (
