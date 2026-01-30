@@ -14,6 +14,8 @@ import {
   Alert,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import { login } from "@/app/actions/auth";
 
 export default function LoginPage() {
@@ -45,9 +47,21 @@ export default function LoginPage() {
     const result = await login(formData);
 
     if (result.success) {
+      notifications.show({
+        title: "Berhasil",
+        message: "Login berhasil",
+        color: "green",
+        icon: <IconCheck size={18} />,
+      });
       router.push("/dashboard");
       router.refresh();
     } else {
+      notifications.show({
+        title: "Gagal",
+        message: result.error || "Terjadi kesalahan",
+        color: "red",
+        icon: <IconX size={18} />,
+      });
       setError(result.error || "Terjadi kesalahan");
       setLoading(false);
     }

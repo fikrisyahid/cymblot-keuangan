@@ -1,7 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import prisma from "@/lib/prisma";
+import { eq } from "drizzle-orm";
+import db from "@/db";
+import { users } from "@/db/schema";
 import {
   hashPassword,
   verifyPassword,
@@ -9,7 +11,7 @@ import {
   setSessionCookie,
   clearSessionCookie,
 } from "@/lib/auth";
-import { DEFAULT_CATEGORIES, createDefaultCategories } from "@/lib/categories";
+import { createDefaultCategories } from "@/lib/categories";
 
 export interface AuthResult {
   success: boolean;
@@ -39,8 +41,8 @@ export async function register(formData: FormData): Promise<AuthResult> {
   }
 
   // Check if email already exists
-  const existingUser = await prisma.user.findUnique({
-    where: { email: email.toLowerCase() },
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.email, email.toLowerCase()),
   });
 
   if (existingUser) {
@@ -49,13 +51,14 @@ export async function register(formData: FormData): Promise<AuthResult> {
 
   // Create user
   const passwordHash = await hashPassword(password);
-  const user = await prisma.user.create({
-    data: {
+  const [user] = await db
+    .insert(users)
+    .values({
       name,
       email: email.toLowerCase(),
       passwordHash,
-    },
-  });
+    })
+    .returning();
 
   // Create default categories for the user
   await createDefaultCategories(user.id);
@@ -78,9 +81,9 @@ export async function login(formData: FormData): Promise<AuthResult> {
     return { success: false, error: "Email dan password harus diisi" };
   }
 
-  // Find user
-  const user = await prisma.user.findUnique({
-    where: { email: email.toLowerCase() },
+  // Find user using ORM-style query
+  const user = await db.query.users.findFirst({
+    where: eq(users.email, email.toLowerCase()),
   });
 
   if (!user) {
@@ -105,5 +108,5 @@ export async function login(formData: FormData): Promise<AuthResult> {
  */
 export async function logout(): Promise<void> {
   await clearSessionCookie();
-  redirect("/login");
 }
+

@@ -15,6 +15,8 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { register } from "@/app/actions/auth";
+import { notifications } from "@mantine/notifications";
+import { IconCheck, IconX } from "@tabler/icons-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -53,9 +55,21 @@ export default function RegisterPage() {
     const result = await register(formData);
 
     if (result.success) {
+      notifications.show({
+        title: "Berhasil",
+        message: "Akun berhasil dibuat",
+        color: "green",
+        icon: <IconCheck size={18} />,
+      });
       router.push("/dashboard");
       router.refresh();
     } else {
+      notifications.show({
+        title: "Gagal",
+        message: result.error || "Terjadi kesalahan",
+        color: "red",
+        icon: <IconX size={18} />,
+      });
       setError(result.error || "Terjadi kesalahan");
       setLoading(false);
     }

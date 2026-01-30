@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { Container, Title, Text, Button, Group } from "@mantine/core";
-import { logout } from "@/app/actions/auth";
+import { Container, Title, Text, Group } from "@mantine/core";
+import { LogoutButton } from "@/components/LogoutButton";
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -24,12 +24,9 @@ export default async function DashboardPage() {
         Email: {session.email}
       </Text>
       <Group>
-        <form action={logout}>
-          <Button type="submit" variant="light" color="red">
-            Logout
-          </Button>
-        </form>
+        <LogoutButton />
       </Group>
     </Container>
   );
 }
+

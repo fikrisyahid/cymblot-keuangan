@@ -1,9 +1,11 @@
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 
 import "./globals.css"
 
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps, createTheme } from '@mantine/core';
 import { Poppins } from 'next/font/google';
+import { Notifications } from '@mantine/notifications';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -30,7 +32,9 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body className={poppins.className}>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <MantineProvider theme={theme}>
+          <Notifications position="top-center" />
+          {children}</MantineProvider>
       </body>
     </html>
   );
