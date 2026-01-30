@@ -21,6 +21,12 @@ import {
   Box,
   Grid,
   GridCol,
+  TableScrollContainer,
+  TableThead,
+  TableTr,
+  TableTh,
+  TableTbody,
+  TableTd,
 } from "@mantine/core";
 import {
   IconWallet,
@@ -318,19 +324,19 @@ export default async function DashboardPage() {
                 Belum ada transaksi
               </Text>
             ) : (
-              <Table.ScrollContainer minWidth={400}>
+              <TableScrollContainer minWidth={400}>
                 <Table striped highlightOnHover>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th>Transaksi</Table.Th>
-                      <Table.Th>Akun</Table.Th>
-                      <Table.Th ta="right">Nominal</Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
+                  <TableThead>
+                    <TableTr>
+                      <TableTh>Transaksi</TableTh>
+                      <TableTh>Akun</TableTh>
+                      <TableTh ta="right">Nominal</TableTh>
+                    </TableTr>
+                  </TableThead>
+                  <TableTbody>
                     {recentTransactions.map((txn) => (
-                      <Table.Tr key={txn.id}>
-                        <Table.Td>
+                      <TableTr key={txn.id}>
+                        <TableTd>
                           <Stack gap={0}>
                             <Text size="sm" fw={500}>
                               {txn.description}
@@ -339,13 +345,13 @@ export default async function DashboardPage() {
                               {dayjs(txn.date).format("DD MMM YYYY")}
                             </Text>
                           </Stack>
-                        </Table.Td>
-                        <Table.Td>
+                        </TableTd>
+                        <TableTd>
                           <Badge variant="light" size="sm">
                             {txn.account?.icon} {txn.account?.name}
                           </Badge>
-                        </Table.Td>
-                        <Table.Td ta="right">
+                        </TableTd>
+                        <TableTd ta="right">
                           <Text
                             fw={600}
                             c={txn.type === "INCOME" ? "green" : "red"}
@@ -354,12 +360,12 @@ export default async function DashboardPage() {
                             {txn.type === "INCOME" ? "+" : "-"}
                             {formatCurrency(parseFloat(txn.amount))}
                           </Text>
-                        </Table.Td>
-                      </Table.Tr>
+                        </TableTd>
+                      </TableTr>
                     ))}
-                  </Table.Tbody>
+                  </TableTbody>
                 </Table>
-              </Table.ScrollContainer>
+              </TableScrollContainer>
             )}
           </Paper>
         </GridCol>
