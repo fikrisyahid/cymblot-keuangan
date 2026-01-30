@@ -81,6 +81,8 @@ export function RecurringModal({
       ...values,
       type,
       amount: String(values.amount),
+      startDate: new Date(values.startDate),
+      nextDueDate: new Date(values.nextDueDate),
     };
 
     const result = await createRecurring(formData);
