@@ -13,6 +13,7 @@ import {
   Badge,
   ActionIcon,
   Menu,
+  Tooltip,
 } from "@mantine/core";
 import {
   IconPlus,
@@ -131,11 +132,7 @@ export function TransactionsClient({
         )}
       </Table.Td>
       <Table.Td ta="right">
-        <Text
-          fw={600}
-          c={txn.type === "INCOME" ? "green" : "red"}
-          size="sm"
-        >
+        <Text fw={600} c={txn.type === "INCOME" ? "green" : "red"} size="sm">
           {txn.type === "INCOME" ? "+" : "-"}
           {formatCurrency(txn.amount)}
         </Text>
@@ -169,13 +166,24 @@ export function TransactionsClient({
     </Table.Tr>
   ));
 
+  const dynamicAddTransactionButton =
+    accounts.length === 0 ? (
+      <Tooltip label="Tambahkan akun terlebih dahulu" withArrow>
+        <Button leftSection={<IconPlus size={16} />} disabled>
+          Tambah Transaksi
+        </Button>
+      </Tooltip>
+    ) : (
+      <Button leftSection={<IconPlus size={16} />} onClick={handleAdd}>
+        Tambah Transaksi
+      </Button>
+    );
+
   return (
     <>
       <Group justify="space-between" mb="lg">
         <Title order={2}>Transaksi</Title>
-        <Button leftSection={<IconPlus size={16} />} onClick={handleAdd}>
-          Tambah Transaksi
-        </Button>
+        {dynamicAddTransactionButton}
       </Group>
 
       {transactions.length === 0 ? (
@@ -185,9 +193,7 @@ export function TransactionsClient({
             <Text c="dimmed" ta="center">
               Belum ada transaksi. Catat transaksi pertamamu!
             </Text>
-            <Button leftSection={<IconPlus size={16} />} onClick={handleAdd}>
-              Tambah Transaksi
-            </Button>
+            {dynamicAddTransactionButton}
           </Stack>
         </Paper>
       ) : (
