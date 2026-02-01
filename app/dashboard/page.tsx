@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getSession } from "@/lib/auth";
 import { getAccounts } from "@/app/actions/accounts";
 import {
@@ -40,10 +41,11 @@ import {
 import Link from "next/link";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
+import CustomLoadingOverlay from "@/components/custom-loading-overlay";
 
 dayjs.locale("id");
 
-export default async function DashboardPage() {
+async function DashboardContent() {
   const session = await getSession();
   const now = new Date();
 
@@ -426,5 +428,13 @@ export default async function DashboardPage() {
         </GridCol>
       </Grid>
     </>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<CustomLoadingOverlay />}>
+      <DashboardContent />
+    </Suspense>
   );
 }

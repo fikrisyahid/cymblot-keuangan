@@ -31,6 +31,7 @@ import {
 import { RecurringModal } from "./components/recurring-modal";
 import type { Account, Category, RecurringTransaction } from "@/db/schema";
 import dayjs from "dayjs";
+import ComingSoonAlert from "@/components/coming-soon-alert";
 
 type RecurringWithRelations = RecurringTransaction & {
   account: Account;
@@ -167,9 +168,11 @@ export function RecurringClient({
 
   return (
     <>
-      <Group justify="space-between" mb="lg">
+      <ComingSoonAlert />
+
+      <Group justify="space-between" mb="lg" mt="lg">
         <Title order={2}>Transaksi Berulang</Title>
-        <Button leftSection={<IconPlus size={16} />} onClick={open}>
+        <Button leftSection={<IconPlus size={16} />} onClick={open} disabled>
           Tambah Transaksi
         </Button>
       </Group>
@@ -182,7 +185,7 @@ export function RecurringClient({
               Belum ada transaksi berulang. Tambahkan tagihan rutin atau
               pemasukan tetap!
             </Text>
-            <Button leftSection={<IconPlus size={16} />} onClick={open}>
+            <Button leftSection={<IconPlus size={16} />} onClick={open} disabled>
               Tambah Transaksi
             </Button>
           </Stack>
