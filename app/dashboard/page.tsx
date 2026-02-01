@@ -97,7 +97,7 @@ export default async function DashboardPage() {
   return (
     <>
       <Title order={2} mb="lg">
-        Selamat datang, {session?.email?.split("@")[0]}! 👋
+        Selamat datang, {session?.name}! 👋
       </Title>
 
       {/* Quick Stats */}

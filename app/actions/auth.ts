@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import db from "@/db";
 import { users } from "@/db/schema";
@@ -64,7 +63,7 @@ export async function register(formData: FormData): Promise<AuthResult> {
   await createDefaultCategories(user.id);
 
   // Create session and set cookie
-  const token = await createSession(user.id, user.email);
+  const token = await createSession(user.id, user.email, user.name);
   await setSessionCookie(token);
 
   return { success: true };
@@ -97,7 +96,7 @@ export async function login(formData: FormData): Promise<AuthResult> {
   }
 
   // Create session and set cookie
-  const token = await createSession(user.id, user.email);
+  const token = await createSession(user.id, user.email, user.name);
   await setSessionCookie(token);
 
   return { success: true };

@@ -1,7 +1,8 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const secretKey = process.env.JWT_SECRET || "your-secret-key-change-in-production";
+const secretKey =
+  process.env.JWT_SECRET || "your-secret-key-change-in-production";
 const encodedKey = new TextEncoder().encode(secretKey);
 
 const SESSION_COOKIE_NAME = "session";
@@ -10,6 +11,7 @@ const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
 export interface SessionPayload {
   userId: string;
   email: string;
+  name: string;
   expiresAt: Date;
 }
 
@@ -21,14 +23,19 @@ export async function hashPassword(password: string): Promise<string> {
   const data = encoder.encode(password);
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
   return hashHex;
 }
 
 /**
  * Verify password against hash
  */
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  hash: string,
+): Promise<boolean> {
   const passwordHash = await hashPassword(password);
   return passwordHash === hash;
 }
@@ -36,10 +43,14 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 /**
  * Create a session JWT token
  */
-export async function createSession(userId: string, email: string): Promise<string> {
+export async function createSession(
+  userId: string,
+  email: string,
+  name: string,
+): Promise<string> {
   const expiresAt = new Date(Date.now() + SESSION_DURATION);
 
-  const session = await new SignJWT({ userId, email })
+  const session = await new SignJWT({ userId, email, name })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(expiresAt)
@@ -51,7 +62,9 @@ export async function createSession(userId: string, email: string): Promise<stri
 /**
  * Verify session token and return payload
  */
-export async function verifySession(token: string): Promise<SessionPayload | null> {
+export async function verifySession(
+  token: string,
+): Promise<SessionPayload | null> {
   try {
     const { payload } = await jwtVerify(token, encodedKey, {
       algorithms: ["HS256"],
@@ -60,6 +73,7 @@ export async function verifySession(token: string): Promise<SessionPayload | nul
     return {
       userId: payload.userId as string,
       email: payload.email as string,
+      name: payload.name as string,
       expiresAt: new Date(payload.exp! * 1000),
     };
   } catch {
