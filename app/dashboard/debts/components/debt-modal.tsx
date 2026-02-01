@@ -52,7 +52,7 @@ export function DebtModal({ opened, onClose }: DebtModalProps) {
       ...values,
       type,
       amount: String(values.amount),
-      dueDate: values.dueDate || undefined,
+      dueDate: values.dueDate ? new Date(values.dueDate) : undefined,
     };
 
     const result = await createDebt(formData);
