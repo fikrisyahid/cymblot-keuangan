@@ -124,6 +124,30 @@ export async function createTransaction(
   }
 
   try {
+    const amountNum = parseFloat(data.amount);
+
+    // Check if account has sufficient balance for expense transactions
+    if (data.type === "EXPENSE") {
+      const account = await db.query.accounts.findFirst({
+        where: and(
+          eq(accounts.id, data.accountId),
+          eq(accounts.userId, session.userId)
+        ),
+      });
+
+      if (!account) {
+        return { success: false, error: "Akun tidak ditemukan" };
+      }
+
+      const currentBalance = parseFloat(account.balance);
+      if (currentBalance < amountNum) {
+        return {
+          success: false,
+          error: `Saldo tidak cukup. Saldo tersedia: ${currentBalance}, diperlukan: ${amountNum}`,
+        };
+      }
+    }
+
     // Create transaction
     await db.insert(transactions).values({
       userId: session.userId,
@@ -137,7 +161,6 @@ export async function createTransaction(
     });
 
     // Update account balance
-    const amountNum = parseFloat(data.amount);
     const balanceChange = data.type === "INCOME" ? amountNum : -amountNum;
 
     await db
@@ -176,37 +199,104 @@ export async function updateTransaction(
   }
 
   try {
-    // Revert original balance change
     const originalAmountNum = parseFloat(originalAmount);
-    const revertChange =
-      originalType === "INCOME" ? -originalAmountNum : originalAmountNum;
+    const newAmountNum = parseFloat(data.amount);
 
-    await db
-      .update(accounts)
-      .set({
-        balance: sql`${accounts.balance} + ${revertChange}`,
-        updatedAt: new Date(),
-      })
-      .where(
-        and(
+    // Get current account state before any changes
+    const account = await db.query.accounts.findFirst({
+      where: and(
+        eq(accounts.id, data.accountId),
+        eq(accounts.userId, session.userId)
+      ),
+    });
+
+    if (!account) {
+      return { success: false, error: "Akun tidak ditemukan" };
+    }
+
+    const currentBalance = parseFloat(account.balance);
+
+    // If changing account, need to handle both accounts
+    if (data.accountId !== originalAccountId) {
+      const originalAccount = await db.query.accounts.findFirst({
+        where: and(
           eq(accounts.id, originalAccountId),
           eq(accounts.userId, session.userId)
-        )
-      );
+        ),
+      });
 
-    // Apply new balance change
-    const newAmountNum = parseFloat(data.amount);
-    const newChange = data.type === "INCOME" ? newAmountNum : -newAmountNum;
+      if (!originalAccount) {
+        return { success: false, error: "Akun original tidak ditemukan" };
+      }
 
-    await db
-      .update(accounts)
-      .set({
-        balance: sql`${accounts.balance} + ${newChange}`,
-        updatedAt: new Date(),
-      })
-      .where(
-        and(eq(accounts.id, data.accountId), eq(accounts.userId, session.userId))
-      );
+      // Check if new account has sufficient balance for expense transactions
+      if (data.type === "EXPENSE") {
+        if (currentBalance < newAmountNum) {
+          return {
+            success: false,
+            error: `Saldo akun ${account.name} tidak cukup. Saldo tersedia: ${currentBalance}, diperlukan: ${newAmountNum}`,
+          };
+        }
+      }
+
+      // Revert from original account
+      const originalRevertChange =
+        originalType === "INCOME" ? -originalAmountNum : originalAmountNum;
+
+      await db
+        .update(accounts)
+        .set({
+          balance: sql`${accounts.balance} + ${originalRevertChange}`,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(accounts.id, originalAccountId),
+            eq(accounts.userId, session.userId)
+          )
+        );
+
+      // Apply new transaction to new account
+      const newChange = data.type === "INCOME" ? newAmountNum : -newAmountNum;
+
+      await db
+        .update(accounts)
+        .set({
+          balance: sql`${accounts.balance} + ${newChange}`,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(eq(accounts.id, data.accountId), eq(accounts.userId, session.userId))
+        );
+    } else {
+      // Same account: calculate balance after reverting original transaction
+      const revertChange =
+        originalType === "INCOME" ? -originalAmountNum : originalAmountNum;
+      const balanceAfterRevert = currentBalance + revertChange;
+
+      // Check if the new transaction is an expense and if there's sufficient balance
+      if (data.type === "EXPENSE") {
+        if (balanceAfterRevert < newAmountNum) {
+          return {
+            success: false,
+            error: `Saldo tidak cukup. Saldo tersedia setelah revert: ${balanceAfterRevert}, diperlukan: ${newAmountNum}`,
+          };
+        }
+      }
+
+      // Apply new transaction to the reverted balance
+      const finalBalance = balanceAfterRevert + (data.type === "INCOME" ? newAmountNum : -newAmountNum);
+
+      await db
+        .update(accounts)
+        .set({
+          balance: finalBalance.toString(),
+          updatedAt: new Date(),
+        })
+        .where(
+          and(eq(accounts.id, data.accountId), eq(accounts.userId, session.userId))
+        );
+    }
 
     // Update transaction
     await db
