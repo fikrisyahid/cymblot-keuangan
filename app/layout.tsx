@@ -1,16 +1,22 @@
-import '@mantine/core/styles.css';
-import '@mantine/notifications/styles.css';
-import '@mantine/dates/styles.css';
+import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
+import "@mantine/dates/styles.css";
 
-import "./globals.css"
+import "./globals.css";
 
-import { ColorSchemeScript, MantineProvider, mantineHtmlProps, createTheme } from '@mantine/core';
-import { Poppins } from 'next/font/google';
-import { Notifications } from '@mantine/notifications';
+import {
+  ColorSchemeScript,
+  MantineProvider,
+  mantineHtmlProps,
+  createTheme,
+} from "@mantine/core";
+import { Poppins } from "next/font/google";
+import { Notifications } from "@mantine/notifications";
+import BProgressProvider from "@/components/bprogress-provider";
 
 const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const theme = createTheme({
@@ -18,8 +24,8 @@ const theme = createTheme({
 });
 
 export const metadata = {
-  title: 'Cymblot Keuangan',
-  description: 'Aplikasi Keuangan Sederhana',
+  title: "Cymblot Keuangan",
+  description: "Aplikasi Keuangan Sederhana",
 };
 
 export default function RootLayout({
@@ -35,7 +41,8 @@ export default function RootLayout({
       <body className={poppins.className}>
         <MantineProvider theme={theme}>
           <Notifications position="top-center" />
-          {children}</MantineProvider>
+          <BProgressProvider>{children}</BProgressProvider>
+        </MantineProvider>
       </body>
     </html>
   );
