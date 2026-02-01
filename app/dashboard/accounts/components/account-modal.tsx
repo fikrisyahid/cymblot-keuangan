@@ -134,7 +134,13 @@ export function AccountModal({ opened, onClose, account }: AccountModalProps) {
             thousandSeparator=","
             prefix="Rp "
             min={0}
-            {...form.getInputProps("balance")}
+            value={form.values.balance}
+            onChange={(value) => {
+              // Normalize value to remove leading zeros
+              const numValue = typeof value === 'number' ? value : parseFloat(value || '0');
+              form.setFieldValue('balance', isNaN(numValue) ? '0' : numValue.toString());
+            }}
+            error={form.errors.balance}
           />
 
           <Select

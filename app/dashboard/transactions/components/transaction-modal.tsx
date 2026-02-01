@@ -170,7 +170,13 @@ function TransactionForm({
             min={0}
             required
             size="lg"
-            {...form.getInputProps("amount")}
+            value={form.values.amount}
+            onChange={(value) => {
+              // Normalize value to remove leading zeros
+              const numValue = typeof value === 'number' ? value : parseFloat(value || '0');
+              form.setFieldValue('amount', isNaN(numValue) ? '' : numValue.toString());
+            }}
+            error={form.errors.amount}
           />
 
           <Select

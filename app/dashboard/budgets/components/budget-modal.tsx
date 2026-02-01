@@ -141,7 +141,13 @@ export function BudgetModal({ opened, onClose, categories, budget }: BudgetModal
             prefix="Rp "
             min={0}
             required
-            {...form.getInputProps("amount")}
+            value={form.values.amount}
+            onChange={(value) => {
+              // Normalize value to remove leading zeros
+              const numValue = typeof value === 'number' ? value : parseFloat(value || '0');
+              form.setFieldValue('amount', isNaN(numValue) ? 0 : numValue);
+            }}
+            error={form.errors.amount}
           />
 
           <Group grow>
