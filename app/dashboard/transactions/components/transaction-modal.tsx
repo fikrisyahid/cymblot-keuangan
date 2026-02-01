@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Modal,
   TextInput,
@@ -35,13 +35,17 @@ interface TransactionModalProps {
   }) | null;
 }
 
-export function TransactionModal({
-  opened,
-  onClose,
+function TransactionForm({
+  transaction,
   accounts,
   categories,
-  transaction,
-}: TransactionModalProps) {
+  onClose,
+}: {
+  transaction: TransactionModalProps["transaction"];
+  accounts: Account[];
+  categories: Category[];
+  onClose: () => void;
+}) {
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState<TransactionType>(
     transaction?.type || "EXPENSE"
@@ -64,27 +68,6 @@ export function TransactionModal({
       description: (value) => (!value ? "Deskripsi harus diisi" : null),
     },
   });
-
-  // Reset form when modal opens
-  useEffect(() => {
-    if (opened) {
-      if (transaction) {
-        setType(transaction.type);
-        form.setValues({
-          accountId: transaction.accountId,
-          categoryId: transaction.categoryId || "",
-          amount: transaction.amount,
-          description: transaction.description,
-          note: transaction.note || "",
-          date: new Date(transaction.date),
-        });
-      } else {
-        setType("EXPENSE");
-        form.reset();
-        form.setFieldValue("date", new Date());
-      }
-    }
-  }, [opened, transaction]);
 
   const handleClose = () => {
     form.reset();
@@ -146,13 +129,7 @@ export function TransactionModal({
   }));
 
   return (
-    <Modal
-      opened={opened}
-      onClose={handleClose}
-      title={isEdit ? "Edit Transaksi" : "Tambah Transaksi"}
-      centered
-      size="md"
-    >
+    <>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
           <SegmentedControl
@@ -250,6 +227,32 @@ export function TransactionModal({
           </Group>
         </Stack>
       </form>
+    </>
+  );
+}
+
+export function TransactionModal({
+  opened,
+  onClose,
+  accounts,
+  categories,
+  transaction,
+}: TransactionModalProps) {
+  return (
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title={transaction ? "Edit Transaksi" : "Tambah Transaksi"}
+      centered
+      size="md"
+    >
+      <TransactionForm
+        key={transaction?.id || "new"}
+        transaction={transaction}
+        accounts={accounts}
+        categories={categories}
+        onClose={onClose}
+      />
     </Modal>
   );
 }
