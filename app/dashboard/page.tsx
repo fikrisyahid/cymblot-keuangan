@@ -309,7 +309,7 @@ async function DashboardContent() {
 
       <Grid gutter="md">
         {/* Recent Transactions */}
-        <GridCol span={{ base: 12, md: 8 }}>
+        <GridCol span={{ base: 12, md: 12 }}>
           <Paper p="md" radius="md" withBorder>
             <Group justify="space-between" mb="md">
               <Title order={4}>Transaksi Terakhir</Title>
@@ -373,7 +373,7 @@ async function DashboardContent() {
         </GridCol>
 
         {/* Upcoming Recurring */}
-        <GridCol span={{ base: 12, md: 4 }}>
+        {/* <GridCol span={{ base: 12, md: 4 }}>
           <Paper p="md" radius="md" withBorder>
             <Group justify="space-between" mb="md">
               <Group gap="xs">
@@ -425,7 +425,7 @@ async function DashboardContent() {
               </Stack>
             )}
           </Paper>
-        </GridCol>
+        </GridCol> */}
       </Grid>
     </>
   );
