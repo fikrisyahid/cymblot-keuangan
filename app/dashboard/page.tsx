@@ -60,7 +60,7 @@ async function DashboardContent() {
     getAccounts(),
     getRecentTransactions(5),
     getMonthlySummary(now.getFullYear(), now.getMonth() + 1),
-    getBudgetsWithSpending(),
+    getBudgetsWithSpending({ monthly: true }),
     getDebts(),
     getRecurringTransactions(),
   ]);

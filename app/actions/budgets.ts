@@ -30,35 +30,43 @@ export interface BudgetWithSpending {
   year: number;
 }
 
+type BudgetsWithSpendingParams = {
+  monthly?: boolean;
+};
+
 /**
  * Get budgets with spending calculation
  */
 export async function getBudgetsWithSpending(
-  month?: number,
-  year?: number
+  params?: BudgetsWithSpendingParams,
 ): Promise<BudgetWithSpending[]> {
+  const { monthly = false } = params || {};
+
   const session = await getSession();
   if (!session) return [];
 
   const now = new Date();
-  const targetMonth = month || now.getMonth() + 1;
-  const targetYear = year || now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+
+  const whereOptions = [eq(budgets.userId, session.userId)];
+
+  if (monthly) {
+    whereOptions.push(eq(budgets.month, currentMonth));
+    whereOptions.push(eq(budgets.year, currentYear));
+  }
 
   const userBudgets = await db.query.budgets.findMany({
-    where: and(
-      eq(budgets.userId, session.userId),
-      eq(budgets.month, targetMonth),
-      eq(budgets.year, targetYear)
-    ),
+    where: and(...whereOptions),
     with: {
       category: true,
     },
-    orderBy: (budgets, { desc }) => [desc(budgets.createdAt)],
+    orderBy: (budgets, { asc }) => [asc(budgets.createdAt)],
   });
 
   // Calculate date range for this month
-  const startDate = new Date(targetYear, targetMonth - 1, 1);
-  const endDate = new Date(targetYear, targetMonth, 0, 23, 59, 59);
+  const startDate = new Date(currentYear, currentMonth - 1, 1);
+  const endDate = new Date(currentYear, currentMonth, 0, 23, 59, 59);
 
   // Calculate spending for each budget
   const budgetsWithSpending = await Promise.all(
@@ -69,7 +77,7 @@ export async function getBudgetsWithSpending(
           eq(transactions.categoryId, budget.categoryId),
           eq(transactions.type, "EXPENSE"),
           gte(transactions.date, startDate),
-          lte(transactions.date, endDate)
+          lte(transactions.date, endDate),
         ),
       });
 
@@ -86,7 +94,7 @@ export async function getBudgetsWithSpending(
         month: budget.month,
         year: budget.year,
       };
-    })
+    }),
   );
 
   return budgetsWithSpending;
@@ -95,7 +103,9 @@ export async function getBudgetsWithSpending(
 /**
  * Create new budget
  */
-export async function createBudget(data: BudgetFormData): Promise<ActionResult> {
+export async function createBudget(
+  data: BudgetFormData,
+): Promise<ActionResult> {
   const session = await getSession();
   if (!session) {
     return { success: false, error: "Unauthorized" };
@@ -108,7 +118,7 @@ export async function createBudget(data: BudgetFormData): Promise<ActionResult> 
         eq(budgets.userId, session.userId),
         eq(budgets.categoryId, data.categoryId),
         eq(budgets.month, data.month),
-        eq(budgets.year, data.year)
+        eq(budgets.year, data.year),
       ),
     });
 
@@ -141,7 +151,7 @@ export async function createBudget(data: BudgetFormData): Promise<ActionResult> 
  */
 export async function updateBudget(
   id: string,
-  data: BudgetFormData
+  data: BudgetFormData,
 ): Promise<ActionResult> {
   const session = await getSession();
   if (!session) {
