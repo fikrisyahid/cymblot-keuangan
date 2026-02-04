@@ -9,6 +9,7 @@ import {
   createSession,
   setSessionCookie,
   clearSessionCookie,
+  getSession,
 } from "@/lib/auth";
 import { createDefaultCategories } from "@/lib/categories";
 
@@ -109,3 +110,57 @@ export async function logout(): Promise<void> {
   await clearSessionCookie();
 }
 
+/**
+ * Change user password
+ */
+export async function changePassword(formData: FormData): Promise<AuthResult> {
+  const session = await getSession();
+
+  if (!session) {
+    return { success: false, error: "Anda harus login terlebih dahulu" };
+  }
+
+  const currentPassword = formData.get("currentPassword") as string;
+  const newPassword = formData.get("newPassword") as string;
+  const confirmNewPassword = formData.get("confirmNewPassword") as string;
+
+  // Validation
+  if (!currentPassword || !newPassword || !confirmNewPassword) {
+    return { success: false, error: "Semua field harus diisi" };
+  }
+
+  if (newPassword !== confirmNewPassword) {
+    return { success: false, error: "Password baru tidak cocok" };
+  }
+
+  if (newPassword.length < 6) {
+    return { success: false, error: "Password baru minimal 6 karakter" };
+  }
+
+  // Get current user
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, session.userId),
+  });
+
+  if (!user) {
+    return { success: false, error: "User tidak ditemukan" };
+  }
+
+  // Verify current password
+  const isValid = await verifyPassword(currentPassword, user.passwordHash);
+  if (!isValid) {
+    return { success: false, error: "Password lama salah" };
+  }
+
+  // Update password
+  const newPasswordHash = await hashPassword(newPassword);
+  await db
+    .update(users)
+    .set({
+      passwordHash: newPasswordHash,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, session.userId));
+
+  return { success: true };
+}
