@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./public/icons/192x192.png" alt="Aplikasi Keuangan Cymblot" />
+  <img src="./public/android-chrome-192x192.png" alt="Aplikasi Keuangan Cymblot" />
 </p>
 
 # Aplikasi Keuangan Cymblot
