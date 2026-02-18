@@ -60,7 +60,14 @@ async function DashboardContent() {
 
   // Date ranges
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+  const monthEnd = new Date(
+    now.getFullYear(),
+    now.getMonth() + 1,
+    0,
+    23,
+    59,
+    59,
+  );
 
   // Week start (Monday)
   const dayOfWeek = now.getDay();
@@ -142,8 +149,14 @@ async function DashboardContent() {
     "var(--mantine-color-pink-6)",
   ];
 
-  const totalExpenseCategories = expenseCategoriesMonth.reduce((s, c) => s + c.total, 0);
-  const totalIncomeCategories = incomeCategoriesMonth.reduce((s, c) => s + c.total, 0);
+  const totalExpenseCategories = expenseCategoriesMonth.reduce(
+    (s, c) => s + c.total,
+    0,
+  );
+  const totalIncomeCategories = incomeCategoriesMonth.reduce(
+    (s, c) => s + c.total,
+    0,
+  );
 
   return (
     <>
@@ -170,7 +183,12 @@ async function DashboardContent() {
                 {formatCurrency(totalBalance)}
               </Text>
             </div>
-            <ThemeIcon size="lg" radius="md" variant="filled" style={{ background: "rgba(255,255,255,0.2)" }}>
+            <ThemeIcon
+              size="lg"
+              radius="md"
+              variant="filled"
+              style={{ background: "rgba(255,255,255,0.2)" }}
+            >
               <IconWallet size={20} color="white" />
             </ThemeIcon>
           </Group>
@@ -193,7 +211,12 @@ async function DashboardContent() {
                 {formatCurrency(monthlySummary.income)}
               </Text>
             </div>
-            <ThemeIcon size="lg" radius="md" variant="filled" style={{ background: "rgba(255,255,255,0.2)" }}>
+            <ThemeIcon
+              size="lg"
+              radius="md"
+              variant="filled"
+              style={{ background: "rgba(255,255,255,0.2)" }}
+            >
               <IconArrowUp size={20} color="white" />
             </ThemeIcon>
           </Group>
@@ -216,7 +239,12 @@ async function DashboardContent() {
                 {formatCurrency(monthlySummary.expense)}
               </Text>
             </div>
-            <ThemeIcon size="lg" radius="md" variant="filled" style={{ background: "rgba(255,255,255,0.2)" }}>
+            <ThemeIcon
+              size="lg"
+              radius="md"
+              variant="filled"
+              style={{ background: "rgba(255,255,255,0.2)" }}
+            >
               <IconArrowDown size={20} color="white" />
             </ThemeIcon>
           </Group>
@@ -242,240 +270,334 @@ async function DashboardContent() {
                 {formatCurrency(monthlySummary.income - monthlySummary.expense)}
               </Text>
             </div>
-            <ThemeIcon size="lg" radius="md" variant="filled" style={{ background: "rgba(255,255,255,0.2)" }}>
+            <ThemeIcon
+              size="lg"
+              radius="md"
+              variant="filled"
+              style={{ background: "rgba(255,255,255,0.2)" }}
+            >
               <IconScale size={20} color="white" />
             </ThemeIcon>
           </Group>
         </Paper>
       </SimpleGrid>
 
-      {/* ===== CATEGORY BREAKDOWN — BULAN INI ===== */}
-      <Grid gutter="md" mb="xl">
-        {/* Pengeluaran per Kategori — Bulan Ini */}
-        <GridCol span={{ base: 12, md: 6 }}>
-          <Paper p="md" radius="md" withBorder h="100%">
-            <Group gap="xs" mb="md">
-              <ThemeIcon size="sm" radius="xl" variant="gradient" gradient={{ from: "red", to: "orange" }}>
-                <IconTrendingDown size={14} />
-              </ThemeIcon>
-              <Title order={4}>Pengeluaran per Kategori</Title>
-              <Badge size="xs" variant="light" color="gray">Bulan ini</Badge>
-            </Group>
+      {/* ===== CATEGORY BREAKDOWN ===== */}
+      <Paper p="md" radius="md" withBorder mb="xl">
+        {/* Section title */}
+        <Group gap="sm" mb="lg">
+          <ThemeIcon
+            size="md"
+            radius="xl"
+            variant="gradient"
+            gradient={{ from: "blue", to: "cyan", deg: 135 }}
+          >
+            <IconCategory size={16} />
+          </ThemeIcon>
+          <div>
+            <Title order={4} style={{ lineHeight: 1.2 }}>
+              Pengeluaran & Pemasukan per Kategori
+            </Title>
+            <Text size="xs" c="dimmed">
+              Perbandingan bulan ini dan minggu ini
+            </Text>
+          </div>
+        </Group>
 
-            {expenseCategoriesMonth.length === 0 ? (
-              <Text c="dimmed" ta="center" py="lg" size="sm">
-                Belum ada pengeluaran bulan ini
-              </Text>
-            ) : (
-              <Group align="flex-start" gap="lg">
-                {/* Ring Chart */}
-                <RingProgress
-                  size={130}
-                  thickness={14}
-                  roundCaps
-                  sections={expenseCategoriesMonth.map((cat, idx) => ({
-                    value: cat.percentage,
-                    color: categoryColors[idx % categoryColors.length],
-                    tooltip: `${cat.categoryIcon} ${cat.categoryName}: ${cat.percentage.toFixed(1)}%`,
-                  }))}
-                  label={
-                    <Text ta="center" size="xs" fw={700}>
-                      {formatCurrency(totalExpenseCategories)}
-                    </Text>
-                  }
-                />
-                {/* Legend */}
-                <Stack gap={6} style={{ flex: 1 }}>
-                  {expenseCategoriesMonth.map((cat, idx) => (
-                    <Group key={cat.categoryId || idx} justify="space-between">
-                      <Group gap="xs">
-                        <Box
-                          style={{
-                            width: 10,
-                            height: 10,
-                            borderRadius: "50%",
-                            backgroundColor: categoryColors[idx % categoryColors.length],
-                            flexShrink: 0,
-                          }}
-                        />
-                        <Text size="sm">
-                          {cat.categoryIcon} {cat.categoryName}
-                        </Text>
+        {/* ── Bulan Ini ── */}
+        <Group
+          gap="xs"
+          mb="sm"
+          px="xs"
+          py={6}
+          style={{
+            borderRadius: 8,
+            background: "var(--mantine-color-blue-light)",
+          }}
+        >
+          <ThemeIcon size="xs" radius="xl" variant="filled" color="blue">
+            <IconChartBar size={10} />
+          </ThemeIcon>
+          <Text size="sm" fw={700} c="blue">
+            Bulan Ini —{" "}
+            {new Date().toLocaleString("id-ID", {
+              month: "long",
+              year: "numeric",
+            })}
+          </Text>
+        </Group>
+
+        <Grid gutter="md" mb="md">
+          {/* Pengeluaran per Kategori — Bulan Ini */}
+          <GridCol span={{ base: 12, md: 6 }}>
+            <Paper p="md" radius="md" withBorder h="100%">
+              <Group gap="xs" mb="md">
+                <ThemeIcon
+                  size="sm"
+                  radius="xl"
+                  variant="gradient"
+                  gradient={{ from: "red", to: "orange" }}
+                >
+                  <IconTrendingDown size={14} />
+                </ThemeIcon>
+                <Title order={5}>Pengeluaran per Kategori</Title>
+              </Group>
+
+              {expenseCategoriesMonth.length === 0 ? (
+                <Text c="dimmed" ta="center" py="lg" size="sm">
+                  Belum ada pengeluaran bulan ini
+                </Text>
+              ) : (
+                <Group align="flex-start" gap="lg">
+                  <RingProgress
+                    size={130}
+                    thickness={14}
+                    roundCaps
+                    sections={expenseCategoriesMonth.map((cat, idx) => ({
+                      value: cat.percentage,
+                      color: categoryColors[idx % categoryColors.length],
+                      tooltip: `${cat.categoryIcon} ${cat.categoryName}: ${cat.percentage.toFixed(1)}%`,
+                    }))}
+                    label={
+                      <Text ta="center" size="xs" fw={700}>
+                        {formatCurrency(totalExpenseCategories)}
+                      </Text>
+                    }
+                  />
+                  <Stack gap={6} style={{ flex: 1 }}>
+                    {expenseCategoriesMonth.map((cat, idx) => (
+                      <Group
+                        key={cat.categoryId || idx}
+                        justify="space-between"
+                      >
+                        <Group gap="xs">
+                          <Box
+                            style={{
+                              width: 10,
+                              height: 10,
+                              borderRadius: "50%",
+                              backgroundColor:
+                                categoryColors[idx % categoryColors.length],
+                              flexShrink: 0,
+                            }}
+                          />
+                          <Text size="sm">
+                            {cat.categoryIcon} {cat.categoryName}
+                          </Text>
+                        </Group>
+                        <div style={{ textAlign: "right" }}>
+                          <Text size="sm" fw={600} c="red">
+                            {formatCurrency(cat.total)}
+                          </Text>
+                          <Text size="xs" c="dimmed">
+                            {cat.percentage.toFixed(1)}% • {cat.count}x
+                          </Text>
+                        </div>
                       </Group>
-                      <div style={{ textAlign: "right" }}>
+                    ))}
+                  </Stack>
+                </Group>
+              )}
+            </Paper>
+          </GridCol>
+
+          {/* Pemasukan per Kategori — Bulan Ini */}
+          <GridCol span={{ base: 12, md: 6 }}>
+            <Paper p="md" radius="md" withBorder h="100%">
+              <Group gap="xs" mb="md">
+                <ThemeIcon
+                  size="sm"
+                  radius="xl"
+                  variant="gradient"
+                  gradient={{ from: "teal", to: "lime" }}
+                >
+                  <IconTrendingUp size={14} />
+                </ThemeIcon>
+                <Title order={5}>Pemasukan per Kategori</Title>
+              </Group>
+
+              {incomeCategoriesMonth.length === 0 ? (
+                <Text c="dimmed" ta="center" py="lg" size="sm">
+                  Belum ada pemasukan bulan ini
+                </Text>
+              ) : (
+                <Group align="flex-start" gap="lg">
+                  <RingProgress
+                    size={130}
+                    thickness={14}
+                    roundCaps
+                    sections={incomeCategoriesMonth.map((cat, idx) => ({
+                      value: cat.percentage,
+                      color: categoryColors[idx % categoryColors.length],
+                      tooltip: `${cat.categoryIcon} ${cat.categoryName}: ${cat.percentage.toFixed(1)}%`,
+                    }))}
+                    label={
+                      <Text ta="center" size="xs" fw={700}>
+                        {formatCurrency(totalIncomeCategories)}
+                      </Text>
+                    }
+                  />
+                  <Stack gap={6} style={{ flex: 1 }}>
+                    {incomeCategoriesMonth.map((cat, idx) => (
+                      <Group
+                        key={cat.categoryId || idx}
+                        justify="space-between"
+                      >
+                        <Group gap="xs">
+                          <Box
+                            style={{
+                              width: 10,
+                              height: 10,
+                              borderRadius: "50%",
+                              backgroundColor:
+                                categoryColors[idx % categoryColors.length],
+                              flexShrink: 0,
+                            }}
+                          />
+                          <Text size="sm">
+                            {cat.categoryIcon} {cat.categoryName}
+                          </Text>
+                        </Group>
+                        <div style={{ textAlign: "right" }}>
+                          <Text size="sm" fw={600} c="green">
+                            {formatCurrency(cat.total)}
+                          </Text>
+                          <Text size="xs" c="dimmed">
+                            {cat.percentage.toFixed(1)}% • {cat.count}x
+                          </Text>
+                        </div>
+                      </Group>
+                    ))}
+                  </Stack>
+                </Group>
+              )}
+            </Paper>
+          </GridCol>
+        </Grid>
+
+        <Divider my="md" />
+
+        {/* ── Minggu Ini ── */}
+        <Group
+          gap="xs"
+          mb="sm"
+          px="xs"
+          py={6}
+          style={{
+            borderRadius: 8,
+            background: "var(--mantine-color-violet-light)",
+          }}
+        >
+          <ThemeIcon size="xs" radius="xl" variant="filled" color="violet">
+            <IconCalendarWeek size={10} />
+          </ThemeIcon>
+          <Text size="sm" fw={700} c="violet">
+            Minggu Ini —{" "}
+            {weekStart.toLocaleString("id-ID", {
+              day: "numeric",
+              month: "long",
+            })}{" "}
+            s/d{" "}
+            {weekEnd.toLocaleString("id-ID", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </Text>
+        </Group>
+
+        <Grid gutter="md">
+          <GridCol span={{ base: 12, md: 6 }}>
+            <Paper p="md" radius="md" withBorder h="100%">
+              <Group gap="xs" mb="md">
+                <ThemeIcon size="sm" radius="xl" variant="light" color="red">
+                  <IconCalendarWeek size={14} />
+                </ThemeIcon>
+                <Title order={5}>Pengeluaran per Kategori</Title>
+              </Group>
+
+              {expenseCategoriesWeek.length === 0 ? (
+                <Text c="dimmed" ta="center" py="md" size="sm">
+                  Belum ada pengeluaran minggu ini
+                </Text>
+              ) : (
+                <Stack gap="xs">
+                  {expenseCategoriesWeek.map((cat, idx) => (
+                    <Box key={cat.categoryId || idx}>
+                      <Group justify="space-between" mb={4}>
+                        <Group gap="xs">
+                          <Text size="sm">
+                            {cat.categoryIcon} {cat.categoryName}
+                          </Text>
+                          <Badge size="xs" variant="light" color="gray">
+                            {cat.count}x
+                          </Badge>
+                        </Group>
                         <Text size="sm" fw={600} c="red">
                           {formatCurrency(cat.total)}
                         </Text>
-                        <Text size="xs" c="dimmed">
-                          {cat.percentage.toFixed(1)}% • {cat.count}x
-                        </Text>
-                      </div>
-                    </Group>
+                      </Group>
+                      <Progress
+                        value={cat.percentage}
+                        color={categoryColors[idx % categoryColors.length]
+                          .replace("var(--mantine-color-", "")
+                          .replace("-6)", "")}
+                        size="sm"
+                        radius="xl"
+                      />
+                    </Box>
                   ))}
                 </Stack>
+              )}
+            </Paper>
+          </GridCol>
+
+          <GridCol span={{ base: 12, md: 6 }}>
+            <Paper p="md" radius="md" withBorder h="100%">
+              <Group gap="xs" mb="md">
+                <ThemeIcon size="sm" radius="xl" variant="light" color="green">
+                  <IconCalendarWeek size={14} />
+                </ThemeIcon>
+                <Title order={5}>Pemasukan per Kategori</Title>
               </Group>
-            )}
-          </Paper>
-        </GridCol>
 
-        {/* Pemasukan per Kategori — Bulan Ini */}
-        <GridCol span={{ base: 12, md: 6 }}>
-          <Paper p="md" radius="md" withBorder h="100%">
-            <Group gap="xs" mb="md">
-              <ThemeIcon size="sm" radius="xl" variant="gradient" gradient={{ from: "teal", to: "lime" }}>
-                <IconTrendingUp size={14} />
-              </ThemeIcon>
-              <Title order={4}>Pemasukan per Kategori</Title>
-              <Badge size="xs" variant="light" color="gray">Bulan ini</Badge>
-            </Group>
-
-            {incomeCategoriesMonth.length === 0 ? (
-              <Text c="dimmed" ta="center" py="lg" size="sm">
-                Belum ada pemasukan bulan ini
-              </Text>
-            ) : (
-              <Group align="flex-start" gap="lg">
-                {/* Ring Chart */}
-                <RingProgress
-                  size={130}
-                  thickness={14}
-                  roundCaps
-                  sections={incomeCategoriesMonth.map((cat, idx) => ({
-                    value: cat.percentage,
-                    color: categoryColors[idx % categoryColors.length],
-                    tooltip: `${cat.categoryIcon} ${cat.categoryName}: ${cat.percentage.toFixed(1)}%`,
-                  }))}
-                  label={
-                    <Text ta="center" size="xs" fw={700}>
-                      {formatCurrency(totalIncomeCategories)}
-                    </Text>
-                  }
-                />
-                {/* Legend */}
-                <Stack gap={6} style={{ flex: 1 }}>
-                  {incomeCategoriesMonth.map((cat, idx) => (
-                    <Group key={cat.categoryId || idx} justify="space-between">
-                      <Group gap="xs">
-                        <Box
-                          style={{
-                            width: 10,
-                            height: 10,
-                            borderRadius: "50%",
-                            backgroundColor: categoryColors[idx % categoryColors.length],
-                            flexShrink: 0,
-                          }}
-                        />
-                        <Text size="sm">
-                          {cat.categoryIcon} {cat.categoryName}
-                        </Text>
-                      </Group>
-                      <div style={{ textAlign: "right" }}>
+              {incomeCategoriesWeek.length === 0 ? (
+                <Text c="dimmed" ta="center" py="md" size="sm">
+                  Belum ada pemasukan minggu ini
+                </Text>
+              ) : (
+                <Stack gap="xs">
+                  {incomeCategoriesWeek.map((cat, idx) => (
+                    <Box key={cat.categoryId || idx}>
+                      <Group justify="space-between" mb={4}>
+                        <Group gap="xs">
+                          <Text size="sm">
+                            {cat.categoryIcon} {cat.categoryName}
+                          </Text>
+                          <Badge size="xs" variant="light" color="gray">
+                            {cat.count}x
+                          </Badge>
+                        </Group>
                         <Text size="sm" fw={600} c="green">
                           {formatCurrency(cat.total)}
                         </Text>
-                        <Text size="xs" c="dimmed">
-                          {cat.percentage.toFixed(1)}% • {cat.count}x
-                        </Text>
-                      </div>
-                    </Group>
+                      </Group>
+                      <Progress
+                        value={cat.percentage}
+                        color={categoryColors[idx % categoryColors.length]
+                          .replace("var(--mantine-color-", "")
+                          .replace("-6)", "")}
+                        size="sm"
+                        radius="xl"
+                      />
+                    </Box>
                   ))}
                 </Stack>
-              </Group>
-            )}
-          </Paper>
-        </GridCol>
-      </Grid>
-
-      {/* ===== CATEGORY BREAKDOWN — MINGGU INI ===== */}
-      <Grid gutter="md" mb="xl">
-        <GridCol span={{ base: 12, md: 6 }}>
-          <Paper p="md" radius="md" withBorder h="100%">
-            <Group gap="xs" mb="md">
-              <ThemeIcon size="sm" radius="xl" variant="light" color="red">
-                <IconCalendarWeek size={14} />
-              </ThemeIcon>
-              <Title order={4}>Pengeluaran per Kategori</Title>
-              <Badge size="xs" variant="light" color="gray">Minggu ini</Badge>
-            </Group>
-
-            {expenseCategoriesWeek.length === 0 ? (
-              <Text c="dimmed" ta="center" py="md" size="sm">
-                Belum ada pengeluaran minggu ini
-              </Text>
-            ) : (
-              <Stack gap="xs">
-                {expenseCategoriesWeek.map((cat, idx) => (
-                  <Box key={cat.categoryId || idx}>
-                    <Group justify="space-between" mb={4}>
-                      <Group gap="xs">
-                        <Text size="sm">
-                          {cat.categoryIcon} {cat.categoryName}
-                        </Text>
-                        <Badge size="xs" variant="light" color="gray">
-                          {cat.count}x
-                        </Badge>
-                      </Group>
-                      <Text size="sm" fw={600} c="red">
-                        {formatCurrency(cat.total)}
-                      </Text>
-                    </Group>
-                    <Progress
-                      value={cat.percentage}
-                      color={idx === 0 ? "red" : "orange"}
-                      size="sm"
-                      radius="xl"
-                    />
-                  </Box>
-                ))}
-              </Stack>
-            )}
-          </Paper>
-        </GridCol>
-
-        <GridCol span={{ base: 12, md: 6 }}>
-          <Paper p="md" radius="md" withBorder h="100%">
-            <Group gap="xs" mb="md">
-              <ThemeIcon size="sm" radius="xl" variant="light" color="green">
-                <IconCalendarWeek size={14} />
-              </ThemeIcon>
-              <Title order={4}>Pemasukan per Kategori</Title>
-              <Badge size="xs" variant="light" color="gray">Minggu ini</Badge>
-            </Group>
-
-            {incomeCategoriesWeek.length === 0 ? (
-              <Text c="dimmed" ta="center" py="md" size="sm">
-                Belum ada pemasukan minggu ini
-              </Text>
-            ) : (
-              <Stack gap="xs">
-                {incomeCategoriesWeek.map((cat, idx) => (
-                  <Box key={cat.categoryId || idx}>
-                    <Group justify="space-between" mb={4}>
-                      <Group gap="xs">
-                        <Text size="sm">
-                          {cat.categoryIcon} {cat.categoryName}
-                        </Text>
-                        <Badge size="xs" variant="light" color="gray">
-                          {cat.count}x
-                        </Badge>
-                      </Group>
-                      <Text size="sm" fw={600} c="green">
-                        {formatCurrency(cat.total)}
-                      </Text>
-                    </Group>
-                    <Progress
-                      value={cat.percentage}
-                      color={idx === 0 ? "teal" : "green"}
-                      size="sm"
-                      radius="xl"
-                    />
-                  </Box>
-                ))}
-              </Stack>
-            )}
-          </Paper>
-        </GridCol>
-      </Grid>
+              )}
+            </Paper>
+          </GridCol>
+        </Grid>
+      </Paper>
 
       {/* ===== BUDGET + DEBT ===== */}
       <Grid gutter="md" mb="xl">
@@ -632,15 +754,29 @@ async function DashboardContent() {
                       Pengeluaran
                     </Text>
                     {topExpensesMonth.slice(0, 3).map((txn, idx) => (
-                      <Group key={txn.id} justify="space-between" p="xs" style={{ borderRadius: 8, background: idx === 0 ? "var(--mantine-color-red-light)" : "transparent" }}>
+                      <Group
+                        key={txn.id}
+                        justify="space-between"
+                        p="xs"
+                        style={{
+                          borderRadius: 8,
+                          background:
+                            idx === 0
+                              ? "var(--mantine-color-red-light)"
+                              : "transparent",
+                        }}
+                      >
                         <Group gap="xs">
                           <Badge size="sm" variant="filled" color="red" circle>
                             {idx + 1}
                           </Badge>
                           <div>
-                            <Text size="sm" fw={500}>{txn.description}</Text>
+                            <Text size="sm" fw={500}>
+                              {txn.description}
+                            </Text>
                             <Text size="xs" c="dimmed">
-                              {txn.category?.icon} {txn.category?.name || "—"} • {dayjs(txn.date).format("DD MMM")}
+                              {txn.category?.icon} {txn.category?.name || "—"} •{" "}
+                              {dayjs(txn.date).format("DD MMM")}
                             </Text>
                           </div>
                         </Group>
@@ -663,15 +799,34 @@ async function DashboardContent() {
                       Pemasukan
                     </Text>
                     {topIncomeMonth.slice(0, 3).map((txn, idx) => (
-                      <Group key={txn.id} justify="space-between" p="xs" style={{ borderRadius: 8, background: idx === 0 ? "var(--mantine-color-green-light)" : "transparent" }}>
+                      <Group
+                        key={txn.id}
+                        justify="space-between"
+                        p="xs"
+                        style={{
+                          borderRadius: 8,
+                          background:
+                            idx === 0
+                              ? "var(--mantine-color-green-light)"
+                              : "transparent",
+                        }}
+                      >
                         <Group gap="xs">
-                          <Badge size="sm" variant="filled" color="green" circle>
+                          <Badge
+                            size="sm"
+                            variant="filled"
+                            color="green"
+                            circle
+                          >
                             {idx + 1}
                           </Badge>
                           <div>
-                            <Text size="sm" fw={500}>{txn.description}</Text>
+                            <Text size="sm" fw={500}>
+                              {txn.description}
+                            </Text>
                             <Text size="xs" c="dimmed">
-                              {txn.category?.icon} {txn.category?.name || "—"} • {dayjs(txn.date).format("DD MMM")}
+                              {txn.category?.icon} {txn.category?.name || "—"} •{" "}
+                              {dayjs(txn.date).format("DD MMM")}
                             </Text>
                           </div>
                         </Group>
