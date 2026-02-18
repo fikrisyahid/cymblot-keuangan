@@ -149,6 +149,7 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
       {/* Navbar */}
       <AppShell.Navbar
         p="md"
+        zIndex={200}
         style={{
           background: isDark
             ? "linear-gradient(180deg, #1a1b1e 0%, #141517 100%)"
