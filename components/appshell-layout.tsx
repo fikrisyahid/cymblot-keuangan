@@ -31,6 +31,7 @@ import {
   IconLogout,
   IconCurrencyDollar,
   IconReportAnalytics,
+  IconBrandGithub,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { logout } from "@/app/actions/auth";
@@ -103,6 +104,21 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           </Group>
           <Group gap="sm">
+            <Tooltip label="Source Code" withArrow>
+              <ActionIcon
+                variant="light"
+                size="lg"
+                radius="xl"
+                color="gray"
+                component="a"
+                href="https://github.com/fikrisyahid/cymblot-keuangan"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Source Code"
+              >
+                <IconBrandGithub size={18} />
+              </ActionIcon>
+            </Tooltip>
             <Tooltip label={isDark ? "Mode terang" : "Mode gelap"} withArrow>
               <ActionIcon
                 variant="light"

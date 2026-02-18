@@ -16,6 +16,9 @@ import {
   Group,
   ThemeIcon,
   List,
+  ActionIcon,
+  Tooltip,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { register } from "@/app/actions/auth";
@@ -28,12 +31,17 @@ import {
   IconChartPie,
   IconBell,
   IconTargetArrow,
+  IconSun,
+  IconMoon,
+  IconBrandGithub,
 } from "@tabler/icons-react";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
 
   const form = useForm({
     initialValues: {
@@ -95,7 +103,45 @@ export default function RegisterPage() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex" }}>
+    <div style={{ minHeight: "100vh", display: "flex", position: "relative" }}>
+      {/* Top-right action buttons */}
+      <Group
+        gap="xs"
+        style={{
+          position: "fixed",
+          top: "1rem",
+          right: "1rem",
+          zIndex: 100,
+        }}
+      >
+        <Tooltip label="Source Code" withArrow>
+          <ActionIcon
+            variant="light"
+            size="lg"
+            radius="xl"
+            color="gray"
+            component="a"
+            href="https://github.com/fikrisyahid/cymblot-keuangan"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Source Code"
+          >
+            <IconBrandGithub size={18} />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label={isDark ? "Mode terang" : "Mode gelap"} withArrow>
+          <ActionIcon
+            variant="light"
+            size="lg"
+            radius="xl"
+            onClick={() => toggleColorScheme()}
+            color={isDark ? "yellow" : "blue"}
+            aria-label="Toggle color scheme"
+          >
+            {isDark ? <IconSun size={18} /> : <IconMoon size={18} />}
+          </ActionIcon>
+        </Tooltip>
+      </Group>
       {/* Left side - Form */}
       <Box
         style={{
