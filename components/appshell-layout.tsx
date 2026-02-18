@@ -30,6 +30,7 @@ import {
   IconMoon,
   IconLogout,
   IconCurrencyDollar,
+  IconReportAnalytics,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { logout } from "@/app/actions/auth";
@@ -44,6 +45,7 @@ const navItems = [
   { label: "Anggaran", href: "/dashboard/budgets", icon: IconChartBar, color: "orange" },
   { label: "Recurring", href: "/dashboard/recurring", icon: IconReceipt, color: "indigo" },
   { label: "Utang/Piutang", href: "/dashboard/debts", icon: IconUsers, color: "pink" },
+  { label: "Laporan", href: "/dashboard/reports", icon: IconReportAnalytics, color: "violet" },
 ];
 
 
