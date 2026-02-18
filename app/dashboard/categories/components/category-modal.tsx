@@ -145,7 +145,6 @@ export function CategoryModal({ opened, onClose, category }: CategoryModalProps)
           <Select
             label="Icon"
             data={CATEGORY_ICONS}
-            searchable
             {...form.getInputProps("icon")}
           />
 

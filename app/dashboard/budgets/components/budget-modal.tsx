@@ -130,7 +130,6 @@ export function BudgetModal({ opened, onClose, categories, budget }: BudgetModal
             placeholder="Pilih kategori"
             data={expenseCategories}
             required
-            searchable
             {...form.getInputProps("categoryId")}
           />
 

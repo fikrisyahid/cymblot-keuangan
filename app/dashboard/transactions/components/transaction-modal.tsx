@@ -184,7 +184,6 @@ function TransactionForm({
             placeholder="Pilih akun"
             data={accountOptions}
             required
-            searchable
             {...form.getInputProps("accountId")}
           />
 
@@ -192,7 +191,6 @@ function TransactionForm({
             label="Kategori"
             placeholder="Pilih kategori (opsional)"
             data={categoryOptions}
-            searchable
             clearable
             {...form.getInputProps("categoryId")}
           />
