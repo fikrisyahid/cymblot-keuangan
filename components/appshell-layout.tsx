@@ -39,13 +39,13 @@ import { notifications } from "@mantine/notifications";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: IconHome, color: "blue" },
+  { label: "Transaksi", href: "/dashboard/transactions", icon: IconArrowsExchange, color: "teal" },
   { label: "Akun", href: "/dashboard/accounts", icon: IconWallet, color: "cyan" },
   { label: "Kategori", href: "/dashboard/categories", icon: IconCategory, color: "grape" },
-  { label: "Transaksi", href: "/dashboard/transactions", icon: IconArrowsExchange, color: "teal" },
+  { label: "Laporan", href: "/dashboard/reports", icon: IconReportAnalytics, color: "violet" },
   { label: "Anggaran", href: "/dashboard/budgets", icon: IconChartBar, color: "orange" },
   { label: "Recurring", href: "/dashboard/recurring", icon: IconReceipt, color: "indigo" },
   { label: "Utang/Piutang", href: "/dashboard/debts", icon: IconUsers, color: "pink" },
-  { label: "Laporan", href: "/dashboard/reports", icon: IconReportAnalytics, color: "violet" },
 ];
 
 
