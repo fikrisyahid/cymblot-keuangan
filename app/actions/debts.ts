@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { eq, and } from "drizzle-orm";
 import db from "@/db";
 import { debts } from "@/db/schema";
-import { getSession } from "@/lib/auth";
+import { getSession, getEncryptionKey } from "@/lib/auth";
+import { encrypt, encryptField, decryptDebt } from "@/lib/encryption";
 
 export type DebtType = "LEND" | "BORROW";
 
@@ -28,10 +29,15 @@ export async function getDebts() {
   const session = await getSession();
   if (!session) return [];
 
-  return db.query.debts.findMany({
+  const key = await getEncryptionKey();
+
+  const raw = await db.query.debts.findMany({
     where: eq(debts.userId, session.userId),
     orderBy: (debts, { desc }) => [desc(debts.createdAt)],
   });
+
+  if (!key) return raw;
+  return Promise.all(raw.map((d) => decryptDebt(d, key)));
 }
 
 /**
@@ -44,13 +50,21 @@ export async function createDebt(data: DebtFormData): Promise<ActionResult> {
   }
 
   try {
+    const key = await getEncryptionKey();
+
     await db.insert(debts).values({
       userId: session.userId,
-      personName: data.personName,
-      amount: data.amount,
-      remainingAmount: data.amount,
+      personName: key
+        ? await encrypt(data.personName, key)
+        : data.personName,
+      amount: key ? await encrypt(data.amount, key) : data.amount,
+      remainingAmount: key
+        ? await encrypt(data.amount, key)
+        : data.amount,
       type: data.type,
-      description: data.description,
+      description: key
+        ? await encryptField(data.description ?? null, key)
+        : (data.description ?? null),
       dueDate: data.dueDate,
       isPaid: false,
     });
@@ -73,11 +87,13 @@ export async function markDebtAsPaid(id: string): Promise<ActionResult> {
   }
 
   try {
+    const key = await getEncryptionKey();
+
     await db
       .update(debts)
       .set({
         isPaid: true,
-        remainingAmount: "0",
+        remainingAmount: key ? await encrypt("0", key) : "0",
         updatedAt: new Date(),
       })
       .where(and(eq(debts.id, id), eq(debts.userId, session.userId)));

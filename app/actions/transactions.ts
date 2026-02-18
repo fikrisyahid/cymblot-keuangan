@@ -1,10 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq, and, desc, gte, lte, sql, count, ilike } from "drizzle-orm";
+import { eq, and, desc, gte, lte, count } from "drizzle-orm";
 import db from "@/db";
 import { transactions, accounts } from "@/db/schema";
-import { getSession } from "@/lib/auth";
+import { getSession, getEncryptionKey } from "@/lib/auth";
+import {
+  encrypt,
+  decrypt,
+  encryptField,
+  decryptTransaction,
+} from "@/lib/encryption";
 
 export type TransactionType = "INCOME" | "EXPENSE";
 
@@ -45,6 +51,9 @@ export interface PaginatedResult<T> {
   totalPages: number;
 }
 
+/**
+ * Build SQL filter conditions (excludes search — done in JS after decrypt)
+ */
 function buildFilterConditions(userId: string, filters?: TransactionFilters) {
   const conditions = [eq(transactions.userId, userId)];
 
@@ -63,9 +72,7 @@ function buildFilterConditions(userId: string, filters?: TransactionFilters) {
   if (filters?.categoryId) {
     conditions.push(eq(transactions.categoryId, filters.categoryId));
   }
-  if (filters?.search) {
-    conditions.push(ilike(transactions.description, `%${filters.search}%`));
-  }
+  // NOTE: search is handled in JS after decryption (can't ilike on ciphertext)
 
   return conditions;
 }
@@ -77,9 +84,10 @@ export async function getTransactions(filters?: TransactionFilters) {
   const session = await getSession();
   if (!session) return [];
 
+  const key = await getEncryptionKey();
   const conditions = buildFilterConditions(session.userId, filters);
 
-  return db.query.transactions.findMany({
+  const raw = await db.query.transactions.findMany({
     where: and(...conditions),
     with: {
       account: true,
@@ -87,6 +95,22 @@ export async function getTransactions(filters?: TransactionFilters) {
     },
     orderBy: [desc(transactions.date), desc(transactions.createdAt)],
   });
+
+  if (!key) return raw;
+
+  let decrypted = await Promise.all(
+    raw.map((t) => decryptTransaction(t, key)),
+  );
+
+  // Apply search filter in JS (on decrypted description)
+  if (filters?.search) {
+    const q = filters.search.toLowerCase();
+    decrypted = decrypted.filter((t) =>
+      t.description.toLowerCase().includes(q),
+    );
+  }
+
+  return decrypted;
 }
 
 /**
@@ -94,36 +118,67 @@ export async function getTransactions(filters?: TransactionFilters) {
  */
 export async function getTransactionsPaginated(
   filters?: TransactionFilters,
-  pagination?: PaginationParams
+  pagination?: PaginationParams,
 ) {
   const session = await getSession();
-  if (!session) return { data: [], total: 0, page: 1, perPage: 15, totalPages: 0 };
+  if (!session)
+    return { data: [], total: 0, page: 1, perPage: 15, totalPages: 0 };
 
+  const key = await getEncryptionKey();
   const page = pagination?.page || 1;
   const perPage = pagination?.perPage || 15;
-  const offset = (page - 1) * perPage;
 
   const conditions = buildFilterConditions(session.userId, filters);
   const whereClause = and(...conditions);
 
-  const [data, totalResult] = await Promise.all([
+  if (filters?.search && key) {
+    // Search requires decryption — fetch all matching SQL filters, decrypt, search in JS, paginate in JS
+    const allRaw = await db.query.transactions.findMany({
+      where: whereClause,
+      with: { account: true, category: true },
+      orderBy: [desc(transactions.date), desc(transactions.createdAt)],
+    });
+
+    const allDecrypted = await Promise.all(
+      allRaw.map((t) => decryptTransaction(t, key)),
+    );
+
+    const q = filters.search.toLowerCase();
+    const filtered = allDecrypted.filter((t) =>
+      t.description.toLowerCase().includes(q),
+    );
+
+    const total = filtered.length;
+    const offset = (page - 1) * perPage;
+    const paged = filtered.slice(offset, offset + perPage);
+
+    return {
+      data: paged,
+      total,
+      page,
+      perPage,
+      totalPages: Math.ceil(total / perPage),
+    };
+  }
+
+  // No search — use SQL pagination
+  const offset = (page - 1) * perPage;
+
+  const [rawData, totalResult] = await Promise.all([
     db.query.transactions.findMany({
       where: whereClause,
-      with: {
-        account: true,
-        category: true,
-      },
+      with: { account: true, category: true },
       orderBy: [desc(transactions.date), desc(transactions.createdAt)],
       limit: perPage,
       offset,
     }),
-    db
-      .select({ count: count() })
-      .from(transactions)
-      .where(whereClause),
+    db.select({ count: count() }).from(transactions).where(whereClause),
   ]);
 
   const total = totalResult[0]?.count || 0;
+  const data = key
+    ? await Promise.all(rawData.map((t) => decryptTransaction(t, key)))
+    : rawData;
 
   return {
     data,
@@ -136,30 +191,45 @@ export async function getTransactionsPaginated(
 
 /**
  * Get top transactions (biggest income/expense) for a date range
+ * Sorts by decrypted amount in JS since amount is encrypted
  */
 export async function getTopTransactions(
   type: TransactionType,
   startDate: Date,
   endDate: Date,
-  limitCount = 5
+  limitCount = 5,
 ) {
   const session = await getSession();
   if (!session) return [];
 
-  return db.query.transactions.findMany({
+  const key = await getEncryptionKey();
+
+  const raw = await db.query.transactions.findMany({
     where: and(
       eq(transactions.userId, session.userId),
       eq(transactions.type, type),
       gte(transactions.date, startDate),
-      lte(transactions.date, endDate)
+      lte(transactions.date, endDate),
     ),
     with: {
       account: true,
       category: true,
     },
-    orderBy: [desc(transactions.amount)],
-    limit: limitCount,
+    orderBy: [desc(transactions.date)],
   });
+
+  if (!key) return raw.slice(0, limitCount);
+
+  const decrypted = await Promise.all(
+    raw.map((t) => decryptTransaction(t, key)),
+  );
+
+  // Sort by amount descending (in JS since amount is encrypted)
+  decrypted.sort(
+    (a, b) => parseFloat(b.amount) - parseFloat(a.amount),
+  );
+
+  return decrypted.slice(0, limitCount);
 }
 
 export interface CategorySummary {
@@ -179,34 +249,46 @@ export async function getCategorySummary(
   type: TransactionType,
   startDate: Date,
   endDate: Date,
-  limitCount = 5
+  limitCount = 5,
 ): Promise<CategorySummary[]> {
   const session = await getSession();
   if (!session) return [];
 
-  const txns = await db.query.transactions.findMany({
+  const key = await getEncryptionKey();
+
+  const raw = await db.query.transactions.findMany({
     where: and(
       eq(transactions.userId, session.userId),
       eq(transactions.type, type),
       gte(transactions.date, startDate),
-      lte(transactions.date, endDate)
+      lte(transactions.date, endDate),
     ),
     with: {
       category: true,
     },
   });
 
-  // Aggregate by category
+  // Decrypt if needed
+  const txns = key
+    ? await Promise.all(raw.map((t) => decryptTransaction(t, key)))
+    : raw;
+
   const categoryMap = new Map<
     string,
-    { name: string; icon: string; color: string; total: number; count: number }
+    {
+      name: string;
+      icon: string;
+      color: string;
+      total: number;
+      count: number;
+    }
   >();
 
   let grandTotal = 0;
 
   for (const txn of txns) {
-    const key = txn.categoryId || "__uncategorized__";
-    const existing = categoryMap.get(key);
+    const k = txn.categoryId || "__uncategorized__";
+    const existing = categoryMap.get(k);
     const amount = parseFloat(txn.amount);
     grandTotal += amount;
 
@@ -214,7 +296,7 @@ export async function getCategorySummary(
       existing.total += amount;
       existing.count += 1;
     } else {
-      categoryMap.set(key, {
+      categoryMap.set(k, {
         name: txn.category?.name || "Tanpa Kategori",
         icon: txn.category?.icon || "📦",
         color: txn.category?.color || "gray",
@@ -224,8 +306,7 @@ export async function getCategorySummary(
     }
   }
 
-  // Convert to array, sort by total desc, limit
-  const result: CategorySummary[] = Array.from(categoryMap.entries())
+  return Array.from(categoryMap.entries())
     .map(([categoryId, data]) => ({
       categoryId: categoryId === "__uncategorized__" ? null : categoryId,
       categoryName: data.name,
@@ -237,18 +318,18 @@ export async function getCategorySummary(
     }))
     .sort((a, b) => b.total - a.total)
     .slice(0, limitCount);
-
-  return result;
 }
 
 /**
- * Get recent transactions (last 10)
+ * Get recent transactions
  */
 export async function getRecentTransactions(limit = 10) {
   const session = await getSession();
   if (!session) return [];
 
-  return db.query.transactions.findMany({
+  const key = await getEncryptionKey();
+
+  const raw = await db.query.transactions.findMany({
     where: eq(transactions.userId, session.userId),
     with: {
       account: true,
@@ -257,6 +338,9 @@ export async function getRecentTransactions(limit = 10) {
     orderBy: [desc(transactions.date), desc(transactions.createdAt)],
     limit,
   });
+
+  if (!key) return raw;
+  return Promise.all(raw.map((t) => decryptTransaction(t, key)));
 }
 
 /**
@@ -266,16 +350,27 @@ export async function getMonthlySummary(year: number, month: number) {
   const session = await getSession();
   if (!session) return { income: 0, expense: 0 };
 
+  const key = await getEncryptionKey();
   const startDate = new Date(year, month - 1, 1);
   const endDate = new Date(year, month, 0, 23, 59, 59);
 
-  const txns = await db.query.transactions.findMany({
+  const raw = await db.query.transactions.findMany({
     where: and(
       eq(transactions.userId, session.userId),
       gte(transactions.date, startDate),
-      lte(transactions.date, endDate)
+      lte(transactions.date, endDate),
     ),
   });
+
+  // Decrypt amounts
+  const txns = key
+    ? await Promise.all(
+        raw.map(async (t) => ({
+          ...t,
+          amount: await decrypt(t.amount, key),
+        })),
+      )
+    : raw;
 
   const income = txns
     .filter((t) => t.type === "INCOME")
@@ -287,11 +382,48 @@ export async function getMonthlySummary(year: number, month: number) {
   return { income, expense };
 }
 
+// ============================================
+// HELPER: Read & decrypt account balance
+// ============================================
+
+async function getDecryptedAccountBalance(
+  accountId: string,
+  userId: string,
+  key: string | null,
+): Promise<{ account: typeof accounts.$inferSelect; balance: number } | null> {
+  const account = await db.query.accounts.findFirst({
+    where: and(eq(accounts.id, accountId), eq(accounts.userId, userId)),
+  });
+  if (!account) return null;
+
+  const balance = key
+    ? parseFloat(await decrypt(account.balance, key))
+    : parseFloat(account.balance);
+
+  return { account, balance };
+}
+
+async function updateAccountBalance(
+  accountId: string,
+  userId: string,
+  newBalance: number,
+  key: string | null,
+) {
+  const balanceStr = newBalance.toString();
+  await db
+    .update(accounts)
+    .set({
+      balance: key ? await encrypt(balanceStr, key) : balanceStr,
+      updatedAt: new Date(),
+    })
+    .where(and(eq(accounts.id, accountId), eq(accounts.userId, userId)));
+}
+
 /**
  * Create new transaction
  */
 export async function createTransaction(
-  data: TransactionFormData
+  data: TransactionFormData,
 ): Promise<ActionResult> {
   const session = await getSession();
   if (!session) {
@@ -299,54 +431,50 @@ export async function createTransaction(
   }
 
   try {
+    const key = await getEncryptionKey();
     const amountNum = parseFloat(data.amount);
 
-    // Check if account has sufficient balance for expense transactions
-    if (data.type === "EXPENSE") {
-      const account = await db.query.accounts.findFirst({
-        where: and(
-          eq(accounts.id, data.accountId),
-          eq(accounts.userId, session.userId)
-        ),
-      });
-
-      if (!account) {
-        return { success: false, error: "Akun tidak ditemukan" };
-      }
-
-      const currentBalance = parseFloat(account.balance);
-      if (currentBalance < amountNum) {
-        return {
-          success: false,
-          error: `Saldo tidak cukup. Saldo tersedia: ${currentBalance}, diperlukan: ${amountNum}`,
-        };
-      }
+    // Get account with decrypted balance
+    const accData = await getDecryptedAccountBalance(
+      data.accountId,
+      session.userId,
+      key,
+    );
+    if (!accData) {
+      return { success: false, error: "Akun tidak ditemukan" };
     }
 
-    // Create transaction
+    // Check sufficient balance for expense
+    if (data.type === "EXPENSE" && accData.balance < amountNum) {
+      return {
+        success: false,
+        error: `Saldo tidak cukup. Saldo tersedia: ${accData.balance}, diperlukan: ${amountNum}`,
+      };
+    }
+
+    // Create transaction (encrypted)
     await db.insert(transactions).values({
       userId: session.userId,
       accountId: data.accountId,
       categoryId: data.categoryId || null,
-      amount: data.amount,
+      amount: key ? await encrypt(data.amount, key) : data.amount,
       type: data.type,
-      description: data.description,
-      note: data.note,
+      description: key
+        ? await encrypt(data.description, key)
+        : data.description,
+      note: key ? await encryptField(data.note ?? null, key) : (data.note ?? null),
       date: data.date,
     });
 
     // Update account balance
-    const balanceChange = data.type === "INCOME" ? amountNum : -amountNum;
-
-    await db
-      .update(accounts)
-      .set({
-        balance: sql`${accounts.balance} + ${balanceChange}`,
-        updatedAt: new Date(),
-      })
-      .where(
-        and(eq(accounts.id, data.accountId), eq(accounts.userId, session.userId))
-      );
+    const balanceChange =
+      data.type === "INCOME" ? amountNum : -amountNum;
+    await updateAccountBalance(
+      data.accountId,
+      session.userId,
+      accData.balance + balanceChange,
+      key,
+    );
 
     revalidatePath("/dashboard/transactions");
     revalidatePath("/dashboard/accounts");
@@ -366,7 +494,7 @@ export async function updateTransaction(
   data: TransactionFormData,
   originalAmount: string,
   originalType: TransactionType,
-  originalAccountId: string
+  originalAccountId: string,
 ): Promise<ActionResult> {
   const session = await getSession();
   if (!session) {
@@ -374,120 +502,107 @@ export async function updateTransaction(
   }
 
   try {
+    const key = await getEncryptionKey();
     const originalAmountNum = parseFloat(originalAmount);
     const newAmountNum = parseFloat(data.amount);
 
-    // Get current account state before any changes
-    const account = await db.query.accounts.findFirst({
-      where: and(
-        eq(accounts.id, data.accountId),
-        eq(accounts.userId, session.userId)
-      ),
-    });
-
-    if (!account) {
+    // Get current account balance (decrypted)
+    const accData = await getDecryptedAccountBalance(
+      data.accountId,
+      session.userId,
+      key,
+    );
+    if (!accData) {
       return { success: false, error: "Akun tidak ditemukan" };
     }
 
-    const currentBalance = parseFloat(account.balance);
-
-    // If changing account, need to handle both accounts
     if (data.accountId !== originalAccountId) {
-      const originalAccount = await db.query.accounts.findFirst({
-        where: and(
-          eq(accounts.id, originalAccountId),
-          eq(accounts.userId, session.userId)
-        ),
-      });
-
-      if (!originalAccount) {
+      // Different account: revert from original, apply to new
+      const origAccData = await getDecryptedAccountBalance(
+        originalAccountId,
+        session.userId,
+        key,
+      );
+      if (!origAccData) {
         return { success: false, error: "Akun original tidak ditemukan" };
       }
 
-      // Check if new account has sufficient balance for expense transactions
-      if (data.type === "EXPENSE") {
-        if (currentBalance < newAmountNum) {
-          return {
-            success: false,
-            error: `Saldo akun ${account.name} tidak cukup. Saldo tersedia: ${currentBalance}, diperlukan: ${newAmountNum}`,
-          };
-        }
+      if (data.type === "EXPENSE" && accData.balance < newAmountNum) {
+        return {
+          success: false,
+          error: `Saldo akun tidak cukup. Saldo tersedia: ${accData.balance}, diperlukan: ${newAmountNum}`,
+        };
       }
 
-      // Revert from original account
-      const originalRevertChange =
-        originalType === "INCOME" ? -originalAmountNum : originalAmountNum;
+      // Revert original account
+      const origRevert =
+        originalType === "INCOME"
+          ? -originalAmountNum
+          : originalAmountNum;
+      await updateAccountBalance(
+        originalAccountId,
+        session.userId,
+        origAccData.balance + origRevert,
+        key,
+      );
 
-      await db
-        .update(accounts)
-        .set({
-          balance: sql`${accounts.balance} + ${originalRevertChange}`,
-          updatedAt: new Date(),
-        })
-        .where(
-          and(
-            eq(accounts.id, originalAccountId),
-            eq(accounts.userId, session.userId)
-          )
-        );
-
-      // Apply new transaction to new account
-      const newChange = data.type === "INCOME" ? newAmountNum : -newAmountNum;
-
-      await db
-        .update(accounts)
-        .set({
-          balance: sql`${accounts.balance} + ${newChange}`,
-          updatedAt: new Date(),
-        })
-        .where(
-          and(eq(accounts.id, data.accountId), eq(accounts.userId, session.userId))
-        );
+      // Apply to new account
+      const newChange =
+        data.type === "INCOME" ? newAmountNum : -newAmountNum;
+      await updateAccountBalance(
+        data.accountId,
+        session.userId,
+        accData.balance + newChange,
+        key,
+      );
     } else {
-      // Same account: calculate balance after reverting original transaction
+      // Same account
       const revertChange =
-        originalType === "INCOME" ? -originalAmountNum : originalAmountNum;
-      const balanceAfterRevert = currentBalance + revertChange;
+        originalType === "INCOME"
+          ? -originalAmountNum
+          : originalAmountNum;
+      const balanceAfterRevert = accData.balance + revertChange;
 
-      // Check if the new transaction is an expense and if there's sufficient balance
-      if (data.type === "EXPENSE") {
-        if (balanceAfterRevert < newAmountNum) {
-          return {
-            success: false,
-            error: `Saldo tidak cukup. Saldo tersedia setelah revert: ${balanceAfterRevert}, diperlukan: ${newAmountNum}`,
-          };
-        }
+      if (data.type === "EXPENSE" && balanceAfterRevert < newAmountNum) {
+        return {
+          success: false,
+          error: `Saldo tidak cukup. Saldo tersedia setelah revert: ${balanceAfterRevert}, diperlukan: ${newAmountNum}`,
+        };
       }
 
-      // Apply new transaction to the reverted balance
-      const finalBalance = balanceAfterRevert + (data.type === "INCOME" ? newAmountNum : -newAmountNum);
-
-      await db
-        .update(accounts)
-        .set({
-          balance: finalBalance.toString(),
-          updatedAt: new Date(),
-        })
-        .where(
-          and(eq(accounts.id, data.accountId), eq(accounts.userId, session.userId))
-        );
+      const finalBalance =
+        balanceAfterRevert +
+        (data.type === "INCOME" ? newAmountNum : -newAmountNum);
+      await updateAccountBalance(
+        data.accountId,
+        session.userId,
+        finalBalance,
+        key,
+      );
     }
 
-    // Update transaction
+    // Update transaction (encrypted)
     await db
       .update(transactions)
       .set({
         accountId: data.accountId,
         categoryId: data.categoryId || null,
-        amount: data.amount,
+        amount: key ? await encrypt(data.amount, key) : data.amount,
         type: data.type,
-        description: data.description,
-        note: data.note,
+        description: key
+          ? await encrypt(data.description, key)
+          : data.description,
+        note: key
+          ? await encryptField(data.note ?? null, key)
+          : (data.note ?? null),
         date: data.date,
         updatedAt: new Date(),
       })
       .where(
-        and(eq(transactions.id, id), eq(transactions.userId, session.userId))
+        and(
+          eq(transactions.id, id),
+          eq(transactions.userId, session.userId),
+        ),
       );
 
     revalidatePath("/dashboard/transactions");
@@ -510,11 +625,13 @@ export async function deleteTransaction(id: string): Promise<ActionResult> {
   }
 
   try {
-    // Get transaction first to revert balance
+    const key = await getEncryptionKey();
+
+    // Get transaction to revert balance
     const txn = await db.query.transactions.findFirst({
       where: and(
         eq(transactions.id, id),
-        eq(transactions.userId, session.userId)
+        eq(transactions.userId, session.userId),
       ),
     });
 
@@ -522,25 +639,36 @@ export async function deleteTransaction(id: string): Promise<ActionResult> {
       return { success: false, error: "Transaksi tidak ditemukan" };
     }
 
-    // Revert balance
-    const amountNum = parseFloat(txn.amount);
-    const revertChange = txn.type === "INCOME" ? -amountNum : amountNum;
+    // Decrypt amount for balance calculation
+    const amountStr = key ? await decrypt(txn.amount, key) : txn.amount;
+    const amountNum = parseFloat(amountStr);
 
-    await db
-      .update(accounts)
-      .set({
-        balance: sql`${accounts.balance} + ${revertChange}`,
-        updatedAt: new Date(),
-      })
-      .where(
-        and(eq(accounts.id, txn.accountId), eq(accounts.userId, session.userId))
+    // Get account balance (decrypted)
+    const accData = await getDecryptedAccountBalance(
+      txn.accountId,
+      session.userId,
+      key,
+    );
+
+    if (accData) {
+      const revertChange =
+        txn.type === "INCOME" ? -amountNum : amountNum;
+      await updateAccountBalance(
+        txn.accountId,
+        session.userId,
+        accData.balance + revertChange,
+        key,
       );
+    }
 
     // Delete transaction
     await db
       .delete(transactions)
       .where(
-        and(eq(transactions.id, id), eq(transactions.userId, session.userId))
+        and(
+          eq(transactions.id, id),
+          eq(transactions.userId, session.userId),
+        ),
       );
 
     revalidatePath("/dashboard/transactions");

@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { eq, and } from "drizzle-orm";
 import db from "@/db";
 import { recurringTransactions } from "@/db/schema";
-import { getSession } from "@/lib/auth";
+import { getSession, getEncryptionKey } from "@/lib/auth";
+import { encrypt, decryptRecurring } from "@/lib/encryption";
 
 export type RecurringFrequency = "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
 
@@ -31,7 +32,9 @@ export async function getRecurringTransactions() {
   const session = await getSession();
   if (!session) return [];
 
-  return db.query.recurringTransactions.findMany({
+  const key = await getEncryptionKey();
+
+  const raw = await db.query.recurringTransactions.findMany({
     where: eq(recurringTransactions.userId, session.userId),
     with: {
       account: true,
@@ -39,25 +42,34 @@ export async function getRecurringTransactions() {
     },
     orderBy: (r, { asc }) => [asc(r.nextDueDate)],
   });
+
+  if (!key) return raw;
+  return Promise.all(raw.map((r) => decryptRecurring(r, key)));
 }
 
 /**
  * Create recurring transaction
  */
-export async function createRecurring(data: RecurringFormData): Promise<ActionResult> {
+export async function createRecurring(
+  data: RecurringFormData,
+): Promise<ActionResult> {
   const session = await getSession();
   if (!session) {
     return { success: false, error: "Unauthorized" };
   }
 
   try {
+    const key = await getEncryptionKey();
+
     await db.insert(recurringTransactions).values({
       userId: session.userId,
       accountId: data.accountId,
       categoryId: data.categoryId || null,
-      amount: data.amount,
+      amount: key ? await encrypt(data.amount, key) : data.amount,
       type: data.type,
-      description: data.description,
+      description: key
+        ? await encrypt(data.description, key)
+        : data.description,
       frequency: data.frequency,
       startDate: data.startDate,
       nextDueDate: data.nextDueDate,
@@ -75,7 +87,9 @@ export async function createRecurring(data: RecurringFormData): Promise<ActionRe
 /**
  * Toggle recurring active status
  */
-export async function toggleRecurringStatus(id: string): Promise<ActionResult> {
+export async function toggleRecurringStatus(
+  id: string,
+): Promise<ActionResult> {
   const session = await getSession();
   if (!session) {
     return { success: false, error: "Unauthorized" };
@@ -85,7 +99,7 @@ export async function toggleRecurringStatus(id: string): Promise<ActionResult> {
     const existing = await db.query.recurringTransactions.findFirst({
       where: and(
         eq(recurringTransactions.id, id),
-        eq(recurringTransactions.userId, session.userId)
+        eq(recurringTransactions.userId, session.userId),
       ),
     });
 
@@ -102,8 +116,8 @@ export async function toggleRecurringStatus(id: string): Promise<ActionResult> {
       .where(
         and(
           eq(recurringTransactions.id, id),
-          eq(recurringTransactions.userId, session.userId)
-        )
+          eq(recurringTransactions.userId, session.userId),
+        ),
       );
 
     revalidatePath("/dashboard/recurring");
@@ -129,8 +143,8 @@ export async function deleteRecurring(id: string): Promise<ActionResult> {
       .where(
         and(
           eq(recurringTransactions.id, id),
-          eq(recurringTransactions.userId, session.userId)
-        )
+          eq(recurringTransactions.userId, session.userId),
+        ),
       );
 
     revalidatePath("/dashboard/recurring");

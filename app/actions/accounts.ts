@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { eq, and } from "drizzle-orm";
 import db from "@/db";
 import { accounts } from "@/db/schema";
-import { getSession } from "@/lib/auth";
+import { getSession, getEncryptionKey } from "@/lib/auth";
+import { encrypt, decryptAccount } from "@/lib/encryption";
 
 export type AccountType = "CASH" | "BANK" | "E_WALLET" | "CREDIT_CARD" | "INVESTMENT";
 
@@ -29,10 +30,14 @@ export async function getAccounts() {
   const session = await getSession();
   if (!session) return [];
 
-  return db.query.accounts.findMany({
+  const key = await getEncryptionKey();
+  const raw = await db.query.accounts.findMany({
     where: eq(accounts.userId, session.userId),
     orderBy: (accounts, { desc }) => [desc(accounts.createdAt)],
   });
+
+  if (!key) return raw;
+  return Promise.all(raw.map((a) => decryptAccount(a, key)));
 }
 
 /**
@@ -42,9 +47,14 @@ export async function getAccount(id: string) {
   const session = await getSession();
   if (!session) return null;
 
-  return db.query.accounts.findFirst({
+  const key = await getEncryptionKey();
+  const raw = await db.query.accounts.findFirst({
     where: and(eq(accounts.id, id), eq(accounts.userId, session.userId)),
   });
+
+  if (!raw) return null;
+  if (!key) return raw;
+  return decryptAccount(raw, key);
 }
 
 /**
@@ -57,11 +67,12 @@ export async function createAccount(data: AccountFormData): Promise<ActionResult
   }
 
   try {
+    const key = await getEncryptionKey();
     await db.insert(accounts).values({
       userId: session.userId,
-      name: data.name,
+      name: key ? await encrypt(data.name, key) : data.name,
       type: data.type,
-      balance: data.balance,
+      balance: key ? await encrypt(data.balance, key) : data.balance,
       currency: data.currency || "IDR",
       icon: data.icon,
       color: data.color,
@@ -89,12 +100,13 @@ export async function updateAccount(
   }
 
   try {
+    const key = await getEncryptionKey();
     await db
       .update(accounts)
       .set({
-        name: data.name,
+        name: key ? await encrypt(data.name, key) : data.name,
         type: data.type,
-        balance: data.balance,
+        balance: key ? await encrypt(data.balance, key) : data.balance,
         currency: data.currency || "IDR",
         icon: data.icon,
         color: data.color,

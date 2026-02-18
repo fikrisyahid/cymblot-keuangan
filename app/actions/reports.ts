@@ -3,7 +3,8 @@
 import { eq, and, gte, lte, desc } from "drizzle-orm";
 import db from "@/db";
 import { transactions, accounts } from "@/db/schema";
-import { getSession } from "@/lib/auth";
+import { getSession, getEncryptionKey } from "@/lib/auth";
+import { decryptTransaction, decryptAccount } from "@/lib/encryption";
 
 // ============================================
 // TYPES
@@ -168,10 +169,11 @@ export async function getReportData(
   const session = await getSession();
   if (!session) return null;
 
+  const key = await getEncryptionKey();
   const { start, end } = getDateRange(period, year, month, week);
 
   // Fetch all transactions in range
-  const txns = await db.query.transactions.findMany({
+  const rawTxns = await db.query.transactions.findMany({
     where: and(
       eq(transactions.userId, session.userId),
       gte(transactions.date, start),
@@ -185,9 +187,17 @@ export async function getReportData(
   });
 
   // Fetch all accounts
-  const userAccounts = await db.query.accounts.findMany({
+  const rawAccounts = await db.query.accounts.findMany({
     where: eq(accounts.userId, session.userId),
   });
+
+  // Decrypt data
+  const txns = key
+    ? await Promise.all(rawTxns.map((t) => decryptTransaction(t, key)))
+    : rawTxns;
+  const userAccounts = key
+    ? await Promise.all(rawAccounts.map((a) => decryptAccount(a, key)))
+    : rawAccounts;
 
   // ---- TIMELINE ----
   const timeline = buildTimeline(txns, period, start);

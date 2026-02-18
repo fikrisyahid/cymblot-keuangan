@@ -1,5 +1,6 @@
 import db from "@/db";
 import { categories } from "@/db/schema";
+import { encrypt } from "@/lib/encryption";
 
 // Default categories to create for new users
 export const DEFAULT_CATEGORIES = [
@@ -22,18 +23,23 @@ export const DEFAULT_CATEGORIES = [
 ];
 
 /**
- * Creates default categories for a user
+ * Creates default categories for a user (with encrypted names)
  * Call this function after user registration
  */
-export async function createDefaultCategories(userId: string) {
-  const categoriesToInsert = DEFAULT_CATEGORIES.map((cat) => ({
-    userId,
-    name: cat.name,
-    type: cat.type,
-    icon: cat.icon,
-    color: cat.color,
-    isDefault: true,
-  }));
+export async function createDefaultCategories(
+  userId: string,
+  encryptionKey: string,
+) {
+  const categoriesToInsert = await Promise.all(
+    DEFAULT_CATEGORIES.map(async (cat) => ({
+      userId,
+      name: await encrypt(cat.name, encryptionKey),
+      type: cat.type,
+      icon: cat.icon,
+      color: cat.color,
+      isDefault: true,
+    })),
+  );
 
   return db.insert(categories).values(categoriesToInsert);
 }

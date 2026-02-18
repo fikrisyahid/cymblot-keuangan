@@ -1,11 +1,13 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { encryptForCookie, decryptFromCookie } from "@/lib/encryption";
 
 const secretKey =
   process.env.JWT_SECRET || "your-secret-key-change-in-production";
 const encodedKey = new TextEncoder().encode(secretKey);
 
 const SESSION_COOKIE_NAME = "session";
+const ENCRYPTION_KEY_COOKIE_NAME = "ek";
 const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 export interface SessionPayload {
@@ -115,4 +117,40 @@ export async function setSessionCookie(token: string): Promise<void> {
 export async function clearSessionCookie(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(SESSION_COOKIE_NAME);
+  cookieStore.delete(ENCRYPTION_KEY_COOKIE_NAME);
+}
+
+/**
+ * Store the user's encryption key in an encrypted httpOnly cookie.
+ * The key is encrypted with the server's JWT_SECRET before storage.
+ */
+export async function setEncryptionKeyCookie(
+  encryptionKey: string,
+): Promise<void> {
+  const encrypted = await encryptForCookie(encryptionKey, secretKey);
+  const cookieStore = await cookies();
+  cookieStore.set(ENCRYPTION_KEY_COOKIE_NAME, encrypted, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    expires: new Date(Date.now() + SESSION_DURATION),
+    path: "/",
+  });
+}
+
+/**
+ * Retrieve the user's encryption key from the encrypted cookie.
+ * Returns null if cookie is missing or invalid.
+ */
+export async function getEncryptionKey(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const ekCookie = cookieStore.get(ENCRYPTION_KEY_COOKIE_NAME);
+
+  if (!ekCookie?.value) return null;
+
+  try {
+    return await decryptFromCookie(ekCookie.value, secretKey);
+  } catch {
+    return null;
+  }
 }

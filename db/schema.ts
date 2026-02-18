@@ -3,7 +3,6 @@ import {
   text,
   timestamp,
   boolean,
-  decimal,
   integer,
   pgEnum,
   uniqueIndex,
@@ -51,7 +50,9 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
   name: text("name").notNull(),
-  encryptionKey: text("encryption_key"),
+  encryptionSalt: text("encryption_salt"),
+  encryptionVerifier: text("encryption_verifier"),
+  isDataEncrypted: boolean("is_data_encrypted").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -67,7 +68,7 @@ export const accounts = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     type: accountTypeEnum("type").notNull(),
-    balance: decimal("balance", { precision: 15, scale: 2 })
+    balance: text("balance")
       .default("0")
       .notNull(),
     currency: text("currency").default("IDR").notNull(),
@@ -138,12 +139,11 @@ export const transactions = pgTable(
     categoryId: text("category_id").references(() => categories.id, {
       onDelete: "set null",
     }),
-    amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+    amount: text("amount").notNull(),
     type: transactionTypeEnum("type").notNull(),
     description: text("description").notNull(),
     note: text("note"),
     date: timestamp("date").notNull(),
-    isEncrypted: boolean("is_encrypted").default(false).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
@@ -183,7 +183,7 @@ export const budgets = pgTable(
     categoryId: text("category_id")
       .notNull()
       .references(() => categories.id, { onDelete: "cascade" }),
-    amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+    amount: text("amount").notNull(),
     month: integer("month").notNull(),
     year: integer("year").notNull(),
     isActive: boolean("is_active").default(true).notNull(),
@@ -217,7 +217,7 @@ export const recurringTransactions = pgTable(
     categoryId: text("category_id").references(() => categories.id, {
       onDelete: "set null",
     }),
-    amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+    amount: text("amount").notNull(),
     type: transactionTypeEnum("type").notNull(),
     description: text("description").notNull(),
     frequency: recurrenceFrequencyEnum("frequency").notNull(),
@@ -249,11 +249,8 @@ export const debts = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     type: debtTypeEnum("type").notNull(),
     personName: text("person_name").notNull(),
-    amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
-    remainingAmount: decimal("remaining_amount", {
-      precision: 15,
-      scale: 2,
-    }).notNull(),
+    amount: text("amount").notNull(),
+    remainingAmount: text("remaining_amount").notNull(),
     description: text("description"),
     dueDate: timestamp("due_date"),
     isPaid: boolean("is_paid").default(false).notNull(),

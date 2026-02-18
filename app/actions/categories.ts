@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { eq, and } from "drizzle-orm";
 import db from "@/db";
 import { categories } from "@/db/schema";
-import { getSession } from "@/lib/auth";
+import { getSession, getEncryptionKey } from "@/lib/auth";
+import { encrypt, decryptCategory } from "@/lib/encryption";
 
 export type CategoryType = "INCOME" | "EXPENSE";
 
@@ -27,10 +28,14 @@ export async function getCategories() {
   const session = await getSession();
   if (!session) return [];
 
-  return db.query.categories.findMany({
+  const key = await getEncryptionKey();
+  const raw = await db.query.categories.findMany({
     where: eq(categories.userId, session.userId),
     orderBy: (categories, { asc }) => [asc(categories.type), asc(categories.name)],
   });
+
+  if (!key) return raw;
+  return Promise.all(raw.map((c) => decryptCategory(c, key)));
 }
 
 /**
@@ -40,13 +45,17 @@ export async function getCategoriesByType(type: CategoryType) {
   const session = await getSession();
   if (!session) return [];
 
-  return db.query.categories.findMany({
+  const key = await getEncryptionKey();
+  const raw = await db.query.categories.findMany({
     where: and(
       eq(categories.userId, session.userId),
       eq(categories.type, type)
     ),
     orderBy: (categories, { asc }) => [asc(categories.name)],
   });
+
+  if (!key) return raw;
+  return Promise.all(raw.map((c) => decryptCategory(c, key)));
 }
 
 /**
@@ -59,9 +68,10 @@ export async function createCategory(data: CategoryFormData): Promise<ActionResu
   }
 
   try {
+    const key = await getEncryptionKey();
     await db.insert(categories).values({
       userId: session.userId,
-      name: data.name,
+      name: key ? await encrypt(data.name, key) : data.name,
       type: data.type,
       icon: data.icon,
       color: data.color,
@@ -89,10 +99,11 @@ export async function updateCategory(
   }
 
   try {
+    const key = await getEncryptionKey();
     await db
       .update(categories)
       .set({
-        name: data.name,
+        name: key ? await encrypt(data.name, key) : data.name,
         type: data.type,
         icon: data.icon,
         color: data.color,

@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { eq, and, gte, lte } from "drizzle-orm";
 import db from "@/db";
 import { budgets, transactions } from "@/db/schema";
-import { getSession } from "@/lib/auth";
+import { getSession, getEncryptionKey } from "@/lib/auth";
+import { encrypt, decrypt, decryptCategory } from "@/lib/encryption";
 
 export interface BudgetFormData {
   categoryId: string;
@@ -45,6 +46,7 @@ export async function getBudgetsWithSpending(
   const session = await getSession();
   if (!session) return [];
 
+  const key = await getEncryptionKey();
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
@@ -64,11 +66,9 @@ export async function getBudgetsWithSpending(
     orderBy: (budgets, { asc }) => [asc(budgets.createdAt)],
   });
 
-  // Calculate date range for this month
   const startDate = new Date(currentYear, currentMonth - 1, 1);
   const endDate = new Date(currentYear, currentMonth, 0, 23, 59, 59);
 
-  // Calculate spending for each budget
   const budgetsWithSpending = await Promise.all(
     userBudgets.map(async (budget) => {
       const txns = await db.query.transactions.findMany({
@@ -81,15 +81,30 @@ export async function getBudgetsWithSpending(
         ),
       });
 
-      const spent = txns.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+      // Decrypt transaction amounts to calculate spending
+      let spent = 0;
+      for (const t of txns) {
+        const amount = key
+          ? parseFloat(await decrypt(t.amount, key))
+          : parseFloat(t.amount);
+        spent += amount;
+      }
+
+      // Decrypt budget amount and category name
+      const decryptedAmount = key
+        ? await decrypt(budget.amount, key)
+        : budget.amount;
+      const decryptedCategory = key && budget.category
+        ? await decryptCategory(budget.category, key)
+        : budget.category;
 
       return {
         id: budget.id,
         categoryId: budget.categoryId,
-        categoryName: budget.category?.name || "Unknown",
-        categoryIcon: budget.category?.icon || null,
-        categoryColor: budget.category?.color || null,
-        amount: budget.amount,
+        categoryName: decryptedCategory?.name || "Unknown",
+        categoryIcon: decryptedCategory?.icon || null,
+        categoryColor: decryptedCategory?.color || null,
+        amount: decryptedAmount,
         spent,
         month: budget.month,
         year: budget.year,
@@ -112,7 +127,8 @@ export async function createBudget(
   }
 
   try {
-    // Check if budget already exists for this category and period
+    const key = await getEncryptionKey();
+
     const existing = await db.query.budgets.findFirst({
       where: and(
         eq(budgets.userId, session.userId),
@@ -132,7 +148,7 @@ export async function createBudget(
     await db.insert(budgets).values({
       userId: session.userId,
       categoryId: data.categoryId,
-      amount: data.amount,
+      amount: key ? await encrypt(data.amount, key) : data.amount,
       month: data.month,
       year: data.year,
     });
@@ -159,11 +175,13 @@ export async function updateBudget(
   }
 
   try {
+    const key = await getEncryptionKey();
+
     await db
       .update(budgets)
       .set({
         categoryId: data.categoryId,
-        amount: data.amount,
+        amount: key ? await encrypt(data.amount, key) : data.amount,
         month: data.month,
         year: data.year,
         updatedAt: new Date(),
