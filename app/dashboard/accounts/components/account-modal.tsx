@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Modal,
   TextInput,
@@ -71,6 +71,21 @@ export function AccountModal({ opened, onClose, account }: AccountModalProps) {
       name: (value) => (value.length < 1 ? "Nama akun harus diisi" : null),
     },
   });
+
+  // Sync form values when modal opens or account changes
+  useEffect(() => {
+    if (opened) {
+      form.setValues({
+        name: account?.name || "",
+        type: account?.type || "CASH",
+        balance: account?.balance || "0",
+        currency: account?.currency || "IDR",
+        icon: account?.icon || "💵",
+        color: account?.color || "#228be6",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opened, account]);
 
   // Reset form when modal opens with different account
   const handleClose = () => {
