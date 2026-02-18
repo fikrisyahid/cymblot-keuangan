@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Modal,
   TextInput,
@@ -72,6 +72,19 @@ export function CategoryModal({ opened, onClose, category }: CategoryModalProps)
       name: (value) => (value.length < 1 ? "Nama kategori harus diisi" : null),
     },
   });
+
+  // Sync form values when modal opens or category changes
+  useEffect(() => {
+    if (opened) {
+      form.setValues({
+        name: category?.name || "",
+        type: category?.type || "EXPENSE",
+        icon: category?.icon || "💰",
+        color: category?.color || "#228be6",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opened, category]);
 
   const handleClose = () => {
     form.reset();
