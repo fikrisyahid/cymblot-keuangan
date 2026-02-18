@@ -31,7 +31,7 @@ import {
   IconLogout,
   IconCurrencyDollar,
   IconReportAnalytics,
-  IconBrandGithub,
+  IconInfoCircle,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { logout } from "@/app/actions/auth";
@@ -47,6 +47,11 @@ const navItems = [
   { label: "Anggaran", href: "/dashboard/budgets", icon: IconChartBar, color: "orange" },
   { label: "Recurring", href: "/dashboard/recurring", icon: IconReceipt, color: "indigo" },
   { label: "Utang/Piutang", href: "/dashboard/debts", icon: IconUsers, color: "pink" },
+];
+
+const secondaryNavItems = [
+  { label: "Pengaturan", href: "/dashboard/settings", icon: IconSettings, color: "gray" },
+  { label: "Tentang", href: "/dashboard/about", icon: IconInfoCircle, color: "blue" },
 ];
 
 
@@ -104,21 +109,6 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           </Group>
           <Group gap="sm">
-            <Tooltip label="Source Code" withArrow>
-              <ActionIcon
-                variant="light"
-                size="lg"
-                radius="xl"
-                color="gray"
-                component="a"
-                href="https://github.com/fikrisyahid/cymblot-keuangan"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Source Code"
-              >
-                <IconBrandGithub size={18} />
-              </ActionIcon>
-            </Tooltip>
             <Tooltip label={isDark ? "Mode terang" : "Mode gelap"} withArrow>
               <ActionIcon
                 variant="light"
@@ -133,19 +123,6 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
                 ) : (
                   <IconMoon size={18} />
                 )}
-              </ActionIcon>
-            </Tooltip>
-            <Tooltip label="Pengaturan" withArrow>
-              <ActionIcon
-                variant="light"
-                size="lg"
-                radius="xl"
-                color="gray"
-                component={Link}
-                href="/dashboard/settings"
-                aria-label="Pengaturan"
-              >
-                <IconSettings size={18} />
               </ActionIcon>
             </Tooltip>
             <Tooltip label="Logout" withArrow>
@@ -238,6 +215,42 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
           </Stack>
         </AppShell.Section>
 
+        <AppShell.Section>
+          <Divider my="sm" />
+          <Text size="xs" fw={600} c="dimmed" tt="uppercase" mb="xs" px="sm">
+            Lainnya
+          </Text>
+          <Stack gap={2}>
+            {secondaryNavItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <NavLink
+                  key={item.href}
+                  component={Link}
+                  href={item.href}
+                  label={item.label}
+                  leftSection={
+                    <item.icon
+                      size={20}
+                      stroke={1.5}
+                      color={isActive ? `var(--mantine-color-${item.color}-6)` : undefined}
+                    />
+                  }
+                  active={isActive}
+                  onClick={close}
+                  color={item.color}
+                  variant={isActive ? "light" : "subtle"}
+                  styles={{
+                    root: {
+                      borderRadius: "var(--mantine-radius-md)",
+                      fontWeight: isActive ? 600 : 400,
+                    },
+                  }}
+                />
+              );
+            })}
+          </Stack>
+        </AppShell.Section>
 
       </AppShell.Navbar>
 

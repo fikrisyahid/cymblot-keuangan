@@ -32,7 +32,6 @@ import {
   IconDeviceAnalytics,
   IconSun,
   IconMoon,
-  IconBrandGithub,
 } from "@tabler/icons-react";
 import { login } from "@/app/actions/auth";
 
@@ -117,21 +116,6 @@ export default function LoginPage() {
           zIndex: 100,
         }}
       >
-        <Tooltip label="Source Code" withArrow>
-          <ActionIcon
-            variant="light"
-            size="lg"
-            radius="xl"
-            color="gray"
-            component="a"
-            href="https://github.com/fikrisyahid/cymblot-keuangan"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Source Code"
-          >
-            <IconBrandGithub size={18} />
-          </ActionIcon>
-        </Tooltip>
         <Tooltip label={isDark ? "Mode terang" : "Mode gelap"} withArrow>
           <ActionIcon
             variant="light"

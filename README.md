@@ -13,14 +13,51 @@ Anda dapat mengakses aplikasi ini melalui [https://keuangan.fikrisyahid.my.id/](
 ## Fitur Utama
 
 - **Dashboard** — Ringkasan keuangan: total saldo, pemasukan & pengeluaran bulan ini, transaksi terbaru, progres anggaran, dan kategori pengeluaran terbesar.
-- **Transaksi** — Catat pemasukan & pengeluaran dengan filter berdasarkan tanggal, akun, kategori, dan kata kunci. Mendukung enkripsi deskripsi transaksi.
+- **Transaksi** — Catat pemasukan & pengeluaran dengan filter berdasarkan tanggal, akun, kategori, dan kata kunci.
 - **Akun** — Kelola berbagai jenis akun keuangan: Tunai, Bank, E-Wallet, Kartu Kredit, dan Investasi.
 - **Kategori** — Buat kategori kustom untuk pemasukan maupun pengeluaran, lengkap dengan ikon dan warna.
 - **Anggaran** — Tetapkan batas anggaran per kategori per bulan dan pantau realisasinya secara visual.
 - **Transaksi Berulang** — Atur transaksi otomatis berulang (harian, mingguan, bulanan, atau tahunan).
 - **Utang & Piutang** — Lacak utang (pinjaman dari orang lain) dan piutang (pinjaman ke orang lain) beserta sisa tagihan dan tanggal jatuh tempo.
 - **Laporan** — Analisis keuangan visual berupa grafik area, bar chart, dan donut chart untuk periode mingguan, bulanan, atau tahunan.
-- **Pengaturan** — Ubah password akun dan lihat informasi aplikasi.
+- **Pengaturan** — Ubah password akun.
+- **Enkripsi End-to-End** — Seluruh data keuangan dienkripsi dengan kunci yang diturunkan dari password pengguna (AES-256-GCM). Bahkan admin server tidak dapat membaca data pengguna.
+
+## Privasi & Keamanan Data
+
+Aplikasi ini dirancang dengan prinsip **zero-knowledge encryption** — artinya bahkan pemilik/admin server **tidak dapat membaca** data keuangan pengguna. Semua data sensitif terenkripsi di database.
+
+### Cara Kerja Enkripsi
+
+| Aspek | Detail |
+|---|---|
+| Algoritma | AES-256-GCM (authenticated encryption) |
+| Key Derivation | PBKDF2 dengan 600.000 iterasi |
+| Kunci Enkripsi | Diturunkan dari password pengguna (per-user key) |
+| API | Web Crypto API (kompatibel Edge Runtime) |
+
+### Alur Enkripsi
+
+1. **Saat Register** — Sistem men-generate salt unik dan menurunkan encryption key dari password pengguna menggunakan PBKDF2. Sebuah verifier disimpan untuk validasi key saat login.
+2. **Saat Login** — Password digunakan untuk menurunkan kembali encryption key yang sama. Key ini disimpan dalam encrypted cookie (bukan di database) selama sesi aktif.
+3. **Saat Menyimpan Data** — Semua data sensitif (nama akun, saldo, jumlah transaksi, deskripsi, nama kategori, dll.) dienkripsi dengan AES-256-GCM sebelum disimpan ke database.
+4. **Saat Membaca Data** — Data didekripsi di server menggunakan encryption key dari cookie, lalu dikirim ke browser dalam bentuk plaintext.
+5. **Saat Ubah Password** — Seluruh data didekripsi dengan key lama, lalu di-re-enkripsi dengan key baru yang diturunkan dari password baru.
+
+### Data yang Dienkripsi
+
+- Nama dan saldo akun keuangan
+- Jumlah, deskripsi, dan catatan transaksi
+- Nama kategori
+- Jumlah anggaran
+- Jumlah dan deskripsi transaksi berulang
+- Nama, jumlah, sisa, dan deskripsi utang/piutang
+
+### Catatan Penting
+
+- **Lupa password = kehilangan data.** Karena kunci enkripsi diturunkan dari password, tidak ada cara untuk memulihkan data jika password hilang.
+- Data yang tersimpan di database berupa ciphertext yang tidak bisa dibaca tanpa kunci yang benar.
+- Setiap pengguna memiliki kunci enkripsi berbeda, sehingga kompromi satu akun tidak mempengaruhi akun lain.
 
 ## Teknologi yang Digunakan
 
