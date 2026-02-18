@@ -392,6 +392,19 @@ export default function AboutPage() {
               </ListItem>
             </List>
           </Paper>
+
+          {/* DB Proof Screenshot */}
+          <Text fw={600} mb="sm" mt="lg">Bukti Enkripsi Database</Text>
+          <Text size="sm" c="dimmed" mb="md">
+            Berikut tampilan data di database — semua kolom sensitif berupa ciphertext yang tidak terbaca tanpa kunci enkripsi pengguna.
+          </Text>
+          <Paper radius="md" withBorder style={{ overflow: "hidden" }}>
+            <img
+              src="/db-encrypted-proof.png"
+              alt="Bukti data terenkripsi di database"
+              style={{ width: "100%", display: "block" }}
+            />
+          </Paper>
         </div>
 
         <Divider />

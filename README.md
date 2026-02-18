@@ -59,6 +59,14 @@ Aplikasi ini dirancang dengan prinsip **zero-knowledge encryption** — artinya 
 - Data yang tersimpan di database berupa ciphertext yang tidak bisa dibaca tanpa kunci yang benar.
 - Setiap pengguna memiliki kunci enkripsi berbeda, sehingga kompromi satu akun tidak mempengaruhi akun lain.
 
+### Bukti Enkripsi Database
+
+Berikut tampilan data di database — semua kolom sensitif berupa ciphertext yang tidak terbaca tanpa kunci enkripsi pengguna:
+
+<p align="center">
+  <img src="./public/db-encrypted-proof.png" alt="Bukti data terenkripsi di database" width="800" />
+</p>
+
 ## Teknologi yang Digunakan
 
 | Kategori | Teknologi |
