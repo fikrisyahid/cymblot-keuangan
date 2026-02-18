@@ -281,20 +281,31 @@ export function TransactionsClient({
 
   return (
     <>
-      <Group justify="space-between" mb="md" wrap="nowrap">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
         <Title order={2}>Transaksi</Title>
-        <Group gap="sm" wrap="nowrap">
+        <div className="flex flex-col sm:flex-row gap-2">
           <Button
             variant={hasActiveFilters ? "filled" : "light"}
             leftSection={hasActiveFilters ? <IconFilterOff size={16} /> : <IconFilter size={16} />}
             onClick={hasActiveFilters ? clearFilters : toggleFilter}
             color={hasActiveFilters ? "red" : "blue"}
+            fullWidth className="sm:!w-auto"
           >
             {hasActiveFilters ? "Reset Filter" : "Filter"}
           </Button>
-          {dynamicAddTransactionButton}
-        </Group>
-      </Group>
+          {accounts.length === 0 ? (
+            <Tooltip label="Tambahkan akun terlebih dahulu" withArrow>
+              <Button leftSection={<IconPlus size={16} />} disabled fullWidth className="sm:!w-auto">
+                Tambah Transaksi
+              </Button>
+            </Tooltip>
+          ) : (
+            <Button leftSection={<IconPlus size={16} />} onClick={handleAdd} fullWidth className="sm:!w-auto">
+              Tambah Transaksi
+            </Button>
+          )}
+        </div>
+      </div>
 
       {/* Search Bar */}
       <Paper p="sm" radius="md" withBorder mb="sm">
