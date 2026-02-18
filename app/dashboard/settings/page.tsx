@@ -104,7 +104,7 @@ export default function SettingsPage() {
 
         <Divider />
 
-        <Paper p="md" radius="md" withBorder>
+        {/* <Paper p="md" radius="md" withBorder>
           <Group justify="space-between">
             <div>
               <Text fw={500}>Notifikasi</Text>
@@ -114,7 +114,7 @@ export default function SettingsPage() {
             </div>
             <Switch defaultChecked />
           </Group>
-        </Paper>
+        </Paper> */}
 
         <Paper p="md" radius="md" withBorder>
           <Group justify="space-between">
