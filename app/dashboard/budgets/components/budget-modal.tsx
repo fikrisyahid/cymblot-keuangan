@@ -30,20 +30,30 @@ const MONTHS = [
   { value: "12", label: "Desember" },
 ];
 
+type BudgetData = {
+  id: string;
+  categoryId: string;
+  amount: string;
+  month: number;
+  year: number;
+};
+
 interface BudgetModalProps {
   opened: boolean;
   onClose: () => void;
   categories: Category[];
-  budget?: {
-    id: string;
-    categoryId: string;
-    amount: string;
-    month: number;
-    year: number;
-  } | null;
+  budget?: BudgetData | null;
 }
 
-export function BudgetModal({ opened, onClose, categories, budget }: BudgetModalProps) {
+function BudgetForm({
+  budget,
+  categories,
+  onClose,
+}: {
+  budget: BudgetData | null | undefined;
+  categories: Category[];
+  onClose: () => void;
+}) {
   const [loading, setLoading] = useState(false);
   const isEdit = !!budget;
 
@@ -117,64 +127,74 @@ export function BudgetModal({ opened, onClose, categories, budget }: BudgetModal
   };
 
   return (
+    <form onSubmit={form.onSubmit(handleSubmit)}>
+      <Stack>
+        <Select
+          label="Kategori Pengeluaran"
+          placeholder="Pilih kategori"
+          data={expenseCategories}
+          required
+          {...form.getInputProps("categoryId")}
+        />
+
+        <NumberInput
+          label="Batas Anggaran"
+          placeholder="0"
+          thousandSeparator=","
+          prefix="Rp "
+          min={0}
+          required
+          value={form.values.amount}
+          onChange={(value) => {
+            const numValue = typeof value === 'number' ? value : parseFloat(value || '0');
+            form.setFieldValue('amount', isNaN(numValue) ? 0 : numValue);
+          }}
+          error={form.errors.amount}
+        />
+
+        <Group grow>
+          <Select
+            label="Bulan"
+            data={MONTHS}
+            required
+            {...form.getInputProps("month")}
+          />
+
+          <Select
+            label="Tahun"
+            data={yearOptions}
+            required
+            {...form.getInputProps("year")}
+          />
+        </Group>
+
+        <Group justify="flex-end" mt="md">
+          <Button variant="subtle" onClick={handleClose}>
+            Batal
+          </Button>
+          <Button type="submit" loading={loading}>
+            {isEdit ? "Simpan" : "Tambah"}
+          </Button>
+        </Group>
+      </Stack>
+    </form>
+  );
+}
+
+export function BudgetModal({ opened, onClose, categories, budget }: BudgetModalProps) {
+  return (
     <Modal
       opened={opened}
-      onClose={handleClose}
-      title={isEdit ? "Edit Budget" : "Tambah Budget Baru"}
+      onClose={onClose}
+      title={budget ? "Edit Budget" : "Tambah Budget Baru"}
       centered
     >
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack>
-          <Select
-            label="Kategori Pengeluaran"
-            placeholder="Pilih kategori"
-            data={expenseCategories}
-            required
-            {...form.getInputProps("categoryId")}
-          />
-
-          <NumberInput
-            label="Batas Anggaran"
-            placeholder="0"
-            thousandSeparator=","
-            prefix="Rp "
-            min={0}
-            required
-            value={form.values.amount}
-            onChange={(value) => {
-              // Normalize value to remove leading zeros
-              const numValue = typeof value === 'number' ? value : parseFloat(value || '0');
-              form.setFieldValue('amount', isNaN(numValue) ? 0 : numValue);
-            }}
-            error={form.errors.amount}
-          />
-
-          <Group grow>
-            <Select
-              label="Bulan"
-              data={MONTHS}
-              required
-              {...form.getInputProps("month")}
-            />
-
-            <Select
-              label="Tahun"
-              data={yearOptions}
-              required
-              {...form.getInputProps("year")}
-            />
-          </Group>
-
-          <Group justify="flex-end" mt="md">
-            <Button variant="subtle" onClick={handleClose}>
-              Batal
-            </Button>
-            <Button type="submit" loading={loading}>
-              {isEdit ? "Simpan" : "Tambah"}
-            </Button>
-          </Group>
-        </Stack>
-      </form>
+      <BudgetForm
+        key={budget?.id || "new"}
+        budget={budget}
+        categories={categories}
+        onClose={onClose}
+      />
     </Modal>
   );
 }
