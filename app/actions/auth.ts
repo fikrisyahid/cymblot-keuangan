@@ -162,6 +162,30 @@ export async function logout(): Promise<void> {
 // CHANGE PASSWORD
 // ============================================
 
+export async function changeName(formData: FormData): Promise<AuthResult> {
+  const session = await getSession();
+  if (!session) {
+    return { success: false, error: "Anda harus login terlebih dahulu" };
+  }
+
+  const newName = (formData.get("newName") as string)?.trim();
+
+  if (!newName || newName.length < 1) {
+    return { success: false, error: "Nama tidak boleh kosong" };
+  }
+
+  await db
+    .update(users)
+    .set({ name: newName, updatedAt: new Date() })
+    .where(eq(users.id, session.userId));
+
+  // Refresh session cookie so the new name is reflected
+  const token = await createSession(session.userId, session.email, newName);
+  await setSessionCookie(token);
+
+  return { success: true };
+}
+
 export async function changePassword(formData: FormData): Promise<AuthResult> {
   const session = await getSession();
   if (!session) {

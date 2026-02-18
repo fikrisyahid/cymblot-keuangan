@@ -6,19 +6,59 @@ import {
   Text,
   Paper,
   Stack,
-  Switch,
   Group,
   PasswordInput,
+  TextInput,
   Button,
-  Divider,
+  SimpleGrid,
+  ThemeIcon,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconCheck, IconX, IconLock } from "@tabler/icons-react";
-import { changePassword } from "@/app/actions/auth";
+import { IconCheck, IconX, IconLock, IconUser } from "@tabler/icons-react";
+import { changePassword, changeName } from "@/app/actions/auth";
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
+  const [nameLoading, setNameLoading] = useState(false);
+
+  const nameForm = useForm({
+    initialValues: {
+      newName: "",
+    },
+    validate: {
+      newName: (value) =>
+        value.trim().length >= 1 ? null : "Nama tidak boleh kosong",
+    },
+  });
+
+  const handleChangeName = async (values: typeof nameForm.values) => {
+    setNameLoading(true);
+
+    const formData = new FormData();
+    formData.append("newName", values.newName.trim());
+
+    const result = await changeName(formData);
+
+    if (result.success) {
+      notifications.show({
+        title: "Berhasil",
+        message: "Nama berhasil diubah",
+        color: "green",
+        icon: <IconCheck size={16} />,
+      });
+      nameForm.reset();
+    } else {
+      notifications.show({
+        title: "Gagal",
+        message: result.error || "Gagal mengubah nama",
+        color: "red",
+        icon: <IconX size={16} />,
+      });
+    }
+
+    setNameLoading(false);
+  };
 
   const form = useForm({
     initialValues: {
@@ -71,12 +111,48 @@ export default function SettingsPage() {
       <Title order={2} mb="lg">
         Pengaturan
       </Title>
-      <Stack gap="md">
+      <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+        {/* Change Name Section */}
+        <Paper p="lg" radius="md" withBorder>
+          <Group gap="sm" mb="lg">
+            <ThemeIcon variant="light" radius="md" size="lg">
+              <IconUser size={18} />
+            </ThemeIcon>
+            <div>
+              <Text fw={600}>Ubah Nama</Text>
+              <Text size="xs" c="dimmed">
+                Perbarui nama tampilan akun kamu
+              </Text>
+            </div>
+          </Group>
+          <form onSubmit={nameForm.onSubmit(handleChangeName)}>
+            <Stack gap="sm">
+              <TextInput
+                label="Nama Baru"
+                placeholder="Masukkan nama baru"
+                {...nameForm.getInputProps("newName")}
+              />
+              <Group justify="flex-end" mt="xs">
+                <Button type="submit" loading={nameLoading}>
+                  Simpan Nama
+                </Button>
+              </Group>
+            </Stack>
+          </form>
+        </Paper>
+
         {/* Change Password Section */}
-        <Paper p="md" radius="md" withBorder>
-          <Group gap="xs" mb="md">
-            <IconLock size={20} />
-            <Text fw={500}>Ubah Password</Text>
+        <Paper p="lg" radius="md" withBorder>
+          <Group gap="sm" mb="lg">
+            <ThemeIcon variant="light" radius="md" size="lg" color="orange">
+              <IconLock size={18} />
+            </ThemeIcon>
+            <div>
+              <Text fw={600}>Ubah Password</Text>
+              <Text size="xs" c="dimmed">
+                Ganti password untuk keamanan akun
+              </Text>
+            </div>
           </Group>
           <form onSubmit={form.onSubmit(handleChangePassword)}>
             <Stack gap="sm">
@@ -95,49 +171,15 @@ export default function SettingsPage() {
                 placeholder="Masukkan ulang password baru"
                 {...form.getInputProps("confirmNewPassword")}
               />
-              <Button type="submit" loading={loading} mt="xs">
-                Ubah Password
-              </Button>
+              <Group justify="flex-end" mt="xs">
+                <Button type="submit" loading={loading} color="orange">
+                  Ubah Password
+                </Button>
+              </Group>
             </Stack>
           </form>
         </Paper>
-
-        <Divider />
-
-        {/* <Paper p="md" radius="md" withBorder>
-          <Group justify="space-between">
-            <div>
-              <Text fw={500}>Notifikasi</Text>
-              <Text size="sm" c="dimmed">
-                Aktifkan notifikasi untuk pengingat
-              </Text>
-            </div>
-            <Switch defaultChecked />
-          </Group>
-        </Paper> */}
-
-        <Paper p="md" radius="md" withBorder>
-          <Group justify="space-between">
-            <div>
-              <Text fw={500}>Mata Uang</Text>
-              <Text size="sm" c="dimmed">
-                IDR - Indonesian Rupiah
-              </Text>
-            </div>
-          </Group>
-        </Paper>
-
-        <Paper p="md" radius="md" withBorder>
-          <Group justify="space-between">
-            <div>
-              <Text fw={500}>Versi Aplikasi</Text>
-              <Text size="sm" c="dimmed">
-                v0.1.0
-              </Text>
-            </div>
-          </Group>
-        </Paper>
-      </Stack>
+      </SimpleGrid>
     </>
   );
 }
