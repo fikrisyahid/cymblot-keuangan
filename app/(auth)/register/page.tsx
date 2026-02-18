@@ -12,11 +12,23 @@ import {
   Anchor,
   Stack,
   Alert,
+  Box,
+  Group,
+  ThemeIcon,
+  List,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { register } from "@/app/actions/auth";
 import { notifications } from "@mantine/notifications";
-import { IconCheck, IconX } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconX,
+  IconCurrencyDollar,
+  IconWallet,
+  IconChartPie,
+  IconBell,
+  IconTargetArrow,
+} from "@tabler/icons-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -75,63 +87,209 @@ export default function RegisterPage() {
     }
   };
 
+  const benefits = [
+    { icon: IconWallet, text: "Kelola banyak akun keuangan" },
+    { icon: IconChartPie, text: "Kategorisasi & analisis pengeluaran" },
+    { icon: IconBell, text: "Pengingat tagihan otomatis" },
+    { icon: IconTargetArrow, text: "Atur anggaran & target finansial" },
+  ];
+
   return (
-    <Paper radius="md" p="xl" withBorder shadow="xl" style={{ width: 420 }}>
-      <Title order={2} ta="center" mb="md">
-        Buat Akun Baru 🚀
-      </Title>
-      <Text c="dimmed" size="sm" ta="center" mb="lg">
-        Daftar untuk mulai mengelola keuanganmu
-      </Text>
+    <div style={{ minHeight: "100vh", display: "flex" }}>
+      {/* Left side - Form */}
+      <Box
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "2rem",
+          minHeight: "100vh",
+        }}
+      >
+        <Paper
+          radius="lg"
+          p="xl"
+          style={{ width: "100%", maxWidth: 440 }}
+        >
+          {/* Mobile logo */}
+          <Group gap="sm" mb="lg" hiddenFrom="md" justify="center">
+            <ThemeIcon
+              size={40}
+              radius="xl"
+              variant="gradient"
+              gradient={{ from: "teal", to: "blue", deg: 135 }}
+            >
+              <IconCurrencyDollar size={22} />
+            </ThemeIcon>
+            <Title order={3}>Cymblot</Title>
+          </Group>
 
-      {error && (
-        <Alert color="red" mb="md" variant="light">
-          {error}
-        </Alert>
-      )}
+          <Title order={2} ta="center" mb={4}>
+            Buat Akun Baru 🚀
+          </Title>
+          <Text c="dimmed" size="sm" ta="center" mb="xl">
+            Mulai perjalanan finansialmu sekarang
+          </Text>
 
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack>
-          <TextInput
-            label="Nama"
-            placeholder="Nama lengkap"
-            required
-            {...form.getInputProps("name")}
-          />
+          {error && (
+            <Alert color="red" mb="md" variant="light" radius="md">
+              {error}
+            </Alert>
+          )}
 
-          <TextInput
-            label="Email"
-            placeholder="email@example.com"
-            required
-            {...form.getInputProps("email")}
-          />
+          <form onSubmit={form.onSubmit(handleSubmit)}>
+            <Stack>
+              <TextInput
+                label="Nama"
+                placeholder="Nama lengkap"
+                required
+                size="md"
+                radius="md"
+                {...form.getInputProps("name")}
+              />
 
-          <PasswordInput
-            label="Password"
-            placeholder="Minimal 6 karakter"
-            required
-            {...form.getInputProps("password")}
-          />
+              <TextInput
+                label="Email"
+                placeholder="email@example.com"
+                required
+                size="md"
+                radius="md"
+                {...form.getInputProps("email")}
+              />
 
-          <PasswordInput
-            label="Konfirmasi Password"
-            placeholder="Ulangi password"
-            required
-            {...form.getInputProps("confirmPassword")}
-          />
+              <PasswordInput
+                label="Password"
+                placeholder="Minimal 6 karakter"
+                required
+                size="md"
+                radius="md"
+                {...form.getInputProps("password")}
+              />
 
-          <Button type="submit" fullWidth loading={loading} mt="md">
-            Daftar
-          </Button>
-        </Stack>
-      </form>
+              <PasswordInput
+                label="Konfirmasi Password"
+                placeholder="Ulangi password"
+                required
+                size="md"
+                radius="md"
+                {...form.getInputProps("confirmPassword")}
+              />
 
-      <Text ta="center" mt="md" size="sm">
-        Sudah punya akun?{" "}
-        <Anchor href="/login" fw={500}>
-          Masuk di sini
-        </Anchor>
-      </Text>
-    </Paper>
+              <Button
+                type="submit"
+                fullWidth
+                loading={loading}
+                mt="md"
+                size="md"
+                radius="md"
+                variant="gradient"
+                gradient={{ from: "teal", to: "blue", deg: 135 }}
+              >
+                Daftar
+              </Button>
+            </Stack>
+          </form>
+
+          <Text ta="center" mt="xl" size="sm">
+            Sudah punya akun?{" "}
+            <Anchor href="/login" fw={600} c="blue">
+              Masuk di sini
+            </Anchor>
+          </Text>
+        </Paper>
+      </Box>
+
+      {/* Right side - Branding */}
+      <Box
+        visibleFrom="md"
+        style={{
+          flex: 1,
+          background: "linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%)",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          padding: "3rem",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Decorative shapes */}
+        <div
+          style={{
+            position: "absolute",
+            top: -80,
+            left: -80,
+            width: 280,
+            height: 280,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.08)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: -40,
+            right: -40,
+            width: 200,
+            height: 200,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.06)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: "40%",
+            right: 60,
+            width: 120,
+            height: 120,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.04)",
+          }}
+        />
+
+        <Box style={{ position: "relative", zIndex: 1, maxWidth: 480 }}>
+          <Group gap="sm" mb="xl">
+            <ThemeIcon size={50} radius="xl" variant="white" color="blue">
+              <IconCurrencyDollar size={28} />
+            </ThemeIcon>
+            <Title order={1} c="white" style={{ fontSize: 36 }}>
+              Cymblot
+            </Title>
+          </Group>
+
+          <Title order={2} c="white" mb="md" style={{ fontWeight: 400, lineHeight: 1.4 }}>
+            Bergabung dan mulai{" "}
+            <Text span fw={700} inherit>
+              kontrol keuanganmu
+            </Text>
+          </Title>
+
+          <Text c="rgba(255,255,255,0.8)" size="lg" mb="xl">
+            Ribuan orang sudah menggunakan Cymblot untuk mengelola keuangan
+            mereka. Saatnya giliran kamu!
+          </Text>
+
+          <Stack gap="md" mt="xl">
+            {benefits.map((b, i) => (
+              <Group key={i} gap="md">
+                <ThemeIcon
+                  size={44}
+                  radius="md"
+                  variant="filled"
+                  style={{ background: "rgba(255,255,255,0.15)" }}
+                >
+                  <b.icon size={22} color="white" />
+                </ThemeIcon>
+                <Text c="white" fw={500} size="sm">
+                  {b.text}
+                </Text>
+              </Group>
+            ))}
+          </Stack>
+        </Box>
+      </Box>
+    </div>
   );
 }

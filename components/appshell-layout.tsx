@@ -11,6 +11,10 @@ import {
   ActionIcon,
   Divider,
   Stack,
+  Text,
+  Avatar,
+  Box,
+  Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -25,6 +29,7 @@ import {
   IconSun,
   IconMoon,
   IconLogout,
+  IconCurrencyDollar,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { logout } from "@/app/actions/auth";
@@ -32,18 +37,16 @@ import { useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
 
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: IconHome },
-  { label: "Akun", href: "/dashboard/accounts", icon: IconWallet },
-  { label: "Kategori", href: "/dashboard/categories", icon: IconCategory },
-  { label: "Transaksi", href: "/dashboard/transactions", icon: IconArrowsExchange },
-  { label: "Anggaran", href: "/dashboard/budgets", icon: IconChartBar },
-  { label: "Recurring", href: "/dashboard/recurring", icon: IconReceipt },
-  { label: "Utang/Piutang", href: "/dashboard/debts", icon: IconUsers },
+  { label: "Dashboard", href: "/dashboard", icon: IconHome, color: "blue" },
+  { label: "Akun", href: "/dashboard/accounts", icon: IconWallet, color: "cyan" },
+  { label: "Kategori", href: "/dashboard/categories", icon: IconCategory, color: "grape" },
+  { label: "Transaksi", href: "/dashboard/transactions", icon: IconArrowsExchange, color: "teal" },
+  { label: "Anggaran", href: "/dashboard/budgets", icon: IconChartBar, color: "orange" },
+  { label: "Recurring", href: "/dashboard/recurring", icon: IconReceipt, color: "indigo" },
+  { label: "Utang/Piutang", href: "/dashboard/debts", icon: IconUsers, color: "pink" },
 ];
 
-const bottomNavItems = [
-  { label: "Pengaturan", href: "/dashboard/settings", icon: IconSettings },
-];
+
 
 interface AppShellLayoutProps {
   children: React.ReactNode;
@@ -54,6 +57,7 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
   const pathname = usePathname();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const router = useRouter();
+  const isDark = colorScheme === "dark";
 
   const handleLogout = async () => {
     close();
@@ -72,99 +76,162 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
   return (
     <AppShell
       layout="alt"
-      header={{ height: 60 }}
+      header={{ height: 64 }}
       navbar={{
-        width: 220,
+        width: 250,
         breakpoint: "sm",
         collapsed: { mobile: !opened },
       }}
-      padding="md"
+      padding="lg"
     >
       {/* Header */}
-      <AppShell.Header>
+      <AppShell.Header
+        style={{
+          background: isDark
+            ? "linear-gradient(135deg, rgba(37, 38, 43, 0.97) 0%, rgba(44, 46, 51, 0.97) 100%)"
+            : "linear-gradient(135deg, rgba(255, 255, 255, 0.97) 0%, rgba(248, 249, 252, 0.97) 100%)",
+          backdropFilter: "blur(10px)",
+          borderBottom: isDark
+            ? "1px solid rgba(255, 255, 255, 0.06)"
+            : "1px solid rgba(0, 0, 0, 0.06)",
+        }}
+      >
         <Group h="100%" px="md" justify="space-between">
           <Group>
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-            <Title order={3} c="blue">
-              💰 Cymblot
-            </Title>
           </Group>
-          <Group>
-            <ActionIcon
-              variant="subtle"
-              size="lg"
-              onClick={() => toggleColorScheme()}
-              aria-label="Toggle color scheme"
-            >
-              {colorScheme === "dark" ? (
-                <IconSun size={20} />
-              ) : (
-                <IconMoon size={20} />
-              )}
-            </ActionIcon>
+          <Group gap="sm">
+            <Tooltip label={isDark ? "Mode terang" : "Mode gelap"} withArrow>
+              <ActionIcon
+                variant="light"
+                size="lg"
+                radius="xl"
+                onClick={() => toggleColorScheme()}
+                aria-label="Toggle color scheme"
+                color={isDark ? "yellow" : "blue"}
+              >
+                {isDark ? (
+                  <IconSun size={18} />
+                ) : (
+                  <IconMoon size={18} />
+                )}
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="Pengaturan" withArrow>
+              <ActionIcon
+                variant="light"
+                size="lg"
+                radius="xl"
+                color="gray"
+                component={Link}
+                href="/dashboard/settings"
+                aria-label="Pengaturan"
+              >
+                <IconSettings size={18} />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label="Logout" withArrow>
+              <ActionIcon
+                variant="light"
+                size="lg"
+                radius="xl"
+                color="red"
+                onClick={handleLogout}
+                aria-label="Logout"
+              >
+                <IconLogout size={18} />
+              </ActionIcon>
+            </Tooltip>
           </Group>
         </Group>
       </AppShell.Header>
 
       {/* Navbar */}
-      <AppShell.Navbar p="md">
+      <AppShell.Navbar
+        p="md"
+        style={{
+          background: isDark
+            ? "linear-gradient(180deg, #1a1b1e 0%, #141517 100%)"
+            : "linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%)",
+          borderRight: isDark
+            ? "1px solid rgba(255, 255, 255, 0.06)"
+            : "1px solid rgba(0, 0, 0, 0.06)",
+        }}
+      >
+        <AppShell.Section>
+          <Box mb="lg" p="sm">
+            <Group gap="sm">
+              <Avatar
+                size="md"
+                radius="xl"
+                color="blue"
+                variant="gradient"
+                gradient={{ from: "blue", to: "cyan", deg: 135 }}
+              >
+                <IconCurrencyDollar size={22} />
+              </Avatar>
+              <div>
+                <Title order={4} style={{ lineHeight: 1.2 }}>
+                  Cymblot
+                </Title>
+                <Text size="xs" c="dimmed">
+                  Keuangan
+                </Text>
+              </div>
+            </Group>
+          </Box>
+          <Divider mb="sm" />
+        </AppShell.Section>
+
         <AppShell.Section grow>
-          <Stack gap={4}>
-            {navItems.map((item) => (
-              <NavLink
-                key={item.href}
-                component={Link}
-                href={item.href}
-                label={item.label}
-                leftSection={<item.icon size={20} stroke={1.5} />}
-                active={pathname === item.href}
-                onClick={close}
-                styles={{
-                  root: {
-                    borderRadius: "var(--mantine-radius-md)",
-                  },
-                }}
-              />
-            ))}
+          <Text size="xs" fw={600} c="dimmed" tt="uppercase" mb="xs" px="sm">
+            Menu
+          </Text>
+          <Stack gap={2}>
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <NavLink
+                  key={item.href}
+                  component={Link}
+                  href={item.href}
+                  label={item.label}
+                  leftSection={
+                    <item.icon
+                      size={20}
+                      stroke={1.5}
+                      color={isActive ? `var(--mantine-color-${item.color}-6)` : undefined}
+                    />
+                  }
+                  active={isActive}
+                  onClick={close}
+                  color={item.color}
+                  variant={isActive ? "light" : "subtle"}
+                  styles={{
+                    root: {
+                      borderRadius: "var(--mantine-radius-md)",
+                      fontWeight: isActive ? 600 : 400,
+                    },
+                  }}
+                />
+              );
+            })}
           </Stack>
         </AppShell.Section>
 
-        <AppShell.Section>
-          <Divider my="sm" />
-          <Stack gap={4}>
-            {bottomNavItems.map((item) => (
-              <NavLink
-                key={item.href}
-                component={Link}
-                href={item.href}
-                label={item.label}
-                leftSection={<item.icon size={20} stroke={1.5} />}
-                active={pathname === item.href}
-                onClick={close}
-                styles={{
-                  root: {
-                    borderRadius: "var(--mantine-radius-md)",
-                  },
-                }}
-              />
-            ))}
-            <NavLink
-              label="Logout"
-              leftSection={<IconLogout size={20} stroke={1.5} />}
-              onClick={handleLogout}
-              c="red"
-              styles={{
-                root: {
-                  borderRadius: "var(--mantine-radius-md)",
-                },
-              }}
-            />
-          </Stack>
-        </AppShell.Section>
+
       </AppShell.Navbar>
 
       {/* Main Content */}
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main
+        style={{
+          background: isDark
+            ? "var(--mantine-color-dark-8)"
+            : "#f1f3f5",
+        }}
+      >
+        {children}
+      </AppShell.Main>
     </AppShell>
   );
 }

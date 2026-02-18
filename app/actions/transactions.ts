@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq, and, desc, gte, lte, sql } from "drizzle-orm";
+import { eq, and, desc, gte, lte, sql, count, ilike } from "drizzle-orm";
 import db from "@/db";
 import { transactions, accounts } from "@/db/schema";
 import { getSession } from "@/lib/auth";
@@ -29,16 +29,24 @@ export interface TransactionFilters {
   type?: TransactionType;
   accountId?: string;
   categoryId?: string;
+  search?: string;
 }
 
-/**
- * Get transactions with optional filters
- */
-export async function getTransactions(filters?: TransactionFilters) {
-  const session = await getSession();
-  if (!session) return [];
+export interface PaginationParams {
+  page?: number;
+  perPage?: number;
+}
 
-  const conditions = [eq(transactions.userId, session.userId)];
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  perPage: number;
+  totalPages: number;
+}
+
+function buildFilterConditions(userId: string, filters?: TransactionFilters) {
+  const conditions = [eq(transactions.userId, userId)];
 
   if (filters?.startDate) {
     conditions.push(gte(transactions.date, filters.startDate));
@@ -55,6 +63,21 @@ export async function getTransactions(filters?: TransactionFilters) {
   if (filters?.categoryId) {
     conditions.push(eq(transactions.categoryId, filters.categoryId));
   }
+  if (filters?.search) {
+    conditions.push(ilike(transactions.description, `%${filters.search}%`));
+  }
+
+  return conditions;
+}
+
+/**
+ * Get transactions with optional filters
+ */
+export async function getTransactions(filters?: TransactionFilters) {
+  const session = await getSession();
+  if (!session) return [];
+
+  const conditions = buildFilterConditions(session.userId, filters);
 
   return db.query.transactions.findMany({
     where: and(...conditions),
@@ -64,6 +87,158 @@ export async function getTransactions(filters?: TransactionFilters) {
     },
     orderBy: [desc(transactions.date), desc(transactions.createdAt)],
   });
+}
+
+/**
+ * Get transactions with pagination and filters (server-side)
+ */
+export async function getTransactionsPaginated(
+  filters?: TransactionFilters,
+  pagination?: PaginationParams
+) {
+  const session = await getSession();
+  if (!session) return { data: [], total: 0, page: 1, perPage: 15, totalPages: 0 };
+
+  const page = pagination?.page || 1;
+  const perPage = pagination?.perPage || 15;
+  const offset = (page - 1) * perPage;
+
+  const conditions = buildFilterConditions(session.userId, filters);
+  const whereClause = and(...conditions);
+
+  const [data, totalResult] = await Promise.all([
+    db.query.transactions.findMany({
+      where: whereClause,
+      with: {
+        account: true,
+        category: true,
+      },
+      orderBy: [desc(transactions.date), desc(transactions.createdAt)],
+      limit: perPage,
+      offset,
+    }),
+    db
+      .select({ count: count() })
+      .from(transactions)
+      .where(whereClause),
+  ]);
+
+  const total = totalResult[0]?.count || 0;
+
+  return {
+    data,
+    total,
+    page,
+    perPage,
+    totalPages: Math.ceil(total / perPage),
+  };
+}
+
+/**
+ * Get top transactions (biggest income/expense) for a date range
+ */
+export async function getTopTransactions(
+  type: TransactionType,
+  startDate: Date,
+  endDate: Date,
+  limitCount = 5
+) {
+  const session = await getSession();
+  if (!session) return [];
+
+  return db.query.transactions.findMany({
+    where: and(
+      eq(transactions.userId, session.userId),
+      eq(transactions.type, type),
+      gte(transactions.date, startDate),
+      lte(transactions.date, endDate)
+    ),
+    with: {
+      account: true,
+      category: true,
+    },
+    orderBy: [desc(transactions.amount)],
+    limit: limitCount,
+  });
+}
+
+export interface CategorySummary {
+  categoryId: string | null;
+  categoryName: string;
+  categoryIcon: string;
+  categoryColor: string;
+  total: number;
+  count: number;
+  percentage: number;
+}
+
+/**
+ * Get spending/income aggregated by category for a date range
+ */
+export async function getCategorySummary(
+  type: TransactionType,
+  startDate: Date,
+  endDate: Date,
+  limitCount = 5
+): Promise<CategorySummary[]> {
+  const session = await getSession();
+  if (!session) return [];
+
+  const txns = await db.query.transactions.findMany({
+    where: and(
+      eq(transactions.userId, session.userId),
+      eq(transactions.type, type),
+      gte(transactions.date, startDate),
+      lte(transactions.date, endDate)
+    ),
+    with: {
+      category: true,
+    },
+  });
+
+  // Aggregate by category
+  const categoryMap = new Map<
+    string,
+    { name: string; icon: string; color: string; total: number; count: number }
+  >();
+
+  let grandTotal = 0;
+
+  for (const txn of txns) {
+    const key = txn.categoryId || "__uncategorized__";
+    const existing = categoryMap.get(key);
+    const amount = parseFloat(txn.amount);
+    grandTotal += amount;
+
+    if (existing) {
+      existing.total += amount;
+      existing.count += 1;
+    } else {
+      categoryMap.set(key, {
+        name: txn.category?.name || "Tanpa Kategori",
+        icon: txn.category?.icon || "📦",
+        color: txn.category?.color || "gray",
+        total: amount,
+        count: 1,
+      });
+    }
+  }
+
+  // Convert to array, sort by total desc, limit
+  const result: CategorySummary[] = Array.from(categoryMap.entries())
+    .map(([categoryId, data]) => ({
+      categoryId: categoryId === "__uncategorized__" ? null : categoryId,
+      categoryName: data.name,
+      categoryIcon: data.icon,
+      categoryColor: data.color,
+      total: data.total,
+      count: data.count,
+      percentage: grandTotal > 0 ? (data.total / grandTotal) * 100 : 0,
+    }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, limitCount);
+
+  return result;
 }
 
 /**
