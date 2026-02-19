@@ -10,6 +10,7 @@ import {
 import { getBudgetsWithSpending } from "@/app/actions/budgets";
 import { getDebts } from "@/app/actions/debts";
 import { getRecurringTransactions } from "@/app/actions/recurring";
+import { getMonthlyTransferSummary, getRecentTransfers } from "@/app/actions/transfers";
 import {
   Title,
   Text,
@@ -46,6 +47,9 @@ import {
   IconCalendarWeek,
   IconCategory,
   IconFlame,
+  IconArrowsExchange,
+  IconArrowRight,
+  IconTransfer,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import dayjs from "dayjs";
@@ -93,6 +97,9 @@ async function DashboardContent() {
     incomeCategoriesMonth,
     expenseCategoriesWeek,
     incomeCategoriesWeek,
+    // Transfer data
+    monthlyTransferSummary,
+    recentTransfersList,
   ] = await Promise.all([
     getAccounts(),
     getRecentTransactions(5),
@@ -106,6 +113,8 @@ async function DashboardContent() {
     getCategorySummary("INCOME", monthStart, monthEnd, 6),
     getCategorySummary("EXPENSE", weekStart, weekEnd, 5),
     getCategorySummary("INCOME", weekStart, weekEnd, 5),
+    getMonthlyTransferSummary(now.getFullYear(), now.getMonth() + 1),
+    getRecentTransfers(5),
   ]);
 
   // Calculate totals
@@ -281,6 +290,38 @@ async function DashboardContent() {
           </Group>
         </Paper>
       </SimpleGrid>
+
+      {/* Transfer Summary */}
+      {monthlyTransferSummary.count > 0 && (
+        <Paper p="md" radius="md" withBorder mb="xl">
+          <Group gap="xs" mb="sm">
+            <ThemeIcon size="sm" radius="xl" variant="light" color="blue">
+              <IconTransfer size={14} />
+            </ThemeIcon>
+            <Text fw={600} size="sm">Transfer Bulan Ini</Text>
+          </Group>
+          <SimpleGrid cols={{ base: 1, xs: 3 }} spacing="md">
+            <Paper p="sm" radius="md" withBorder>
+              <Text size="xs" c="dimmed">Total Ditransfer</Text>
+              <Text size="lg" fw={700} c="blue">
+                {formatCurrency(monthlyTransferSummary.totalTransferred)}
+              </Text>
+            </Paper>
+            <Paper p="sm" radius="md" withBorder>
+              <Text size="xs" c="dimmed">Biaya Transfer</Text>
+              <Text size="lg" fw={700} c="orange">
+                {formatCurrency(monthlyTransferSummary.totalFees)}
+              </Text>
+            </Paper>
+            <Paper p="sm" radius="md" withBorder>
+              <Text size="xs" c="dimmed">Jumlah Transfer</Text>
+              <Text size="lg" fw={700}>
+                {monthlyTransferSummary.count}x
+              </Text>
+            </Paper>
+          </SimpleGrid>
+        </Paper>
+      )}
 
       {/* ===== CATEGORY BREAKDOWN ===== */}
       <Paper p="md" radius="md" withBorder mb="xl">
@@ -906,6 +947,75 @@ async function DashboardContent() {
           </Paper>
         </GridCol>
       </Grid>
+
+      {/* ===== RECENT TRANSFERS ===== */}
+      {recentTransfersList.length > 0 && (
+        <Paper p="md" radius="md" withBorder mb="xl">
+          <Group justify="space-between" mb="md">
+            <Group gap="xs">
+              <ThemeIcon size="sm" radius="xl" variant="light" color="blue">
+                <IconTransfer size={14} />
+              </ThemeIcon>
+              <Title order={4}>Transfer Terakhir</Title>
+            </Group>
+            <Link
+              href="/dashboard/transactions?type=TRANSFER"
+              className="text-sm text-blue-600 hover:underline hover:text-blue-800 transition-colors font-medium"
+            >
+              Lihat semua
+            </Link>
+          </Group>
+
+          <TableScrollContainer minWidth={400}>
+            <Table striped highlightOnHover>
+              <TableThead>
+                <TableTr>
+                  <TableTh>Deskripsi</TableTh>
+                  <TableTh>Dari → Ke</TableTh>
+                  <TableTh ta="right">Nominal</TableTh>
+                </TableTr>
+              </TableThead>
+              <TableTbody>
+                {recentTransfersList.map((tf: any) => (
+                  <TableTr key={tf.id}>
+                    <TableTd>
+                      <Stack gap={0}>
+                        <Text size="sm" fw={500}>
+                          {tf.description}
+                        </Text>
+                        <Text size="xs" c="dimmed">
+                          {dayjs(tf.date).format("DD MMM YYYY")}
+                        </Text>
+                      </Stack>
+                    </TableTd>
+                    <TableTd>
+                      <Group gap={4} wrap="nowrap">
+                        <Badge variant="light" size="sm" color="red">
+                          {tf.fromAccount?.icon} {tf.fromAccount?.name}
+                        </Badge>
+                        <Text size="xs" c="dimmed">→</Text>
+                        <Badge variant="light" size="sm" color="green">
+                          {tf.toAccount?.icon} {tf.toAccount?.name}
+                        </Badge>
+                      </Group>
+                    </TableTd>
+                    <TableTd ta="right">
+                      <Text fw={600} c="blue" size="sm">
+                        {formatCurrency(parseFloat(tf.amount))}
+                      </Text>
+                      {parseFloat(tf.fee || "0") > 0 && (
+                        <Text size="xs" c="dimmed">
+                          Biaya: {formatCurrency(parseFloat(tf.fee))}
+                        </Text>
+                      )}
+                    </TableTd>
+                  </TableTr>
+                ))}
+              </TableTbody>
+            </Table>
+          </TableScrollContainer>
+        </Paper>
+      )}
     </>
   );
 }

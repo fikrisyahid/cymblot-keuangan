@@ -30,6 +30,7 @@ import {
   IconCalendar,
   IconWallet,
   IconFlame,
+  IconTransfer,
 } from "@tabler/icons-react";
 import {
   AreaChart,
@@ -246,6 +247,49 @@ export function ReportsClient({
               subtitle={`Rata-rata: ${formatCurrency(data.avgTransaction)}`}
             />
           </SimpleGrid>
+
+          {/* Transfer Summary (only show if there are transfers) */}
+          {data.transferCount > 0 && (
+            <Paper p="md" radius="md" withBorder>
+              <Group mb="md" gap="xs">
+                <ThemeIcon size="sm" variant="light" color="blue" radius="xl">
+                  <IconTransfer size={14} />
+                </ThemeIcon>
+                <Text fw={600} size="lg">
+                  Transfer Antar Akun
+                </Text>
+                <Badge size="sm" variant="light" color="blue">
+                  {data.transferCount}x
+                </Badge>
+              </Group>
+              <SimpleGrid cols={{ base: 1, xs: 3 }}>
+                <Paper p="sm" radius="md" bg="var(--mantine-color-default-hover)">
+                  <Text size="xs" c="dimmed" mb={4}>Total Ditransfer</Text>
+                  <Text size="lg" fw={700} c="blue">
+                    {formatCurrency(data.totalTransferred)}
+                  </Text>
+                </Paper>
+                <Paper p="sm" radius="md" bg="var(--mantine-color-default-hover)">
+                  <Text size="xs" c="dimmed" mb={4}>Total Biaya Transfer</Text>
+                  <Text size="lg" fw={700} c="orange">
+                    {formatCurrency(data.totalTransferFees)}
+                  </Text>
+                </Paper>
+                <Paper p="sm" radius="md" bg="var(--mantine-color-default-hover)">
+                  <Text size="xs" c="dimmed" mb={4}>Rata-rata Transfer</Text>
+                  <Text size="lg" fw={700}>
+                    {formatCurrency(data.totalTransferred / data.transferCount)}
+                  </Text>
+                </Paper>
+              </SimpleGrid>
+              {data.totalTransferFees > 0 && (
+                <Text size="xs" c="dimmed" mt="sm">
+                  * Biaya transfer tidak termasuk dalam perhitungan pengeluaran di atas.
+                  Total biaya transfer periode ini: {formatCurrency(data.totalTransferFees)}.
+                </Text>
+              )}
+            </Paper>
+          )}
 
           {/* Timeline Chart */}
           <Paper p="md" radius="md" withBorder>

@@ -2,9 +2,9 @@
 
 import { eq, and, gte, lte, desc } from "drizzle-orm";
 import db from "@/db";
-import { transactions, accounts } from "@/db/schema";
+import { transactions, accounts, transfers } from "@/db/schema";
 import { getSession, getEncryptionKey } from "@/lib/auth";
-import { decryptTransaction, decryptAccount } from "@/lib/encryption";
+import { decryptTransaction, decryptAccount, decrypt } from "@/lib/encryption";
 
 // ============================================
 // TYPES
@@ -69,6 +69,10 @@ export interface ReportData {
   avgTransaction: number;
   biggestExpense: { amount: number; description: string; date: Date } | null;
   biggestIncome: { amount: number; description: string; date: Date } | null;
+  // Transfer data
+  transferCount: number;
+  totalTransferred: number;
+  totalTransferFees: number;
 }
 
 // ============================================
@@ -191,6 +195,15 @@ export async function getReportData(
     where: eq(accounts.userId, session.userId),
   });
 
+  // Fetch transfers in range
+  const rawTransfers = await db.query.transfers.findMany({
+    where: and(
+      eq(transfers.userId, session.userId),
+      gte(transfers.date, start),
+      lte(transfers.date, end)
+    ),
+  });
+
   // Decrypt data
   const txns = key
     ? await Promise.all(rawTxns.map((t) => decryptTransaction(t, key)))
@@ -198,6 +211,17 @@ export async function getReportData(
   const userAccounts = key
     ? await Promise.all(rawAccounts.map((a) => decryptAccount(a, key)))
     : rawAccounts;
+
+  // Decrypt transfers
+  const decryptedTransfers = key
+    ? await Promise.all(
+        rawTransfers.map(async (tf) => ({
+          ...tf,
+          amount: await decrypt(tf.amount, key),
+          fee: tf.fee ? await decrypt(tf.fee, key) : "0",
+        }))
+      )
+    : rawTransfers;
 
   // ---- TIMELINE ----
   const timeline = buildTimeline(txns, period, start);
@@ -253,6 +277,17 @@ export async function getReportData(
         )
       : null;
 
+  // ---- TRANSFER STATS ----
+  const transferCount = decryptedTransfers.length;
+  const totalTransferred = decryptedTransfers.reduce(
+    (sum, tf) => sum + parseFloat(tf.amount),
+    0,
+  );
+  const totalTransferFees = decryptedTransfers.reduce(
+    (sum, tf) => sum + parseFloat(tf.fee || "0"),
+    0,
+  );
+
   return {
     timeline,
     expenseByCategory,
@@ -266,6 +301,9 @@ export async function getReportData(
     avgTransaction,
     biggestExpense,
     biggestIncome,
+    transferCount,
+    totalTransferred,
+    totalTransferFees,
   };
 }
 

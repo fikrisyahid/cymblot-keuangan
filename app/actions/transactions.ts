@@ -463,7 +463,7 @@ export async function createTransaction(
         ? await encrypt(data.description, key)
         : data.description,
       note: key ? await encryptField(data.note ?? null, key) : (data.note ?? null),
-      date: data.date,
+      date: new Date(data.date),
     });
 
     // Update account balance
@@ -595,7 +595,7 @@ export async function updateTransaction(
         note: key
           ? await encryptField(data.note ?? null, key)
           : (data.note ?? null),
-        date: data.date,
+        date: new Date(data.date),
         updatedAt: new Date(),
       })
       .where(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -31,24 +31,30 @@ import {
   IconTrash,
   IconArrowUp,
   IconArrowDown,
+  IconArrowRight,
   IconFilter,
   IconFilterOff,
   IconSearch,
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
-import { TransactionModal } from "./components/transaction-modal";
+import {
+  TransactionModal,
+  type TransactionWithRelations,
+  type TransferWithRelations,
+} from "./components/transaction-modal";
 import { deleteTransaction } from "@/app/actions/transactions";
-import type { Account, Category, Transaction } from "@/db/schema";
+import { deleteTransfer } from "@/app/actions/transfers";
+import type { Account, Category } from "@/db/schema";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 
 dayjs.locale("id");
 
-type TransactionWithRelations = Transaction & {
-  account: Account;
-  category: Category | null;
-};
+// Unified item for table display
+type UnifiedItem =
+  | { kind: "transaction"; data: TransactionWithRelations }
+  | { kind: "transfer"; data: TransferWithRelations };
 
 interface PaginationInfo {
   page: number;
@@ -68,6 +74,7 @@ interface FilterState {
 
 interface TransactionsClientProps {
   transactions: TransactionWithRelations[];
+  transfers: TransferWithRelations[];
   accounts: Account[];
   categories: Category[];
   pagination: PaginationInfo;
@@ -76,6 +83,7 @@ interface TransactionsClientProps {
 
 export function TransactionsClient({
   transactions,
+  transfers,
   accounts,
   categories,
   pagination,
@@ -87,6 +95,8 @@ export function TransactionsClient({
   );
   const [selectedTransaction, setSelectedTransaction] =
     useState<TransactionWithRelations | null>(null);
+  const [selectedTransfer, setSelectedTransfer] =
+    useState<TransferWithRelations | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -101,6 +111,25 @@ export function TransactionsClient({
     currentFilters.endDate ? new Date(currentFilters.endDate) : null
   );
   const [searchQuery, setSearchQuery] = useState(currentFilters.search || "");
+
+  // Merge transactions & transfers into a unified list sorted by date desc
+  const unifiedItems: UnifiedItem[] = useMemo(() => {
+    const isTransferFilter = currentFilters.type === "TRANSFER";
+    const isTxFilter = currentFilters.type === "INCOME" || currentFilters.type === "EXPENSE";
+
+    const txItems: UnifiedItem[] = isTxFilter || !isTransferFilter
+      ? transactions.map((t) => ({ kind: "transaction" as const, data: t }))
+      : [];
+    const trItems: UnifiedItem[] = isTransferFilter || !isTxFilter
+      ? transfers.map((t) => ({ kind: "transfer" as const, data: t }))
+      : [];
+
+    return [...txItems, ...trItems].sort((a, b) => {
+      const dateA = new Date(a.data.date).getTime();
+      const dateB = new Date(b.data.date).getTime();
+      return dateB - dateA;
+    });
+  }, [transactions, transfers, currentFilters.type]);
 
   const buildUrl = useCallback(
     (overrides: Record<string, string | undefined>) => {
@@ -145,22 +174,31 @@ export function TransactionsClient({
     router.push(`/dashboard/transactions?${params.toString()}`);
   };
 
-  const handleEdit = (transaction: TransactionWithRelations) => {
+  const handleEditTransaction = (transaction: TransactionWithRelations) => {
     setSelectedTransaction(transaction);
+    setSelectedTransfer(null);
+    open();
+  };
+
+  const handleEditTransfer = (transfer: TransferWithRelations) => {
+    setSelectedTransfer(transfer);
+    setSelectedTransaction(null);
     open();
   };
 
   const handleClose = () => {
     setSelectedTransaction(null);
+    setSelectedTransfer(null);
     close();
   };
 
   const handleAdd = () => {
     setSelectedTransaction(null);
+    setSelectedTransfer(null);
     open();
   };
 
-  const handleDelete = async (transaction: TransactionWithRelations) => {
+  const handleDeleteTransaction = async (transaction: TransactionWithRelations) => {
     if (!confirm("Yakin ingin menghapus transaksi ini?")) return;
 
     const result = await deleteTransaction(transaction.id);
@@ -176,6 +214,28 @@ export function TransactionsClient({
       notifications.show({
         title: "Gagal",
         message: result.error || "Gagal menghapus transaksi",
+        color: "red",
+        icon: <IconX size={18} />,
+      });
+    }
+  };
+
+  const handleDeleteTransfer = async (transfer: TransferWithRelations) => {
+    if (!confirm("Yakin ingin menghapus transfer ini?")) return;
+
+    const result = await deleteTransfer(transfer.id);
+
+    if (result.success) {
+      notifications.show({
+        title: "Berhasil",
+        message: "Transfer berhasil dihapus",
+        color: "green",
+        icon: <IconCheck size={18} />,
+      });
+    } else {
+      notifications.show({
+        title: "Gagal",
+        message: result.error || "Gagal menghapus transfer",
         color: "red",
         icon: <IconX size={18} />,
       });
@@ -200,8 +260,8 @@ export function TransactionsClient({
     currentFilters.search
   );
 
-  const rows = transactions.map((txn) => (
-    <Table.Tr key={txn.id}>
+  const renderTransactionRow = (txn: TransactionWithRelations) => (
+    <Table.Tr key={`txn-${txn.id}`}>
       <Table.Td>
         <Group gap="xs">
           {txn.type === "INCOME" ? (
@@ -225,11 +285,11 @@ export function TransactionsClient({
         </Badge>
       </Table.Td>
       <Table.Td>
-        {txn.category && (
+        {txn.category ? (
           <Badge variant="dot" size="sm" color={txn.category.color || "gray"}>
             {txn.category.icon} {txn.category.name}
           </Badge>
-        )}
+        ) : null}
       </Table.Td>
       <Table.Td ta="right">
         <Text fw={600} c={txn.type === "INCOME" ? "green" : "red"} size="sm">
@@ -244,11 +304,10 @@ export function TransactionsClient({
               <IconDotsVertical size={14} />
             </ActionIcon>
           </Menu.Target>
-
           <Menu.Dropdown>
             <Menu.Item
               leftSection={<IconEdit size={14} />}
-              onClick={() => handleEdit(txn)}
+              onClick={() => handleEditTransaction(txn)}
             >
               Edit
             </Menu.Item>
@@ -256,7 +315,7 @@ export function TransactionsClient({
             <Menu.Item
               leftSection={<IconTrash size={14} />}
               color="red"
-              onClick={() => handleDelete(txn)}
+              onClick={() => handleDeleteTransaction(txn)}
             >
               Hapus
             </Menu.Item>
@@ -264,9 +323,86 @@ export function TransactionsClient({
         </Menu>
       </Table.Td>
     </Table.Tr>
-  ));
+  );
 
-  const dynamicAddTransactionButton =
+  const renderTransferRow = (tr: TransferWithRelations) => (
+    <Table.Tr key={`trf-${tr.id}`}>
+      <Table.Td>
+        <Group gap="xs">
+          <IconArrowsExchange size={16} color="var(--mantine-color-blue-6)" />
+          <div>
+            <Text size="sm" fw={500}>
+              {tr.description}
+            </Text>
+            <Text size="xs" c="dimmed">
+              {dayjs(tr.date).format("DD MMM YYYY")}
+            </Text>
+          </div>
+        </Group>
+      </Table.Td>
+      <Table.Td>
+        <Group gap={4} wrap="nowrap">
+          <Badge variant="light" size="sm" color="blue">
+            {tr.fromAccount?.icon} {tr.fromAccount?.name}
+          </Badge>
+          <IconArrowRight size={12} color="var(--mantine-color-dimmed)" />
+          <Badge variant="light" size="sm" color="blue">
+            {tr.toAccount?.icon} {tr.toAccount?.name}
+          </Badge>
+        </Group>
+      </Table.Td>
+      <Table.Td>
+        <Badge variant="light" size="sm" color="blue">
+          Transfer
+        </Badge>
+      </Table.Td>
+      <Table.Td ta="right">
+        <Text fw={600} c="blue" size="sm">
+          {formatCurrency(tr.amount)}
+        </Text>
+        {parseFloat(tr.fee || "0") > 0 && (
+          <Text size="xs" c="dimmed">
+            +{formatCurrency(tr.fee)} biaya
+          </Text>
+        )}
+      </Table.Td>
+      <Table.Td>
+        <Menu shadow="md" width={140} position="bottom-end">
+          <Menu.Target>
+            <ActionIcon variant="subtle" size="sm">
+              <IconDotsVertical size={14} />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item
+              leftSection={<IconEdit size={14} />}
+              onClick={() => handleEditTransfer(tr)}
+            >
+              Edit
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item
+              leftSection={<IconTrash size={14} />}
+              color="red"
+              onClick={() => handleDeleteTransfer(tr)}
+            >
+              Hapus
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      </Table.Td>
+    </Table.Tr>
+  );
+
+  const rows = unifiedItems.map((item) =>
+    item.kind === "transaction"
+      ? renderTransactionRow(item.data)
+      : renderTransferRow(item.data),
+  );
+
+  const totalItems = pagination.total;
+
+  const dynamicAddButton =
     accounts.length === 0 ? (
       <Tooltip label="Tambahkan akun terlebih dahulu" withArrow>
         <Button leftSection={<IconPlus size={16} />} disabled>
@@ -341,6 +477,7 @@ export function TransactionsClient({
               data={[
                 { value: "INCOME", label: "Pemasukan" },
                 { value: "EXPENSE", label: "Pengeluaran" },
+                { value: "TRANSFER", label: "Transfer" },
               ]}
               clearable
             />
@@ -400,8 +537,12 @@ export function TransactionsClient({
             Filter aktif:
           </Text>
           {currentFilters.type && (
-            <Badge size="sm" variant="light">
-              {currentFilters.type === "INCOME" ? "Pemasukan" : "Pengeluaran"}
+            <Badge size="sm" variant="light" color={
+              currentFilters.type === "INCOME" ? "green" :
+              currentFilters.type === "TRANSFER" ? "blue" : "red"
+            }>
+              {currentFilters.type === "INCOME" ? "Pemasukan" :
+               currentFilters.type === "TRANSFER" ? "Transfer" : "Pengeluaran"}
             </Badge>
           )}
           {currentFilters.accountId && (
@@ -431,12 +572,12 @@ export function TransactionsClient({
             </Badge>
           )}
           <Text size="xs" c="dimmed">
-            ({pagination.total} hasil)
+            ({totalItems} hasil)
           </Text>
         </Group>
       )}
 
-      {transactions.length === 0 ? (
+      {unifiedItems.length === 0 ? (
         <Paper p="xl" radius="md" withBorder>
           <Stack align="center" gap="md">
             <IconArrowsExchange size={48} stroke={1} color="gray" />
@@ -445,7 +586,7 @@ export function TransactionsClient({
                 ? "Tidak ada transaksi yang cocok dengan filter."
                 : "Belum ada transaksi. Catat transaksi pertamamu!"}
             </Text>
-            {!hasActiveFilters && dynamicAddTransactionButton}
+            {!hasActiveFilters && dynamicAddButton}
           </Stack>
         </Paper>
       ) : (
@@ -473,7 +614,7 @@ export function TransactionsClient({
               <Text size="sm" c="dimmed">
                 Menampilkan {(pagination.page - 1) * pagination.perPage + 1}-
                 {Math.min(pagination.page * pagination.perPage, pagination.total)}{" "}
-                dari {pagination.total} transaksi
+                dari {pagination.total}
               </Text>
               <Pagination
                 value={pagination.page}
@@ -492,6 +633,7 @@ export function TransactionsClient({
         accounts={accounts}
         categories={categories}
         transaction={selectedTransaction}
+        transfer={selectedTransfer}
       />
     </>
   );

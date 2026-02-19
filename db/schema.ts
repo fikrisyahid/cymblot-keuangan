@@ -264,6 +264,37 @@ export const debts = pgTable(
   ]
 );
 
+export const transfers = pgTable(
+  "transfers",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    fromAccountId: text("from_account_id")
+      .notNull()
+      .references(() => accounts.id, { onDelete: "cascade" }),
+    toAccountId: text("to_account_id")
+      .notNull()
+      .references(() => accounts.id, { onDelete: "cascade" }),
+    amount: text("amount").notNull(),
+    fee: text("fee").default("0").notNull(),
+    description: text("description").notNull(),
+    note: text("note"),
+    date: timestamp("date").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("transfers_user_id_idx").on(table.userId),
+    index("transfers_user_date_idx").on(table.userId, table.date),
+    index("transfers_from_account_idx").on(table.userId, table.fromAccountId),
+    index("transfers_to_account_idx").on(table.userId, table.toAccountId),
+  ]
+);
+
 // ============================================
 // RELATIONS (for ORM-style queries)
 // ============================================
@@ -276,6 +307,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   budgets: many(budgets),
   recurringTransactions: many(recurringTransactions),
   debts: many(debts),
+  transfers: many(transfers),
 }));
 
 export const accountsRelations = relations(accounts, ({ one, many }) => ({
@@ -285,6 +317,8 @@ export const accountsRelations = relations(accounts, ({ one, many }) => ({
   }),
   transactions: many(transactions),
   recurringTransactions: many(recurringTransactions),
+  transfersFrom: many(transfers, { relationName: "fromAccount" }),
+  transfersTo: many(transfers, { relationName: "toAccount" }),
 }));
 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
@@ -368,6 +402,23 @@ export const debtsRelations = relations(debts, ({ one }) => ({
   }),
 }));
 
+export const transfersRelations = relations(transfers, ({ one }) => ({
+  user: one(users, {
+    fields: [transfers.userId],
+    references: [users.id],
+  }),
+  fromAccount: one(accounts, {
+    fields: [transfers.fromAccountId],
+    references: [accounts.id],
+    relationName: "fromAccount",
+  }),
+  toAccount: one(accounts, {
+    fields: [transfers.toAccountId],
+    references: [accounts.id],
+    relationName: "toAccount",
+  }),
+}));
+
 // ============================================
 // TYPE EXPORTS
 // ============================================
@@ -381,3 +432,4 @@ export type Tag = typeof tags.$inferSelect;
 export type Budget = typeof budgets.$inferSelect;
 export type RecurringTransaction = typeof recurringTransactions.$inferSelect;
 export type Debt = typeof debts.$inferSelect;
+export type Transfer = typeof transfers.$inferSelect;
