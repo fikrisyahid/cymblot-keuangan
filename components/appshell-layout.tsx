@@ -37,6 +37,7 @@ import Link from "next/link";
 import { logout } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
+import { useEffect, useState } from "react";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: IconHome, color: "blue" },
@@ -63,9 +64,16 @@ interface AppShellLayoutProps {
 export function AppShellLayout({ children }: AppShellLayoutProps) {
   const [opened, { toggle, close }] = useDisclosure();
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const router = useRouter();
-  const isDark = colorScheme === "dark";
+  
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && colorScheme === "dark";
 
   const handleLogout = async () => {
     close();
