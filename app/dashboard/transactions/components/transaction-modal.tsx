@@ -9,7 +9,6 @@ import {
   Button,
   Stack,
   Group,
-  SegmentedControl,
   Textarea,
   Paper,
   Text,
@@ -261,48 +260,32 @@ function TransactionForm({
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack>
-        <SegmentedControl
-          value={mode}
-          onChange={(v) => {
-            setMode(v as ModalMode);
-            form.setFieldValue("categoryId", "");
-          }}
-          disabled={isEdit}
-          data={[
-            {
-              value: "EXPENSE",
-              label: (
-                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
-                  <IconArrowDown size={16} />
-                  Pengeluaran
-                </span>
-              ),
-            },
-            {
-              value: "INCOME",
-              label: (
-                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
-                  <IconArrowUp size={16} />
-                  Pemasukan
-                </span>
-              ),
-            },
-            {
-              value: "TRANSFER",
-              label: (
-                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
-                  <IconArrowsExchange size={16} />
-                  Transfer
-                </span>
-              ),
-            },
-          ]}
-          styles={{
-            label: { display: "flex", alignItems: "center", justifyContent: "center" },
-          }}
-          fullWidth
-          color={buttonColor}
-        />
+        <Stack gap="xs">
+          {(
+            [
+              { value: "EXPENSE", label: "Pengeluaran", icon: <IconArrowDown size={16} />, color: "red" },
+              { value: "INCOME", label: "Pemasukan", icon: <IconArrowUp size={16} />, color: "green" },
+              { value: "TRANSFER", label: "Transfer", icon: <IconArrowsExchange size={16} />, color: "blue" },
+            ] as const
+          ).map(({ value, label, icon, color }) => (
+            <Button
+              key={value}
+              variant={mode === value ? "filled" : "light"}
+              color={color}
+              leftSection={icon}
+              fullWidth
+              disabled={isEdit && mode !== value}
+              onClick={() => {
+                if (!isEdit) {
+                  setMode(value);
+                  form.setFieldValue("categoryId", "");
+                }
+              }}
+            >
+              {label}
+            </Button>
+          ))}
+        </Stack>
 
         {isTransferMode && fromAccount && toAccount && (
           <Paper
