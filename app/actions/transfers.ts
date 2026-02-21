@@ -80,7 +80,6 @@ async function updateAccountBalance(
 }
 
 async function decryptTransfer(transfer: TransferRow, key: string): Promise<TransferRow> {
-  console.log("Decrypting transfer:", transfer);
   return {
     ...transfer,
     amount: await decrypt(transfer.amount, key),
