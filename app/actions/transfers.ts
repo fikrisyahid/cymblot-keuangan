@@ -523,7 +523,7 @@ export async function updateTransfer(
         note: key
           ? await encryptField(data.note ?? null, key)
           : (data.note ?? null),
-        date: data.date,
+        date: new Date(data.date),
         updatedAt: new Date(),
       })
       .where(
