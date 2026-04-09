@@ -3,15 +3,15 @@ import { getSession } from "@/lib/auth";
 import { AppShellLayout } from "@/components/appshell-layout";
 
 export default async function DashboardLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  const session = await getSession();
+	const session = await getSession();
 
-  if (!session) {
-    redirect("/login");
-  }
+	if (!session) {
+		redirect("/login");
+	}
 
-  return <AppShellLayout>{children}</AppShellLayout>;
+	return <AppShellLayout>{children}</AppShellLayout>;
 }

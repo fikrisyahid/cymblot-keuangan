@@ -4,15 +4,15 @@ import { CategoriesClient } from "./client";
 import CustomLoadingOverlay from "@/components/custom-loading-overlay";
 
 async function CategoriesContent() {
-  const categories = await getCategories();
+	const categories = await getCategories();
 
-  return <CategoriesClient categories={categories} />;
+	return <CategoriesClient categories={categories} />;
 }
 
 export default function CategoriesPage() {
-  return (
-    <Suspense fallback={<CustomLoadingOverlay />}>
-      <CategoriesContent />
-    </Suspense>
-  );
+	return (
+		<Suspense fallback={<CustomLoadingOverlay />}>
+			<CategoriesContent />
+		</Suspense>
+	);
 }

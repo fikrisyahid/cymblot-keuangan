@@ -1,50 +1,50 @@
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
-import '@mantine/charts/styles.css';
+import "@mantine/charts/styles.css";
 
 import "./globals.css";
 
 import {
-  ColorSchemeScript,
-  MantineProvider,
-  mantineHtmlProps,
-  createTheme,
+	ColorSchemeScript,
+	MantineProvider,
+	mantineHtmlProps,
+	createTheme,
 } from "@mantine/core";
 import { Poppins } from "next/font/google";
 import { Notifications } from "@mantine/notifications";
 import BProgressProvider from "@/components/bprogress-provider";
 
 const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+	subsets: ["latin"],
+	weight: ["300", "400", "500", "600", "700"],
 });
 
 const theme = createTheme({
-  fontFamily: poppins.style.fontFamily,
+	fontFamily: poppins.style.fontFamily,
 });
 
 export const metadata = {
-  title: "Cymblot Keuangan",
-  description: "Aplikasi Keuangan Sederhana",
+	title: "Cymblot Keuangan",
+	description: "Aplikasi Keuangan Sederhana",
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <html lang="en" {...mantineHtmlProps}>
-      <head>
-        <ColorSchemeScript />
-      </head>
-      <body className={poppins.className}>
-        <MantineProvider theme={theme}>
-          <Notifications position="top-center" />
-          <BProgressProvider>{children}</BProgressProvider>
-        </MantineProvider>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" {...mantineHtmlProps}>
+			<head>
+				<ColorSchemeScript />
+			</head>
+			<body className={poppins.className}>
+				<MantineProvider theme={theme}>
+					<Notifications position="top-center" />
+					<BProgressProvider>{children}</BProgressProvider>
+				</MantineProvider>
+			</body>
+		</html>
+	);
 }

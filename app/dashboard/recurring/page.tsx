@@ -6,25 +6,25 @@ import { RecurringClient } from "./client";
 import CustomLoadingOverlay from "@/components/custom-loading-overlay";
 
 async function RecurringContent() {
-  const [recurringTransactions, accounts, categories] = await Promise.all([
-    getRecurringTransactions(),
-    getAccounts(),
-    getCategories(),
-  ]);
+	const [recurringTransactions, accounts, categories] = await Promise.all([
+		getRecurringTransactions(),
+		getAccounts(),
+		getCategories(),
+	]);
 
-  return (
-    <RecurringClient
-      recurringTransactions={recurringTransactions}
-      accounts={accounts}
-      categories={categories}
-    />
-  );
+	return (
+		<RecurringClient
+			recurringTransactions={recurringTransactions}
+			accounts={accounts}
+			categories={categories}
+		/>
+	);
 }
 
 export default function RecurringPage() {
-  return (
-    <Suspense fallback={<CustomLoadingOverlay />}>
-      <RecurringContent />
-    </Suspense>
-  );
+	return (
+		<Suspense fallback={<CustomLoadingOverlay />}>
+			<RecurringContent />
+		</Suspense>
+	);
 }

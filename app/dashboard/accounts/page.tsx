@@ -4,15 +4,15 @@ import { AccountsClient } from "./client";
 import CustomLoadingOverlay from "@/components/custom-loading-overlay";
 
 async function AccountsContent() {
-  const accounts = await getAccounts();
+	const accounts = await getAccounts();
 
-  return <AccountsClient accounts={accounts} />;
+	return <AccountsClient accounts={accounts} />;
 }
 
 export default function AccountsPage() {
-  return (
-    <Suspense fallback={<CustomLoadingOverlay />}>
-      <AccountsContent />
-    </Suspense>
-  );
+	return (
+		<Suspense fallback={<CustomLoadingOverlay />}>
+			<AccountsContent />
+		</Suspense>
+	);
 }

@@ -5,18 +5,18 @@ import { BudgetsClient } from "./client";
 import CustomLoadingOverlay from "@/components/custom-loading-overlay";
 
 async function BudgetsContent() {
-  const [budgets, categories] = await Promise.all([
-    getBudgetsWithSpending(),
-    getCategories(),
-  ]);
+	const [budgets, categories] = await Promise.all([
+		getBudgetsWithSpending(),
+		getCategories(),
+	]);
 
-  return <BudgetsClient budgets={budgets} categories={categories} />;
+	return <BudgetsClient budgets={budgets} categories={categories} />;
 }
 
 export default function BudgetsPage() {
-  return (
-    <Suspense fallback={<CustomLoadingOverlay />}>
-      <BudgetsContent />
-    </Suspense>
-  );
+	return (
+		<Suspense fallback={<CustomLoadingOverlay />}>
+			<BudgetsContent />
+		</Suspense>
+	);
 }
